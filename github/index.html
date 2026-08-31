@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Carduri de training</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <div>
+    <div class="eyebrow">Joc de training</div>
+    <h1 id="learner-game-title">Carduri de training</h1>
+  </div>
+</header>
+
+<main id="learner-main">
+  <div id="status-box"></div>
+  <div id="learner-group-bar" style="display:none; text-align:center; margin-bottom:14px;">
+    <span class="badge" id="learner-group-badge"></span>
+  </div>
+  <div id="session-timer-bar" style="display:none; text-align:center; margin-bottom:24px;">
+    <div style="font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); font-family:'Inter',sans-serif;">Timp rămas</div>
+    <div id="learner-timer-display" style="font-size:44px; font-family:'Fraunces',serif; font-weight:700; color:var(--green);">00:00:00</div>
+  </div>
+  <div class="learner-grid" id="learner-grid"></div>
+
+  <div id="selection-choosing-section" style="display:none;">
+    <p style="text-align:center; font-size:13px; color:var(--grey); margin-bottom:14px;">Alege până la <strong id="selection-max-label"></strong> card(uri) care ți-au plăcut.</p>
+    <div class="card-grid" id="selection-choice-grid" style="max-width:1100px; margin:0 auto 20px;"></div>
+    <div style="text-align:center;">
+      <button class="btn gold" id="selection-submit-btn" disabled>Am ales</button>
+    </div>
+  </div>
+
+  <div id="selection-result-section" style="display:none;">
+    <p id="selection-result-hint" style="text-align:center; font-size:13px; color:var(--grey); margin-bottom:14px;"></p>
+    <div class="learner-grid" id="selection-result-grid"></div>
+  </div>
+</main>
+
+<div id="expired-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.78); z-index:80; align-items:center; justify-content:center; text-align:center; padding:20px;">
+  <div>
+    <div style="font-size:56px; margin-bottom:12px;">⏰</div>
+    <div style="font-family:'Fraunces',serif; font-size:32px; font-weight:700; color:#fff;">Timpul a expirat</div>
+    <div style="font-family:'Inter',sans-serif; font-size:14px; color:#ddd; margin-top:8px;">Așteaptă instrucțiunile trainerului.</div>
+  </div>
+</div>
+
+<style>
+  #learner-main { max-width: 1900px; }
+</style>
+
+<div id="learner-lightbox">
+  <img id="learner-lightbox-img" />
+</div>
+
+<script type="module" src="learner.js"></script>
+</body>
+</html>
