@@ -1239,6 +1239,7 @@ async function renderControlGrid() {
 
   const flipToggle = $("flip-toggle-current");
   if (flipToggle) flipToggle.checked = controlGroupCards.length > 0 && controlGroupCards.every((c) => c.is_flippable);
+  syncAllGroupsFlipToggle();
 
   grid.innerHTML = "";
   if (controlGroupCards.length === 0) {
@@ -1376,6 +1377,14 @@ function togglePreview(cardId) {
   previewBtn.textContent = next ? "Vezi față" : "Vezi verso";
 }
 
+async function syncAllGroupsFlipToggle() {
+  if (!currentSession) return;
+  const toggle = $("flip-toggle-all-groups");
+  if (!toggle) return;
+  const { data } = await supabase.from("session_group_cards").select("is_flippable").eq("session_id", currentSession.id);
+  toggle.checked = !!(data && data.length > 0 && data.every((r) => r.is_flippable));
+}
+
 async function setAllFlippable(value) {
   if (!currentGroupId) return;
   const toggle = $("flip-toggle-current");
@@ -1389,6 +1398,7 @@ async function setAllFlippable(value) {
       c.is_flippable = value;
       updateTileFlipButton(c.id, value);
     });
+    await syncAllGroupsFlipToggle(); // daca acum TOATE grupele sunt flippable (sau nu mai sunt), reflectam corect si aici
   }
   toggle.disabled = false;
 }
@@ -1411,6 +1421,7 @@ async function deactivateAndResetFlip() {
       updateTileFlipButton(c.id, false);
     });
     $("flip-toggle-current").checked = false;
+    await syncAllGroupsFlipToggle();
   } catch (err) {
     alert("Eroare: " + err.message);
   } finally {

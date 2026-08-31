@@ -416,5 +416,5 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
 .switch-row { display: flex; align-items: center; gap: 12px; }
 
 /* grupa completa (mod Selectie) - toti cursantii au ales */
-.btn.group-complete { background: var(--green); color: #fff; border-color: var(--green); }
+.btn.group-complete { background: #88d45f; color: var(--green-deep); border-color: #6bbf3f; }
 .btn.group-complete.group-complete-selected { box-shadow: 0 0 0 3px var(--gold); }
