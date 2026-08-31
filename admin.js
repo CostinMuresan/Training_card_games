@@ -992,6 +992,7 @@ function renderGroupTabs() {
     const btn = document.createElement("button");
     btn.className = "btn " + (g.id === currentGroupId ? "gold" : "outline");
     btn.textContent = g.name;
+    btn.dataset.groupId = g.id;
     btn.addEventListener("click", async () => {
       currentGroupId = g.id;
       renderGroupTabs();
@@ -1003,6 +1004,7 @@ function renderGroupTabs() {
     });
     box.appendChild(btn);
   });
+  if (isSelectionGame()) loadSelectionGroupsOverview();
 }
 
 // ---------- CRONOMETRU SESIUNE ----------
@@ -1702,10 +1704,12 @@ async function loadSelectionGroupsOverview() {
     const parts = (allParts || []).filter((p) => p.group_id === g.id);
     const submitted = parts.filter((p) => p.submitted_at).length;
     const complete = expected > 0 && submitted >= expected;
+    const isSelected = g.id === currentGroupId;
+
     const row = document.createElement("button");
-    row.className = "btn " + (g.id === currentGroupId ? "gold" : "outline");
+    row.className = complete ? "btn group-complete" + (isSelected ? " group-complete-selected" : "") : "btn " + (isSelected ? "gold" : "outline");
     row.style.cssText = "display:flex; justify-content:space-between; align-items:center; text-align:left; width:100%;";
-    row.innerHTML = `<span>${escapeHtml(g.name)}</span><span style="font-weight:700; color:${complete ? "var(--green)" : "inherit"};">${complete ? "✓ " : ""}${submitted} / ${expected || "?"}</span>`;
+    row.innerHTML = `<span>${escapeHtml(g.name)}</span><span style="font-weight:700;">${complete ? "✓ " : ""}${submitted} / ${expected || "?"}</span>`;
     row.addEventListener("click", async () => {
       currentGroupId = g.id;
       renderGroupTabs();
@@ -1714,6 +1718,12 @@ async function loadSelectionGroupsOverview() {
       await loadSelectionGroupsOverview();
     });
     box.appendChild(row);
+
+    // coloreaza si tab-ul corespunzator de sus (Grupa 1, Grupa 2...), la fel ca randul din lista
+    const tabBtn = document.querySelector(`#group-tabs button[data-group-id="${g.id}"]`);
+    if (tabBtn) {
+      tabBtn.className = complete ? "btn group-complete" + (isSelected ? " group-complete-selected" : "") : "btn " + (isSelected ? "gold" : "outline");
+    }
   });
 }
 

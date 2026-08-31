@@ -430,9 +430,15 @@ function renderSelectionChoiceGrid() {
           <img class="mini-flip-face" src="${c.front_image_url}" alt="${escapeHtml(c.title)}" />
           <img class="mini-flip-face back" src="${c.back_image_url}" alt="${escapeHtml(c.title)}" />
         </div>
+        <button class="zoom-btn" data-zoom title="Vezi mărit">🔍</button>
       </div>
       <div class="tile-label">${escapeHtml(c.title)}</div>
     `;
+    tile.querySelector(".mini-flip").style.position = "relative";
+    tile.querySelector("[data-zoom]").addEventListener("click", (e) => {
+      e.stopPropagation();
+      openLightbox(flippedLocal[c.id] ? c.back_image_url : c.front_image_url);
+    });
     if (canFlip) {
       tile.querySelector("[data-flip]").addEventListener("click", () => {
         flippedLocal[c.id] = !flippedLocal[c.id];
@@ -507,6 +513,16 @@ function renderStaticResultCards(cardList) {
       });
     }
 
+    const zoomBtn = document.createElement("button");
+    zoomBtn.className = "zoom-btn";
+    zoomBtn.textContent = "🔍";
+    zoomBtn.title = "Vezi mărit";
+    zoomBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openLightbox(flippedLocal[c.id] ? c.back_image_url : c.front_image_url);
+    });
+
+    wrap.appendChild(zoomBtn);
     wrap.appendChild(flip);
     grid.appendChild(wrap);
   });

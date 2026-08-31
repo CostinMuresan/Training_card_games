@@ -139,6 +139,7 @@ input, textarea, select {
 }
 
 .card-tile {
+  position: relative;
   background: var(--card-bg);
   border: 2px solid var(--parchment-dark);
   border-radius: 10px;
@@ -413,3 +414,7 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
 .switch input:checked + .slider { background: var(--green); }
 .switch input:checked + .slider::before { transform: translateX(22px); }
 .switch-row { display: flex; align-items: center; gap: 12px; }
+
+/* grupa completa (mod Selectie) - toti cursantii au ales */
+.btn.group-complete { background: var(--green); color: #fff; border-color: var(--green); }
+.btn.group-complete.group-complete-selected { box-shadow: 0 0 0 3px var(--gold); }
