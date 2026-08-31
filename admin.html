@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin · Carduri de training</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="login-view" class="login-wrap" style="display:none;">
+  <div class="eyebrow" style="color:var(--gold); font-size:11px; letter-spacing:0.15em; text-transform:uppercase;">Trainer</div>
+  <h2>Autentificare</h2>
+  <label>Email</label>
+  <input id="login-email" type="email" placeholder="trainer@exemplu.ro" />
+  <label>Parolă</label>
+  <input id="login-password" type="password" />
+  <button class="btn" id="login-btn" style="margin-top:18px; width:100%;">Intră</button>
+  <div class="error-msg" id="login-error"></div>
+</div>
+
+<div id="admin-view" style="display:none;">
+  <header class="app-header">
+    <div>
+      <div class="eyebrow">Panou Trainer</div>
+      <h1>Carduri de training · Admin</h1>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <a href="manual.html" target="_blank" class="btn outline" style="border-color:var(--gold-soft); color:var(--gold-soft); text-decoration:none; display:inline-block;">📖 Manual</a>
+      <button class="btn outline" id="logout-btn" style="border-color:var(--gold-soft); color:var(--gold-soft);">Deconectare</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="panel" id="game-set-switcher" style="margin-bottom:16px;">
+      <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-end;">
+        <div>
+          <label style="display:block; font-size:12px; font-weight:600; margin-bottom:4px;">Joc de training</label>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <select id="game-select" style="min-width:170px;"></select>
+            <button class="btn outline" id="game-new-btn" title="Joc nou" style="padding:8px 10px;">+ Nou</button>
+            <button class="btn outline" id="game-edit-btn" title="Editează" style="padding:8px 10px;">✏️</button>
+            <button class="btn outline" id="game-delete-btn" title="Șterge" style="padding:8px 10px; border-color:var(--red); color:var(--red);">🗑</button>
+          </div>
+        </div>
+        <div>
+          <label style="display:block; font-size:12px; font-weight:600; margin-bottom:4px;">Set de cărți</label>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <select id="set-select" style="min-width:170px;"></select>
+            <button class="btn outline" id="set-new-btn" title="Set nou" style="padding:8px 10px;">+ Nou</button>
+            <button class="btn outline" id="set-edit-btn" title="Editează" style="padding:8px 10px;">✏️</button>
+            <button class="btn outline" id="set-delete-btn" title="Șterge" style="padding:8px 10px; border-color:var(--red); color:var(--red);">🗑</button>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:12px; color:var(--grey); margin:10px 0 0;">Alegerea de mai sus determină ce carduri vezi în „Administrare carduri” și ce deck se folosește la crearea unei sesiuni noi.</p>
+      <div class="error-msg" id="gs-switcher-error"></div>
+    </div>
+
+    <div style="display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
+      <button class="btn gold" id="tab-sessions-btn">Sesiuni & Control live</button>
+      <button class="btn outline" id="tab-deck-btn">Administrare carduri</button>
+    </div>
+
+    <div id="view-sessions">
+    <div class="panel" id="control-panel" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:6px;">
+        <h3 style="margin:0;">Control carduri (sesiune live)</h3>
+        <button class="btn danger" id="end-session-btn-top">Încheie sesiunea (toate grupele)</button>
+      </div>
+      <p style="font-size:13px; color:var(--grey);" id="control-panel-hint">Click pe un card pentru a-l evidenția la grupa selectată. Butonul „Permite răsturnarea” activează flip-ul pentru acel card, doar la această grupă.</p>
+      <div id="group-tabs" style="display:flex; gap:8px; margin:12px 0; flex-wrap:wrap;"></div>
+
+      <div id="standard-mode-panel">
+      <p id="presence-indicator" style="display:none; font-size:14px; font-weight:600; margin:0 0 14px;"></p>
+      <button class="btn outline" id="toggle-picker-btn" style="margin-bottom:14px;">Gestionează manual cardurile grupei</button>
+      <div id="card-picker-panel" style="display:none; margin-bottom:18px; padding:14px; border:1px solid var(--parchment-dark); border-radius:10px; background:var(--parchment);">
+        <p style="font-size:12px; color:var(--grey); margin:0 0 10px;">Bifează/debifează pentru a adăuga sau elimina carduri din grupa selectată mai sus — funcționează oricând, chiar și în timpul sesiunii.</p>
+        <div id="card-picker" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+      </div>
+
+      <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--grey); margin:0 0 6px;">Grupa curentă</p>
+      <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+        <button class="btn gold" id="flip-all-on-btn">Activează flip pe toate</button>
+        <button class="btn outline" id="flip-all-off-btn">Dezactivează flip pe toate</button>
+        <button class="btn outline" id="flip-all-reset-btn" style="border-color:var(--red); color:var(--red);">Dezactivează și întoarce la față</button>
+      </div>
+
+      <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--grey); margin:0 0 6px;">Toate grupele</p>
+      <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+        <button class="btn gold" id="flip-all-groups-btn" style="border:2px solid var(--green);">Activează flip pe toate</button>
+        <button class="btn outline" id="flip-all-groups-off-btn" style="border:2px solid var(--red); color:var(--red);">Dezactivează flip pe toate</button>
+        <button class="btn outline" id="flip-all-groups-reset-btn" style="border:2px solid var(--red); color:var(--red);">Dezactivează și întoarce la față</button>
+      </div>
+      <div class="card-grid" id="control-grid"></div>
+      </div>
+
+      <div id="colourblind-mode-panel" style="display:none;">
+        <h4 class="serif" style="margin:6px 0 10px;">Participanți — grupa selectată</h4>
+        <div id="participants-list" style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;"></div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:24px;">
+          <input id="new-participant-name" placeholder="Nume participant" style="max-width:200px;" />
+          <button class="btn gold" id="add-participant-btn">+ Adaugă participant</button>
+        </div>
+
+        <h4 class="serif" style="margin:6px 0 10px;">Distribuire automată a cardurilor private</h4>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:24px;">
+          <input id="cb-cards-per-participant" type="number" min="1" value="1" style="width:80px;" />
+          <span style="font-size:13px;">carduri per participant</span>
+          <label style="display:flex; align-items:center; gap:6px; font-size:13px;">
+            <input id="cb-allow-repeat" type="checkbox" style="width:auto;" /> permite repetarea
+          </label>
+          <button class="btn outline" id="distribute-participants-btn">Distribuie automat tuturor</button>
+        </div>
+
+        <h4 class="serif" style="margin:6px 0 10px;">Tipar-țintă (soluția corectă — vizibilă doar ție)</h4>
+        <div id="target-picker" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px;"></div>
+        <button class="btn danger" id="reveal-solution-btn">🎯 Dezvăluie soluția tuturor participanților</button>
+      </div>
+
+      <div id="selection-mode-panel" style="display:none;">
+        <h4 class="serif" style="margin:6px 0 4px;">Progres — grupa selectată</h4>
+        <p id="selection-progress" style="font-size:14px; font-weight:600; margin:0 0 14px;"></p>
+        <div id="selection-participants-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="session-panel">
+      <h3>Sesiune și grupuri</h3>
+
+      <div id="no-session-box">
+        <p style="font-size:13px; color:var(--grey); margin-bottom:16px;">
+          Alege câte grupe vrei și câte carduri primește fiecare.
+        </p>
+
+        <div id="standard-group-fields">
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Număr de grupe</label>
+          <input id="num-groups" type="number" min="1" value="4" style="width:100px;" />
+
+          <label style="display:block; font-size:13px; font-weight:600; margin:16px 0 4px;">Cursanți așteptați per grupă (opțional)</label>
+          <input id="expected-per-group" type="number" min="0" value="" placeholder="ex. 4" style="width:100px;" />
+          <p style="font-size:12px; color:var(--grey); margin:6px 0 0;">Dacă îl completezi, vezi live în panoul de control câți au deschis linkul din câți sunt așteptați. Lasă gol dacă nu vrei acest indicator.</p>
+        </div>
+
+        <div id="selection-group-fields" style="display:none;">
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Număr total de cursanți</label>
+          <input id="num-participants-total" type="number" min="2" value="9" style="width:100px;" />
+
+          <label style="display:block; font-size:13px; font-weight:600; margin:16px 0 4px;">Cursanți per grupă</label>
+          <input id="participants-per-group" type="number" min="2" value="3" style="width:100px;" />
+          <p id="selection-groups-preview" style="font-size:12px; color:var(--grey); margin:6px 0 0;"></p>
+
+          <label style="display:block; font-size:13px; font-weight:600; margin:16px 0 4px;">Carduri alese per cursant</label>
+          <input id="max-choices" type="number" min="1" value="1" style="width:100px;" />
+        </div>
+
+        <label style="display:block; font-size:13px; font-weight:600; margin:16px 0 4px;" id="cards-per-group-label">Carduri per grupă</label>
+        <input id="cards-per-group" type="number" min="1" style="width:100px;" />
+        <p id="deck-total-hint" style="font-size:12px; color:var(--grey); margin:6px 0 0;"></p>
+        <div class="error-msg" id="groups-error"></div>
+
+        <label style="display:block; font-size:13px; font-weight:600; margin:16px 0 6px;">Cum se extrag cardurile?</label>
+        <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
+          <label style="display:flex; align-items:center; gap:8px;">
+            <input type="radio" name="draw-mode" value="repeat" checked style="width:auto;" />
+            Dintr-un deck nou de fiecare dată (aceeași carte poate apărea la mai multe grupe)
+          </label>
+          <label style="display:flex; align-items:center; gap:8px;">
+            <input type="radio" name="draw-mode" value="deplete" style="width:auto;" />
+            Prin scădere (o carte extrasă pentru o grupă nu mai e disponibilă pentru celelalte)
+          </label>
+          <label style="display:flex; align-items:center; gap:8px;">
+            <input type="radio" name="draw-mode" value="manual" style="width:auto;" />
+            Aleg eu manual ce carduri primește fiecare grupă (grupele pornesc goale)
+          </label>
+        </div>
+
+        <button class="btn gold" id="create-session-btn" style="margin-top:18px;">Creează sesiune și generează grupe</button>
+      </div>
+
+      <div id="active-session-box" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <p style="font-size:14px; margin:0;">Sesiune activă: <span class="badge" id="session-code-badge"></span></p>
+          <button class="btn danger" id="end-session-btn">Încheie sesiunea (toate grupele)</button>
+        </div>
+
+        <div id="timer-panel" style="margin-top:16px; padding:14px; border:1px solid var(--parchment-dark); border-radius:10px; background:var(--card-bg);">
+          <h4 class="serif" style="margin:0 0 10px;">Cronometru sesiune</h4>
+
+          <div id="timer-setup-box">
+            <p style="font-size:12px; color:var(--grey); margin:0 0 8px;">Cursanții nu văd cardurile până pornești cronometrul (sau alegi să sari peste el).</p>
+            <div style="display:flex; gap:6px; align-items:center; font-size:13px; flex-wrap:wrap;">
+              <input id="timer-h" type="number" min="0" value="0" style="width:55px;" /><span>h</span>
+              <input id="timer-m" type="number" min="0" max="59" value="15" style="width:55px;" /><span>m</span>
+              <input id="timer-s" type="number" min="0" max="59" value="0" style="width:55px;" /><span>s</span>
+              <button class="btn gold" id="timer-start-btn">Pornește cronometrul</button>
+            </div>
+            <button class="btn outline" id="timer-skip-btn" style="margin-top:10px;">Începe sesiunea fără cronometru</button>
+          </div>
+
+          <div id="timer-none-box" style="display:none;">
+            <p style="font-size:13px; color:var(--grey); margin:0 0 10px;">Sesiunea rulează fără cronometru — cardurile sunt vizibile la cursanți, fără limită de timp.</p>
+            <button class="btn outline" id="timer-enable-btn">Activează un cronometru acum</button>
+          </div>
+
+          <div id="timer-running-box" style="display:none;">
+            <div id="timer-display" style="font-size:34px; font-family:'Fraunces',serif; font-weight:700; color:var(--green);">00:00:00</div>
+            <p id="timer-status-label" style="font-size:12px; color:var(--grey); margin:2px 0 12px;"></p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+              <button class="btn outline" id="timer-pause-btn">Pauză</button>
+              <input id="timer-extend-min" type="number" min="1" value="5" style="width:60px;" />
+              <span style="font-size:12px;">minute</span>
+              <button class="btn outline" id="timer-extend-btn">Adaugă timp</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn outline" id="toggle-groups-list-btn" style="margin-top:16px;">Arată linkurile și codurile QR ale grupelor ▾</button>
+        <div id="groups-list" style="display:none; flex-direction:column; gap:12px; margin-top:14px;"></div>
+      </div>
+    </div>
+    </div>
+
+    <div id="view-deck" style="display:none;">
+    <div class="panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+        <h3 style="margin:0;" id="deck-title">Carduri</h3>
+        <div id="deck-edit-actions" style="display:flex; gap:8px;">
+          <button class="btn gold" id="bulk-upload-btn">Încarcă în bulk</button>
+          <button class="btn" id="add-card-btn">+ Card nou</button>
+        </div>
+      </div>
+      <p id="deck-locked-note" style="display:none; font-size:13px; color:var(--red); margin:-4px 0 12px;">
+        🔒 Editarea deck-ului e dezactivată cât timp <strong>orice</strong> sesiune e activă (a ta sau a altui trainer), ca să eviți modificări accidentale în timpul unui training live.
+      </p>
+      <div id="deck-bulk-bar" style="display:none; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
+        <button class="btn outline" id="select-all-btn">Selectează tot</button>
+        <button class="btn danger" id="bulk-delete-btn" disabled>Șterge selectate (<span id="selected-count">0</span>)</button>
+      </div>
+      <div class="card-grid" id="deck-grid"></div>
+    </div>
+    </div>
+  </main>
+</div>
+
+<div id="card-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:50; align-items:center; justify-content:center; padding:20px;">
+  <div class="panel" style="max-width:480px; width:100%; max-height:90vh; overflow:auto;">
+    <h3 id="modal-title">Card nou</h3>
+    <label style="display:block; font-size:13px; font-weight:600; margin:10px 0 4px;">Titlu</label>
+    <input id="f-title" style="width:100%;" />
+
+    <label style="display:block; font-size:13px; font-weight:600; margin:10px 0 4px;" id="label-front">Imagine față</label>
+    <input id="f-front-file" type="file" accept="image/*" />
+    <img id="f-front-preview" style="max-width:100px; margin-top:6px; border-radius:6px; display:none;" />
+
+    <label style="display:block; font-size:13px; font-weight:600; margin:10px 0 4px;" id="label-back">Imagine verso</label>
+    <input id="f-back-file" type="file" accept="image/*" />
+    <img id="f-back-preview" style="max-width:100px; margin-top:6px; border-radius:6px; display:none;" />
+
+    <label style="display:block; font-size:13px; font-weight:600; margin:10px 0 4px;">Fața afișată inițial</label>
+    <select id="f-initial-face" style="width:100%;">
+      <option value="front">Față</option>
+      <option value="back">Verso</option>
+    </select>
+
+    <label style="display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px;">
+      <input id="f-flippable" type="checkbox" checked style="width:auto;" />
+      Flippable implicit (poate fi întors în sesiuni noi)
+    </label>
+
+    <label style="display:block; font-size:13px; font-weight:600; margin:10px 0 4px;">Explicație / detalii</label>
+    <textarea id="f-explanation" rows="3" style="width:100%;"></textarea>
+
+    <div class="error-msg" id="modal-error"></div>
+
+    <div style="display:flex; gap:10px; margin-top:16px; justify-content:flex-end;">
+      <button class="btn outline" id="modal-cancel-btn">Anulează</button>
+      <button class="btn" id="modal-save-btn">Salvează</button>
+    </div>
+  </div>
+</div>
+
+<div id="bulk-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:50; align-items:center; justify-content:center; padding:20px;">
+  <div class="panel" style="max-width:640px; width:100%; max-height:90vh; overflow:auto;">
+    <h3>Încărcare în bulk (față + verso)</h3>
+    <p style="font-size:13px; color:var(--grey);">
+      Selectează toate imaginile deodată. Fișierele trebuie să aibă denumiri de forma
+      <code>01_titlu_fata.jpg</code> / <code>01_titlu_verso.jpg</code> (separator „_”) — se împerechează automat după nume.
+    </p>
+    <input type="file" id="bulk-file-input" accept="image/*" multiple style="width:100%;" />
+    <div id="bulk-preview" style="margin-top:16px; display:flex; flex-direction:column; gap:10px;"></div>
+    <div class="error-msg" id="bulk-error"></div>
+    <div id="bulk-progress" style="font-size:13px; color:var(--green); margin-top:8px;"></div>
+    <div style="display:flex; gap:10px; margin-top:16px; justify-content:flex-end;">
+      <button class="btn outline" id="bulk-cancel-btn">Închide</button>
+      <button class="btn" id="bulk-save-btn" disabled>Încarcă toate cardurile</button>
+    </div>
+  </div>
+</div>
+
+<div id="lightbox" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:60; align-items:center; justify-content:center; padding:30px; cursor:zoom-out;">
+  <img id="lightbox-img" style="max-width:90vw; max-height:90vh; border-radius:12px;" />
+</div>
+
+<div id="game-set-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:55; align-items:center; justify-content:center; padding:20px;">
+  <div class="panel" style="max-width:420px; width:100%;">
+    <h3 id="gs-modal-title">Joc nou</h3>
+    <label style="display:block; font-size:13px; font-weight:600; margin:10px 0 4px;">Nume</label>
+    <input id="gs-name" style="width:100%;" />
+    <label style="display:block; font-size:13px; font-weight:600; margin:10px 0 4px;">Descriere (opțional)</label>
+    <textarea id="gs-desc" rows="2" style="width:100%;"></textarea>
+    <div id="gs-mode-row" style="display:none; margin-top:12px;">
+      <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Tip joc</label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:6px;">
+        <input type="radio" name="gs-mode" value="standard" checked style="width:auto;" />
+        Standard — evidențiere card + flip, la nivel de grupă
+      </label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:6px;">
+        <input type="radio" name="gs-mode" value="colourblind" style="width:auto;" />
+        Colourblind — carduri private, per participant individual
+      </label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px;">
+        <input type="radio" name="gs-mode" value="selection" style="width:auto;" />
+        Selecție (Brain Toughness) — cursanții aleg carduri dintr-un deck comun al grupei
+      </label>
+    </div>
+    <div class="error-msg" id="gs-error"></div>
+    <div style="display:flex; gap:10px; margin-top:16px; justify-content:flex-end;">
+      <button class="btn outline" id="gs-cancel-btn">Anulează</button>
+      <button class="btn" id="gs-save-btn">Salvează</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="admin.js"></script>
+</body>
+</html>
