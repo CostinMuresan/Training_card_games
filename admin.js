@@ -796,9 +796,10 @@ $("create-session-btn").addEventListener("click", async () => {
     const { data: groupRows, error: groupErr } = await supabase.from("session_groups").insert(groupInserts).select();
     if (groupErr) throw groupErr;
 
+    const defaultFlippable = $("default-flippable-toggle").checked;
     const cardRows = [];
     groupRows.forEach((g, i) => {
-      assignments[i].forEach((cardId) => cardRows.push({ session_id: sessionRow.id, group_id: g.id, card_id: cardId, is_flippable: false }));
+      assignments[i].forEach((cardId) => cardRows.push({ session_id: sessionRow.id, group_id: g.id, card_id: cardId, is_flippable: defaultFlippable }));
     });
     if (cardRows.length > 0) {
       const { error: cardErr } = await supabase.from("session_group_cards").insert(cardRows);
@@ -973,6 +974,7 @@ $("participants-per-group").addEventListener("input", updateSelectionGroupsPrevi
 function syncGameModeUI() {
   const cb = isColourblindGame();
   const sel = isSelectionGame();
+  $("flip-controls-panel").style.display = cb ? "none" : "block";
   $("standard-mode-panel").style.display = cb || sel ? "none" : "block";
   $("colourblind-mode-panel").style.display = cb ? "block" : "none";
   $("selection-mode-panel").style.display = sel ? "block" : "none";
@@ -1233,6 +1235,9 @@ async function renderControlGrid() {
   const currentGroup = groups.find((g) => g.id === currentGroupId);
   renderCardPicker();
 
+  const flipToggle = $("flip-toggle-current");
+  if (flipToggle) flipToggle.checked = controlGroupCards.length > 0 && controlGroupCards.every((c) => c.is_flippable);
+
   grid.innerHTML = "";
   if (controlGroupCards.length === 0) {
     grid.innerHTML = `<p style="color:var(--grey); font-size:14px;">Această grupă nu are carduri alocate.</p>`;
@@ -1371,20 +1376,21 @@ function togglePreview(cardId) {
 
 async function setAllFlippable(value) {
   if (!currentGroupId) return;
-  const btn = value ? $("flip-all-on-btn") : $("flip-all-off-btn");
-  btn.disabled = true;
-  const original = btn.textContent;
-  btn.textContent = "Se aplică...";
-  await supabase.from("session_group_cards").update({ is_flippable: value }).eq("group_id", currentGroupId);
-  controlGroupCards.forEach((c) => {
-    c.is_flippable = value;
-    updateTileFlipButton(c.id, value);
-  });
-  btn.disabled = false;
-  btn.textContent = original;
+  const toggle = $("flip-toggle-current");
+  toggle.disabled = true;
+  const { error } = await supabase.from("session_group_cards").update({ is_flippable: value }).eq("group_id", currentGroupId);
+  if (error) {
+    alert("Eroare: " + error.message);
+    toggle.checked = !value; // revenim vizual daca actualizarea a esuat
+  } else {
+    controlGroupCards.forEach((c) => {
+      c.is_flippable = value;
+      updateTileFlipButton(c.id, value);
+    });
+  }
+  toggle.disabled = false;
 }
-$("flip-all-on-btn").addEventListener("click", () => setAllFlippable(true));
-$("flip-all-off-btn").addEventListener("click", () => setAllFlippable(false));
+$("flip-toggle-current").addEventListener("change", (e) => setAllFlippable(e.target.checked));
 
 async function deactivateAndResetFlip() {
   if (!currentGroupId) return;
@@ -1402,6 +1408,7 @@ async function deactivateAndResetFlip() {
       c.is_flippable = false;
       updateTileFlipButton(c.id, false);
     });
+    $("flip-toggle-current").checked = false;
   } catch (err) {
     alert("Eroare: " + err.message);
   } finally {
@@ -1413,25 +1420,23 @@ $("flip-all-reset-btn").addEventListener("click", deactivateAndResetFlip);
 
 async function setAllFlippableAllGroups(value) {
   if (!currentSession) return;
-  const btn = value ? $("flip-all-groups-btn") : $("flip-all-groups-off-btn");
-  btn.disabled = true;
-  const original = btn.textContent;
-  btn.textContent = "Se aplică la toate grupele...";
+  const toggle = $("flip-toggle-all-groups");
+  toggle.disabled = true;
   const { error } = await supabase.from("session_group_cards").update({ is_flippable: value }).eq("session_id", currentSession.id);
   if (error) {
     alert("Eroare: " + error.message);
+    toggle.checked = !value;
   } else {
     // actualizeaza si vizual grupa curent afisata (celelalte grupe se vor incarca corect la schimbarea tab-ului)
     controlGroupCards.forEach((c) => {
       c.is_flippable = value;
       updateTileFlipButton(c.id, value);
     });
+    $("flip-toggle-current").checked = value; // reflecta si comutatorul grupei curente noua stare reala
   }
-  btn.disabled = false;
-  btn.textContent = original;
+  toggle.disabled = false;
 }
-$("flip-all-groups-btn").addEventListener("click", () => setAllFlippableAllGroups(true));
-$("flip-all-groups-off-btn").addEventListener("click", () => setAllFlippableAllGroups(false));
+$("flip-toggle-all-groups").addEventListener("change", (e) => setAllFlippableAllGroups(e.target.checked));
 
 async function resetAllGroupsFlip() {
   if (!currentSession || groups.length === 0) return;
@@ -1453,6 +1458,8 @@ async function resetAllGroupsFlip() {
       c.is_flippable = false;
       updateTileFlipButton(c.id, false);
     });
+    $("flip-toggle-current").checked = false;
+    $("flip-toggle-all-groups").checked = false;
   } catch (err) {
     alert("Eroare: " + err.message);
   } finally {

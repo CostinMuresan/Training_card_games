@@ -71,6 +71,22 @@
       <p style="font-size:13px; color:var(--grey);" id="control-panel-hint">Click pe un card pentru a-l evidenția la grupa selectată. Butonul „Permite răsturnarea” activează flip-ul pentru acel card, doar la această grupă.</p>
       <div id="group-tabs" style="display:flex; gap:8px; margin:12px 0; flex-wrap:wrap;"></div>
 
+      <div id="flip-controls-panel">
+        <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--grey); margin:0 0 6px;">Grupa curentă</p>
+        <div class="switch-row" style="margin-bottom:16px; flex-wrap:wrap;">
+          <label class="switch"><input type="checkbox" id="flip-toggle-current" /><span class="slider"></span></label>
+          <span style="font-size:13px;">Flip activat</span>
+          <button class="btn outline" id="flip-all-reset-btn" style="border-color:var(--red); color:var(--red); margin-left:auto;">Dezactivează și întoarce la față</button>
+        </div>
+
+        <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--grey); margin:0 0 6px;">Toate grupele</p>
+        <div class="switch-row" style="margin-bottom:14px; flex-wrap:wrap;">
+          <label class="switch"><input type="checkbox" id="flip-toggle-all-groups" /><span class="slider"></span></label>
+          <span style="font-size:13px;">Flip activat</span>
+          <button class="btn outline" id="flip-all-groups-reset-btn" style="border:2px solid var(--red); color:var(--red); margin-left:auto;">Dezactivează și întoarce la față</button>
+        </div>
+      </div>
+
       <div id="standard-mode-panel">
       <p id="presence-indicator" style="display:none; font-size:14px; font-weight:600; margin:0 0 14px;"></p>
       <button class="btn outline" id="toggle-picker-btn" style="margin-bottom:14px;">Gestionează manual cardurile grupei</button>
@@ -79,19 +95,6 @@
         <div id="card-picker" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
       </div>
 
-      <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--grey); margin:0 0 6px;">Grupa curentă</p>
-      <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
-        <button class="btn gold" id="flip-all-on-btn">Activează flip pe toate</button>
-        <button class="btn outline" id="flip-all-off-btn">Dezactivează flip pe toate</button>
-        <button class="btn outline" id="flip-all-reset-btn" style="border-color:var(--red); color:var(--red);">Dezactivează și întoarce la față</button>
-      </div>
-
-      <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--grey); margin:0 0 6px;">Toate grupele</p>
-      <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
-        <button class="btn gold" id="flip-all-groups-btn" style="border:2px solid var(--green);">Activează flip pe toate</button>
-        <button class="btn outline" id="flip-all-groups-off-btn" style="border:2px solid var(--red); color:var(--red);">Dezactivează flip pe toate</button>
-        <button class="btn outline" id="flip-all-groups-reset-btn" style="border:2px solid var(--red); color:var(--red);">Dezactivează și întoarce la față</button>
-      </div>
       <div class="card-grid" id="control-grid"></div>
       </div>
 
@@ -176,6 +179,11 @@
             <input type="radio" name="draw-mode" value="manual" style="width:auto;" />
             Aleg eu manual ce carduri primește fiecare grupă (grupele pornesc goale)
           </label>
+        </div>
+
+        <div class="switch-row" style="margin-top:18px;">
+          <label class="switch"><input type="checkbox" id="default-flippable-toggle" /><span class="slider"></span></label>
+          <span style="font-size:13px;">Cardurile se pot întoarce încă de la pornirea sesiunii</span>
         </div>
 
         <button class="btn gold" id="create-session-btn" style="margin-top:18px;">Creează sesiune și generează grupe</button>

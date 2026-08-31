@@ -375,8 +375,9 @@ let selectionLocalPicks = new Set();
 async function initSelectionMode() {
   selectionMaxChoices = sessionInfo.max_choices || 1;
 
-  const { data: groupCardRows } = await supabase.from("session_group_cards").select("card_id").eq("group_id", group.id);
+  const { data: groupCardRows } = await supabase.from("session_group_cards").select("card_id, is_flippable").eq("group_id", group.id);
   const cardIds = (groupCardRows || []).map((r) => r.card_id);
+  (groupCardRows || []).forEach((r) => (flippableMap[r.card_id] = r.is_flippable));
   if (cardIds.length > 0) {
     const { data: cardData } = await supabase.from("cards").select("*").in("id", cardIds).order("order_index", { ascending: true });
     cards = cardData || [];
@@ -416,17 +417,28 @@ function renderSelectionChoiceGrid() {
   $("selection-max-label").textContent = selectionMaxChoices;
   cards.forEach((c) => {
     const checked = selectionLocalPicks.has(c.id);
+    const canFlip = !!flippableMap[c.id];
+    const isFlipped = !!flippedLocal[c.id];
     const tile = document.createElement("div");
     tile.className = "card-tile";
     tile.innerHTML = `
       <div style="padding:8px 8px 0; text-align:left;">
         <input type="checkbox" data-pick="${c.id}" ${checked ? "checked" : ""} style="width:auto;" />
       </div>
-      <div class="mini-flip" style="aspect-ratio:${c.aspect_ratio || 0.75};">
-        <div class="static-card"><img src="${c.front_image_url}" alt="${escapeHtml(c.title)}" /></div>
+      <div class="mini-flip${isFlipped ? " flipped" : ""}" style="aspect-ratio:${c.aspect_ratio || 0.75}; ${canFlip ? "cursor:pointer;" : ""}" data-flip>
+        <div class="mini-flip-inner">
+          <img class="mini-flip-face" src="${c.front_image_url}" alt="${escapeHtml(c.title)}" />
+          <img class="mini-flip-face back" src="${c.back_image_url}" alt="${escapeHtml(c.title)}" />
+        </div>
       </div>
       <div class="tile-label">${escapeHtml(c.title)}</div>
     `;
+    if (canFlip) {
+      tile.querySelector("[data-flip]").addEventListener("click", () => {
+        flippedLocal[c.id] = !flippedLocal[c.id];
+        tile.querySelector("[data-flip]").classList.toggle("flipped", flippedLocal[c.id]);
+      });
+    }
     tile.querySelector("[data-pick]").addEventListener("change", (e) => {
       if (e.target.checked) {
         if (selectionLocalPicks.size >= selectionMaxChoices) {
@@ -474,13 +486,28 @@ function renderStaticResultCards(cardList) {
   const grid = $("selection-result-grid");
   grid.innerHTML = "";
   cardList.forEach((c) => {
+    const canFlip = !!flippableMap[c.id];
+    const isFlipped = !!flippedLocal[c.id];
     const wrap = document.createElement("div");
     wrap.className = "flip-card-wrap";
-    const card = document.createElement("div");
-    card.className = "flip-card";
-    card.style.setProperty("--ar", c.aspect_ratio || 0.75);
-    card.innerHTML = `<div class="static-card"><img src="${c.front_image_url}" alt="${escapeHtml(c.title)}" /></div>`;
-    wrap.appendChild(card);
+
+    const flip = document.createElement("div");
+    flip.className = "flip-card" + (canFlip ? " can-flip" : "") + (isFlipped ? " flipped" : "");
+    flip.style.setProperty("--ar", c.aspect_ratio || 0.75);
+    flip.innerHTML = `
+      <div class="flip-card-inner">
+        <div class="flip-face front"><img src="${c.front_image_url}" alt="${escapeHtml(c.title)}" /></div>
+        <div class="flip-face back"><img src="${c.back_image_url}" alt="${escapeHtml(c.title)}" /></div>
+      </div>
+    `;
+    if (canFlip) {
+      flip.addEventListener("click", () => {
+        flippedLocal[c.id] = !flippedLocal[c.id];
+        flip.classList.toggle("flipped", flippedLocal[c.id]);
+      });
+    }
+
+    wrap.appendChild(flip);
     grid.appendChild(wrap);
   });
 }
@@ -539,6 +566,21 @@ function subscribeSelectionRealtime() {
     .on("postgres_changes", { event: "*", schema: "public", table: "session_participants", filter: `group_id=eq.${group.id}` }, () => {
       if (selectionParticipant?.submitted_at) refreshSelectionView();
     })
+    .on("postgres_changes", { event: "*", schema: "public", table: "session_group_cards", filter: `group_id=eq.${group.id}` }, (payload) => {
+      // sincronizeaza starea de "poate fi intors" pe masura ce trainerul activeaza/dezactiveaza flip-ul
+      flippableMap[payload.new.card_id] = payload.new.is_flippable;
+      if (selectionParticipant?.submitted_at) refreshSelectionView();
+      else renderSelectionChoiceGrid();
+    })
+    .on("postgres_changes", { event: "*", schema: "public", table: "session_groups", filter: `id=eq.${group.id}` }, (payload) => {
+      if (payload.new.flip_reset_at && payload.new.flip_reset_at !== group.flip_reset_at) {
+        group.flip_reset_at = payload.new.flip_reset_at;
+        flippedLocal = {}; // toate cardurile intorse revin cu fata la urmatoarea randare
+        $("learner-lightbox").style.display = "none";
+        if (selectionParticipant?.submitted_at) refreshSelectionView();
+        else renderSelectionChoiceGrid();
+      }
+    })
     .subscribe();
 
   pollTimer = setInterval(async () => {
@@ -554,7 +596,19 @@ function subscribeSelectionRealtime() {
       }
       sessionInfo = { ...sessionInfo, ...sessionData };
       updateTimerDisplay();
+
+      const { data: groupData } = await supabase.from("session_groups").select("flip_reset_at").eq("id", group.id).maybeSingle();
+      if (groupData?.flip_reset_at && groupData.flip_reset_at !== group.flip_reset_at) {
+        group.flip_reset_at = groupData.flip_reset_at;
+        flippedLocal = {};
+        $("learner-lightbox").style.display = "none";
+      }
+
+      const { data: gcRows } = await supabase.from("session_group_cards").select("card_id, is_flippable").eq("group_id", group.id);
+      (gcRows || []).forEach((r) => (flippableMap[r.card_id] = r.is_flippable));
+
       if (selectionParticipant?.submitted_at) await refreshSelectionView();
+      else renderSelectionChoiceGrid();
     } catch (err) {
       // eroare temporara de retea - reincercam la urmatorul ciclu
     }
