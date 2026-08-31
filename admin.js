@@ -997,6 +997,7 @@ function renderGroupTabs() {
       if (isColourblindGame()) await loadParticipants();
       if (!isColourblindGame() && !isSelectionGame()) await loadPresence();
       if (isSelectionGame()) await loadSelectionParticipants();
+      if (isSelectionGame()) await loadSelectionGroupsOverview();
     });
     box.appendChild(btn);
   });
@@ -1194,6 +1195,7 @@ async function renderSessionPanel() {
     if (isColourblindGame()) await loadParticipants();
     if (isSelectionGame()) await loadSelectionParticipants();
     if (!isColourblindGame() && !isSelectionGame()) await loadPresence();
+    if (isSelectionGame()) await loadSelectionGroupsOverview();
     renderTimerPanel();
     if (!timerInterval) timerInterval = setInterval(tickTimer, 1000);
   } else {
@@ -1675,6 +1677,39 @@ $("reveal-solution-btn").addEventListener("click", async () => {
 });
 
 // ---------- SELECTION (Brain Toughness): progres live al grupei selectate ----------
+async function loadSelectionGroupsOverview() {
+  const box = $("selection-groups-overview");
+  if (!box) return;
+  if (groups.length === 0) {
+    box.innerHTML = `<p style="font-size:13px; color:var(--grey); margin:0;">Nicio grupă formată încă.</p>`;
+    return;
+  }
+  const { data: allParts } = await supabase
+    .from("session_participants")
+    .select("group_id, submitted_at")
+    .in("group_id", groups.map((g) => g.id));
+
+  box.innerHTML = "";
+  groups.forEach((g) => {
+    const expected = g.expected_participants || 0;
+    const parts = (allParts || []).filter((p) => p.group_id === g.id);
+    const submitted = parts.filter((p) => p.submitted_at).length;
+    const complete = expected > 0 && submitted >= expected;
+    const row = document.createElement("button");
+    row.className = "btn " + (g.id === currentGroupId ? "gold" : "outline");
+    row.style.cssText = "display:flex; justify-content:space-between; align-items:center; text-align:left; width:100%;";
+    row.innerHTML = `<span>${escapeHtml(g.name)}</span><span style="font-weight:700; color:${complete ? "var(--green)" : "inherit"};">${complete ? "✓ " : ""}${submitted} / ${expected || "?"}</span>`;
+    row.addEventListener("click", async () => {
+      currentGroupId = g.id;
+      renderGroupTabs();
+      await renderControlGrid();
+      await loadSelectionParticipants();
+      await loadSelectionGroupsOverview();
+    });
+    box.appendChild(row);
+  });
+}
+
 async function loadSelectionParticipants() {
   const box = $("selection-participants-list");
   const progressEl = $("selection-progress");
@@ -1729,9 +1764,11 @@ supabase
   .channel("selection-progress-watch")
   .on("postgres_changes", { event: "*", schema: "public", table: "session_participants" }, () => {
     if (isSelectionGame() && currentGroupId) loadSelectionParticipants();
+    if (isSelectionGame()) loadSelectionGroupsOverview();
   })
   .on("postgres_changes", { event: "*", schema: "public", table: "session_participant_cards" }, () => {
     if (isSelectionGame() && currentGroupId) loadSelectionParticipants();
+    if (isSelectionGame()) loadSelectionGroupsOverview();
   })
   .subscribe();
 
