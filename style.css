@@ -328,23 +328,23 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
   inset: 0;
   background: rgba(0,0,0,0.8);
   z-index: 60;
-  align-items: center;
-  justify-content: center;
   padding: 30px;
   cursor: zoom-out;
   overflow: auto; /* permite derularea peste imaginea marita, cand e in modul de super-zoom */
 }
 #learner-lightbox img {
+  display: block;
+  margin: auto; /* centreaza cat timp incape pe ecran; spre deosebire de align-items:center pe
+                   container, asta permite derularea completa (inclusiv pana sus/stanga) odata
+                   ce imaginea devine mai mare decat ecranul - un bug clasic de CSS altfel */
   max-width: 90vw;
   max-height: 90vh;
   border-radius: 12px;
   cursor: zoom-in;
-  transition: max-width 0.15s, max-height 0.15s;
+  transition: transform 0.15s;
 }
 #learner-lightbox img.super-zoom {
-  max-width: none;
-  max-height: none;
-  width: 200%; /* aprox. 2x fata de marimea "incape pe ecran" - clar mai mare, cu detalii lizibile */
+  transform: scale(1.5); /* marire proportionala fata de dimensiunea deja "potrivita pe ecran" - moderata, nu uriasa */
   cursor: zoom-out;
 }
 
@@ -371,23 +371,21 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
   inset: 0;
   background: rgba(0,0,0,0.8);
   z-index: 60;
-  align-items: center;
-  justify-content: center;
   padding: 30px;
   cursor: zoom-out;
   overflow: auto;
 }
 #lightbox img {
+  display: block;
+  margin: auto;
   max-width: 90vw;
   max-height: 90vh;
   border-radius: 12px;
   cursor: zoom-in;
-  transition: max-width 0.15s, max-height 0.15s;
+  transition: transform 0.15s;
 }
 #lightbox img.super-zoom {
-  max-width: none;
-  max-height: none;
-  width: 200%;
+  transform: scale(1.5);
   cursor: zoom-out;
 }
 

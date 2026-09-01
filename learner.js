@@ -351,6 +351,7 @@ $("learner-lightbox").addEventListener("click", () => ($("learner-lightbox").sty
 $("learner-lightbox-img").addEventListener("click", (e) => {
   e.stopPropagation(); // nu inchide lightbox-ul - doar comuta intre "incape pe ecran" si marit
   e.target.classList.toggle("super-zoom");
+  $("learner-lightbox").scrollTo(0, 0); // reseteaza derularea, ca sa porneasca mereu din coltul stanga-sus
 });
 
 function showSessionEnded() {

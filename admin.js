@@ -441,6 +441,7 @@ $("lightbox").addEventListener("click", () => ($("lightbox").style.display = "no
 $("lightbox-img").addEventListener("click", (e) => {
   e.stopPropagation();
   e.target.classList.toggle("super-zoom");
+  $("lightbox").scrollTo(0, 0);
 });
 
 // ---------- ADD / EDIT CARD MODAL ----------

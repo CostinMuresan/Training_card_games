@@ -202,6 +202,7 @@ $("learner-lightbox").addEventListener("click", () => ($("learner-lightbox").sty
 $("learner-lightbox-img").addEventListener("click", (e) => {
   e.stopPropagation();
   e.target.classList.toggle("super-zoom");
+  $("learner-lightbox").scrollTo(0, 0);
 });
 
 function showSessionEnded() {
