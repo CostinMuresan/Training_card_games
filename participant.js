@@ -192,10 +192,17 @@ async function loadSolution() {
 }
 
 function openLightbox(src) {
-  $("learner-lightbox-img").src = src;
+  const img = $("learner-lightbox-img");
+  img.src = src;
+  img.classList.remove("super-zoom");
+  $("learner-lightbox").scrollTo(0, 0);
   $("learner-lightbox").style.display = "flex";
 }
 $("learner-lightbox").addEventListener("click", () => ($("learner-lightbox").style.display = "none"));
+$("learner-lightbox-img").addEventListener("click", (e) => {
+  e.stopPropagation();
+  e.target.classList.toggle("super-zoom");
+});
 
 function showSessionEnded() {
   if (pollTimer) clearInterval(pollTimer);
