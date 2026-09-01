@@ -239,7 +239,10 @@ function buildGrid() {
       e.stopPropagation();
       const frontDisplay = c.initial_face === "back" ? c.back_image_url : c.front_image_url;
       const backDisplay = c.initial_face === "back" ? c.front_image_url : c.back_image_url;
-      openLightbox(flippedLocal[c.id] ? backDisplay : frontDisplay);
+      const onBack2 = backPageLocal[c.id] === 2 && c.back_image_url_2;
+      const src = flippedLocal[c.id] ? (onBack2 ? c.back_image_url_2 : backDisplay) : frontDisplay;
+      const label = flippedLocal[c.id] && c.back_image_url_2 ? `Verso — pagina ${onBack2 ? 2 : 1} din 2` : null;
+      openLightbox(src, label);
     });
 
     const flip = document.createElement("div");
@@ -326,10 +329,17 @@ function scrollToHighlighted() {
   if (el) el.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
 }
 
-function openLightbox(src) {
+function openLightbox(src, pageLabel) {
   const img = $("learner-lightbox-img");
   img.src = src;
   img.classList.remove("super-zoom"); // porneste mereu de la "incape pe ecran", nu ramas marit de la deschiderea anterioara
+  const label = $("lightbox-page-label");
+  if (pageLabel) {
+    label.textContent = pageLabel;
+    label.style.display = "block";
+  } else {
+    label.style.display = "none";
+  }
   $("learner-lightbox").scrollTo(0, 0);
   $("learner-lightbox").style.display = "flex";
 }
@@ -468,7 +478,9 @@ function renderSelectionChoiceGrid() {
     tile.querySelector("[data-zoom]").addEventListener("click", (e) => {
       e.stopPropagation();
       const showingBack2 = backPageLocal[c.id] === 2 && c.back_image_url_2;
-      openLightbox(flippedLocal[c.id] ? (showingBack2 ? c.back_image_url_2 : c.back_image_url) : c.front_image_url);
+      const src = flippedLocal[c.id] ? (showingBack2 ? c.back_image_url_2 : c.back_image_url) : c.front_image_url;
+      const label = flippedLocal[c.id] && c.back_image_url_2 ? `Verso — pagina ${showingBack2 ? 2 : 1} din 2` : null;
+      openLightbox(src, label);
     });
     if (canFlip) {
       tile.querySelector("[data-flip]").addEventListener("click", () => {
@@ -574,7 +586,9 @@ function renderStaticResultCards(cardList) {
     zoomBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       const showingBack2 = backPageLocal[c.id] === 2 && c.back_image_url_2;
-      openLightbox(flippedLocal[c.id] ? (showingBack2 ? c.back_image_url_2 : c.back_image_url) : c.front_image_url);
+      const src = flippedLocal[c.id] ? (showingBack2 ? c.back_image_url_2 : c.back_image_url) : c.front_image_url;
+      const label = flippedLocal[c.id] && c.back_image_url_2 ? `Verso — pagina ${showingBack2 ? 2 : 1} din 2` : null;
+      openLightbox(src, label);
     });
 
     wrap.appendChild(zoomBtn);

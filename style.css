@@ -348,6 +348,23 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
   cursor: zoom-out;
 }
 
+/* eticheta "pagina X din 2" - apare doar la cardurile cu al doilea verso, cat timp e afisat versoul */
+#lightbox-page-label {
+  display: none;
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(201,153,46,0.95);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  z-index: 65;
+  pointer-events: none;
+}
+
 #lightbox {
   display: none;
   position: fixed;
