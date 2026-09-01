@@ -87,14 +87,16 @@
         </div>
       </div>
 
-      <div id="standard-mode-panel">
-      <p id="presence-indicator" style="display:none; font-size:14px; font-weight:600; margin:0 0 14px;"></p>
-      <button class="btn outline" id="toggle-picker-btn" style="margin-bottom:14px;">Gestionează manual cardurile grupei</button>
-      <div id="card-picker-panel" style="display:none; margin-bottom:18px; padding:14px; border:1px solid var(--parchment-dark); border-radius:10px; background:var(--parchment);">
-        <p style="font-size:12px; color:var(--grey); margin:0 0 10px;">Bifează/debifează pentru a adăuga sau elimina carduri din grupa selectată mai sus — funcționează oricând, chiar și în timpul sesiunii.</p>
-        <div id="card-picker" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+      <div id="card-picker-shared-panel">
+        <button class="btn outline" id="toggle-picker-btn" style="margin-bottom:14px;">Gestionează manual cardurile grupei</button>
+        <div id="card-picker-panel" style="display:none; margin-bottom:18px; padding:14px; border:1px solid var(--parchment-dark); border-radius:10px; background:var(--parchment);">
+          <p style="font-size:12px; color:var(--grey); margin:0 0 10px;">Bifează/debifează pentru a adăuga sau elimina carduri din grupa selectată mai sus — funcționează oricând, chiar și în timpul sesiunii.</p>
+          <div id="card-picker" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+        </div>
       </div>
 
+      <div id="standard-mode-panel">
+      <p id="presence-indicator" style="display:none; font-size:14px; font-weight:600; margin:0 0 14px;"></p>
       <div class="card-grid" id="control-grid"></div>
       </div>
 

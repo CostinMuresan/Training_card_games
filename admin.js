@@ -1012,6 +1012,7 @@ function syncGameModeUI() {
   const cb = isColourblindGame();
   const sel = isSelectionGame();
   $("flip-controls-panel").style.display = cb ? "none" : "block";
+  $("card-picker-shared-panel").style.display = cb ? "none" : "block";
   $("standard-mode-panel").style.display = cb || sel ? "none" : "block";
   $("colourblind-mode-panel").style.display = cb ? "block" : "none";
   $("selection-mode-panel").style.display = sel ? "block" : "none";
