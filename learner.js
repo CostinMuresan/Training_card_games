@@ -13,6 +13,7 @@ let sessionInfo = {};   // status + campurile de cronometru ale sesiunii
 let cards = [];         // cardurile alocate acestei grupe
 let flippableMap = {};  // card_id -> bool, sincronizat de la trainer
 let flippedLocal = {};  // card_id -> bool, doar local, la acest user
+let backPageLocal = {}; // card_id -> 1 sau 2, doar pentru cardurile exceptionale cu al doilea verso
 let lastScrolledHighlight = undefined;
 let pollTimer = null; // fallback prin polling, pentru retele care blocheaza WebSocket (Supabase Realtime)
 let timerTickInterval = null;
@@ -172,6 +173,7 @@ async function pollUpdates() {
     if (groupData && groupData.flip_reset_at !== group.flip_reset_at) {
       group.flip_reset_at = groupData.flip_reset_at;
       flippedLocal = {};
+      backPageLocal = {};
       $("learner-lightbox").style.display = "none";
       changed = true;
     }
@@ -253,10 +255,20 @@ function buildGrid() {
     // (necesar acum ca flip-ul poate fi activat/dezactivat fara sa se recreeze elementul)
     flip.addEventListener("click", () => {
       if (!flippableMap[c.id]) return;
-      const newState = !flippedLocal[c.id];
-      flippedLocal[c.id] = newState;
-      flip.classList.toggle("flipped", newState);
-      updateExplanation(wrap, c, newState);
+      const hasSecondBack = !!c.back_image_url_2;
+      if (!flippedLocal[c.id]) {
+        flippedLocal[c.id] = true;
+        backPageLocal[c.id] = 1;
+      } else if (hasSecondBack && (backPageLocal[c.id] || 1) === 1) {
+        backPageLocal[c.id] = 2; // ramane intors, doar schimba continutul versoului - fara animatie 3D suplimentara
+      } else {
+        flippedLocal[c.id] = false;
+        backPageLocal[c.id] = 1;
+      }
+      flip.classList.toggle("flipped", flippedLocal[c.id]);
+      const backImg = flip.querySelector(".flip-face.back img");
+      backImg.src = backPageLocal[c.id] === 2 ? c.back_image_url_2 : (c.initial_face === "back" ? c.front_image_url : c.back_image_url);
+      updateExplanation(wrap, c, flippedLocal[c.id]);
     });
 
     wrap.appendChild(zoomBtn);
@@ -278,6 +290,14 @@ function updateCardTile(c) {
   flip.classList.toggle("is-highlighted", isHighlighted);
   flip.classList.toggle("can-flip", canFlip);
   flip.classList.toggle("flipped", isFlipped); // doar comuta clasa pe elementul existent - animatia CSS ruleaza normal
+
+  const backImg = flip.querySelector(".flip-face.back img");
+  if (backImg) {
+    backImg.src =
+      backPageLocal[c.id] === 2 && c.back_image_url_2
+        ? c.back_image_url_2
+        : c.initial_face === "back" ? c.front_image_url : c.back_image_url;
+  }
 
   updateExplanation(wrap, c, isFlipped);
 }
@@ -307,10 +327,17 @@ function scrollToHighlighted() {
 }
 
 function openLightbox(src) {
-  $("learner-lightbox-img").src = src;
+  const img = $("learner-lightbox-img");
+  img.src = src;
+  img.classList.remove("super-zoom"); // porneste mereu de la "incape pe ecran", nu ramas marit de la deschiderea anterioara
+  $("learner-lightbox").scrollTo(0, 0);
   $("learner-lightbox").style.display = "flex";
 }
 $("learner-lightbox").addEventListener("click", () => ($("learner-lightbox").style.display = "none"));
+$("learner-lightbox-img").addEventListener("click", (e) => {
+  e.stopPropagation(); // nu inchide lightbox-ul - doar comuta intre "incape pe ecran" si marit
+  e.target.classList.toggle("super-zoom");
+});
 
 function showSessionEnded() {
   if (pollTimer) clearInterval(pollTimer);
@@ -351,6 +378,7 @@ function subscribeRealtime() {
         group = { ...group, ...payload.new };
         if (flipWasReset) {
           flippedLocal = {};
+          backPageLocal = {};
           $("learner-lightbox").style.display = "none";
         }
         render();
@@ -439,12 +467,24 @@ function renderSelectionChoiceGrid() {
     tile.querySelector(".mini-flip").style.position = "relative";
     tile.querySelector("[data-zoom]").addEventListener("click", (e) => {
       e.stopPropagation();
-      openLightbox(flippedLocal[c.id] ? c.back_image_url : c.front_image_url);
+      const showingBack2 = backPageLocal[c.id] === 2 && c.back_image_url_2;
+      openLightbox(flippedLocal[c.id] ? (showingBack2 ? c.back_image_url_2 : c.back_image_url) : c.front_image_url);
     });
     if (canFlip) {
       tile.querySelector("[data-flip]").addEventListener("click", () => {
-        flippedLocal[c.id] = !flippedLocal[c.id];
-        tile.querySelector("[data-flip]").classList.toggle("flipped", flippedLocal[c.id]);
+        const hasSecondBack = !!c.back_image_url_2;
+        if (!flippedLocal[c.id]) {
+          flippedLocal[c.id] = true;
+          backPageLocal[c.id] = 1;
+        } else if (hasSecondBack && (backPageLocal[c.id] || 1) === 1) {
+          backPageLocal[c.id] = 2;
+        } else {
+          flippedLocal[c.id] = false;
+          backPageLocal[c.id] = 1;
+        }
+        const flipEl = tile.querySelector("[data-flip]");
+        flipEl.classList.toggle("flipped", flippedLocal[c.id]);
+        flipEl.querySelector(".mini-flip-face.back").src = backPageLocal[c.id] === 2 ? c.back_image_url_2 : c.back_image_url;
       });
     }
     tile.querySelector("[data-pick]").addEventListener("change", (e) => {
@@ -512,8 +552,18 @@ function renderStaticResultCards(cardList) {
     `;
     if (canFlip) {
       flip.addEventListener("click", () => {
-        flippedLocal[c.id] = !flippedLocal[c.id];
+        const hasSecondBack = !!c.back_image_url_2;
+        if (!flippedLocal[c.id]) {
+          flippedLocal[c.id] = true;
+          backPageLocal[c.id] = 1;
+        } else if (hasSecondBack && (backPageLocal[c.id] || 1) === 1) {
+          backPageLocal[c.id] = 2;
+        } else {
+          flippedLocal[c.id] = false;
+          backPageLocal[c.id] = 1;
+        }
         flip.classList.toggle("flipped", flippedLocal[c.id]);
+        flip.querySelector(".flip-face.back img").src = backPageLocal[c.id] === 2 ? c.back_image_url_2 : c.back_image_url;
       });
     }
 
@@ -523,7 +573,8 @@ function renderStaticResultCards(cardList) {
     zoomBtn.title = "Vezi mărit";
     zoomBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      openLightbox(flippedLocal[c.id] ? c.back_image_url : c.front_image_url);
+      const showingBack2 = backPageLocal[c.id] === 2 && c.back_image_url_2;
+      openLightbox(flippedLocal[c.id] ? (showingBack2 ? c.back_image_url_2 : c.back_image_url) : c.front_image_url);
     });
 
     wrap.appendChild(zoomBtn);
@@ -596,6 +647,7 @@ function subscribeSelectionRealtime() {
       if (payload.new.flip_reset_at && payload.new.flip_reset_at !== group.flip_reset_at) {
         group.flip_reset_at = payload.new.flip_reset_at;
         flippedLocal = {}; // toate cardurile intorse revin cu fata la urmatoarea randare
+        backPageLocal = {};
         $("learner-lightbox").style.display = "none";
         if (selectionParticipant?.submitted_at) refreshSelectionView();
         else renderSelectionChoiceGrid();
@@ -621,6 +673,7 @@ function subscribeSelectionRealtime() {
       if (groupData?.flip_reset_at && groupData.flip_reset_at !== group.flip_reset_at) {
         group.flip_reset_at = groupData.flip_reset_at;
         flippedLocal = {};
+        backPageLocal = {};
         $("learner-lightbox").style.display = "none";
       }
 

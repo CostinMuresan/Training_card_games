@@ -430,16 +430,24 @@ function escapeHtml(str) {
 }
 
 function openLightbox(src) {
-  $("lightbox-img").src = src;
+  const img = $("lightbox-img");
+  img.src = src;
+  img.classList.remove("super-zoom");
+  $("lightbox").scrollTo(0, 0);
   $("lightbox").style.display = "flex";
 }
 $("lightbox").addEventListener("click", () => ($("lightbox").style.display = "none"));
+$("lightbox-img").addEventListener("click", (e) => {
+  e.stopPropagation();
+  e.target.classList.toggle("super-zoom");
+});
 
 // ---------- ADD / EDIT CARD MODAL ----------
 $("add-card-btn").addEventListener("click", () => openCardModal(null));
 
 function openCardModal(card) {
   editingCard = card;
+  clearBack2 = false;
   $("modal-title").textContent = card ? `Editează: ${card.title}` : "Card nou";
   $("f-title").value = card ? card.title : "";
   $("f-explanation").value = card ? (card.explanation || "") : "";
@@ -447,6 +455,7 @@ function openCardModal(card) {
   $("f-flippable").checked = card ? card.flippable_default : true;
   $("f-front-file").value = "";
   $("f-back-file").value = "";
+  $("f-back2-file").value = "";
   $("label-front").textContent = card ? "Imagine față (lasă gol pentru a păstra actuala)" : "Imagine față";
   $("label-back").textContent = card ? "Imagine verso (lasă gol pentru a păstra actuala)" : "Imagine verso";
   if (card) {
@@ -458,11 +467,27 @@ function openCardModal(card) {
     $("f-front-preview").style.display = "none";
     $("f-back-preview").style.display = "none";
   }
+  if (card && card.back_image_url_2) {
+    $("f-back2-preview").src = card.back_image_url_2;
+    $("f-back2-preview").style.display = "block";
+    $("f-back2-clear-btn").style.display = "inline-block";
+  } else {
+    $("f-back2-preview").style.display = "none";
+    $("f-back2-clear-btn").style.display = "none";
+  }
   $("modal-error").textContent = "";
   $("modal-save-btn").textContent = "Salvează";
   $("card-modal").style.display = "flex";
 }
 $("modal-cancel-btn").addEventListener("click", () => ($("card-modal").style.display = "none"));
+
+let clearBack2 = false;
+$("f-back2-clear-btn").addEventListener("click", () => {
+  clearBack2 = true;
+  $("f-back2-file").value = "";
+  $("f-back2-preview").style.display = "none";
+  $("f-back2-clear-btn").style.display = "none";
+});
 
 function wirePreview(fileInputId, previewId) {
   $(fileInputId).addEventListener("change", () => {
@@ -471,10 +496,15 @@ function wirePreview(fileInputId, previewId) {
     const url = URL.createObjectURL(file);
     $(previewId).src = url;
     $(previewId).style.display = "block";
+    if (fileInputId === "f-back2-file") {
+      clearBack2 = false;
+      $("f-back2-clear-btn").style.display = "inline-block";
+    }
   });
 }
 wirePreview("f-front-file", "f-front-preview");
 wirePreview("f-back-file", "f-back-preview");
+wirePreview("f-back2-file", "f-back2-preview");
 
 function getImageAspectRatio(file) {
   return new Promise((resolve, reject) => {
@@ -506,6 +536,7 @@ $("modal-save-btn").addEventListener("click", async () => {
   const title = $("f-title").value.trim();
   const frontFile = $("f-front-file").files[0];
   const backFile = $("f-back-file").files[0];
+  const back2File = $("f-back2-file").files[0];
   $("modal-error").textContent = "";
 
   if (!title || (!editingCard && (!frontFile || !backFile))) {
@@ -522,11 +553,17 @@ $("modal-save-btn").addEventListener("click", async () => {
   try {
     const frontUrl = frontFile ? await uploadImage(frontFile) : editingCard.front_image_url;
     const backUrl = backFile ? await uploadImage(backFile) : editingCard.back_image_url;
+    const back2Url = back2File
+      ? await uploadImage(back2File)
+      : clearBack2
+      ? null
+      : editingCard?.back_image_url_2 ?? null;
     const aspectRatio = frontFile ? await getImageAspectRatio(frontFile) : editingCard?.aspect_ratio ?? 0.75;
     const payload = {
       title,
       front_image_url: frontUrl,
       back_image_url: backUrl,
+      back_image_url_2: back2Url,
       aspect_ratio: aspectRatio,
       initial_face: $("f-initial-face").value,
       flippable_default: $("f-flippable").checked,

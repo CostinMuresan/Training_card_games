@@ -268,6 +268,11 @@
     <input id="f-back-file" type="file" accept="image/*" />
     <img id="f-back-preview" style="max-width:100px; margin-top:6px; border-radius:6px; display:none;" />
 
+    <label style="display:block; font-size:13px; font-weight:600; margin:14px 0 4px; color:var(--grey);">Al doilea verso (opțional, doar pentru cazuri excepționale — „pagina 2 din 2")</label>
+    <input id="f-back2-file" type="file" accept="image/*" />
+    <img id="f-back2-preview" style="max-width:100px; margin-top:6px; border-radius:6px; display:none;" />
+    <button type="button" class="toggle-flip" id="f-back2-clear-btn" style="display:none; margin-top:6px;">Elimină al doilea verso</button>
+
     <label style="display:block; font-size:13px; font-weight:600; margin:10px 0 4px;">Fața afișată inițial</label>
     <select id="f-initial-face" style="width:100%;">
       <option value="front">Față</option>
@@ -309,8 +314,8 @@
   </div>
 </div>
 
-<div id="lightbox" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:60; align-items:center; justify-content:center; padding:30px; cursor:zoom-out;">
-  <img id="lightbox-img" style="max-width:90vw; max-height:90vh; border-radius:12px;" />
+<div id="lightbox">
+  <img id="lightbox-img" />
 </div>
 
 <div id="game-set-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:55; align-items:center; justify-content:center; padding:20px;">
