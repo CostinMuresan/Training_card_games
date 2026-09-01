@@ -1558,7 +1558,7 @@ function updateDepleteWarning() {
 
   errorEl.textContent =
     shortGroups > 0
-      ? `⚠️ Nu ai destule carduri pentru toate grupele: deck-ul are ${deckLen}, dar ai nevoie de ${cardsPerGroup * numGroups} (${cardsPerGroup} × ${numGroups} grupe). ${shortGroups} grupă/grupe vor primi mai puține carduri decât ai cerut, sau deloc — poți crea sesiunea oricum, sau ajustează numerele mai sus.`
+      ? `Nu ai destule carduri pentru toate grupele: deck-ul are ${deckLen}, dar ai nevoie de ${cardsPerGroup * numGroups} (${cardsPerGroup} × ${numGroups} grupe). ${shortGroups} grupă/grupe vor primi mai puține carduri decât ai cerut, sau deloc — poți crea sesiunea oricum, sau ajustează numerele mai sus.`
       : "";
 }
 
