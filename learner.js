@@ -637,9 +637,18 @@ function subscribeSelectionRealtime() {
     .on("postgres_changes", { event: "*", schema: "public", table: "session_participants", filter: `group_id=eq.${group.id}` }, () => {
       if (selectionParticipant?.submitted_at) refreshSelectionView();
     })
-    .on("postgres_changes", { event: "*", schema: "public", table: "session_group_cards", filter: `group_id=eq.${group.id}` }, (payload) => {
-      // sincronizeaza starea de "poate fi intors" pe masura ce trainerul activeaza/dezactiveaza flip-ul
-      flippableMap[payload.new.card_id] = payload.new.is_flippable;
+    .on("postgres_changes", { event: "*", schema: "public", table: "session_group_cards", filter: `group_id=eq.${group.id}` }, async () => {
+      // reincarca tot deck-ul grupei - nu doar starea de flip - ca sa prinda si cardurile
+      // adaugate/eliminate manual de trainer in timpul sesiunii, nu doar activarea flip-ului
+      const { data: groupCardRows } = await supabase.from("session_group_cards").select("card_id, is_flippable").eq("group_id", group.id);
+      const cardIds = (groupCardRows || []).map((r) => r.card_id);
+      (groupCardRows || []).forEach((r) => (flippableMap[r.card_id] = r.is_flippable));
+      if (cardIds.length > 0) {
+        const { data: cardData } = await supabase.from("cards").select("*").in("id", cardIds).order("order_index", { ascending: true });
+        cards = cardData || [];
+      } else {
+        cards = [];
+      }
       if (selectionParticipant?.submitted_at) refreshSelectionView();
       else renderSelectionChoiceGrid();
     })
@@ -678,7 +687,19 @@ function subscribeSelectionRealtime() {
       }
 
       const { data: gcRows } = await supabase.from("session_group_cards").select("card_id, is_flippable").eq("group_id", group.id);
+      const gcCardIds = (gcRows || []).map((r) => r.card_id);
       (gcRows || []).forEach((r) => (flippableMap[r.card_id] = r.is_flippable));
+      // reincarca tot deck-ul doar daca setul de carduri chiar s-a schimbat (adaugat/eliminat de trainer)
+      const currentIds = cards.map((c) => c.id).sort().join(",");
+      const newIds = [...gcCardIds].sort().join(",");
+      if (currentIds !== newIds) {
+        if (gcCardIds.length > 0) {
+          const { data: cardData } = await supabase.from("cards").select("*").in("id", gcCardIds).order("order_index", { ascending: true });
+          cards = cardData || [];
+        } else {
+          cards = [];
+        }
+      }
 
       if (selectionParticipant?.submitted_at) await refreshSelectionView();
       else renderSelectionChoiceGrid();

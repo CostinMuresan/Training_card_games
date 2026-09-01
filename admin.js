@@ -1524,6 +1524,16 @@ $("cards-per-group").addEventListener("input", () => {
   cardsPerGroupUserEdited = true;
 });
 
+// eroarea de la ultima incercare de creare a sesiunii nu mai are sens de indata ce trainerul
+// schimba orice parametru relevant - o resetam, ca sa nu ramana "inghetata" pe ecran
+["num-groups", "num-participants-total", "participants-per-group", "cards-per-group", "max-choices"].forEach((id) => {
+  const el = $(id);
+  if (el) el.addEventListener("input", () => ($("groups-error").textContent = ""));
+});
+document.querySelectorAll('input[name="draw-mode"]').forEach((el) => {
+  el.addEventListener("change", () => ($("groups-error").textContent = ""));
+});
+
 // ---------- COLOURBLIND: participanti individuali, carduri private, tipar-tinta ----------
 let participants = []; // participantii grupei curent selectate
 let participantCardsMap = {}; // participant_id -> Set(card_id)
