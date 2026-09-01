@@ -250,8 +250,8 @@ function buildGrid() {
     flip.style.setProperty("--ar", c.aspect_ratio || 0.75);
     flip.innerHTML = `
       <div class="flip-card-inner">
-        <div class="flip-face front"><img src="${c.initial_face === "back" ? c.back_image_url : c.front_image_url}" /></div>
-        <div class="flip-face back"><img src="${c.initial_face === "back" ? c.front_image_url : c.back_image_url}" /></div>
+        <div class="flip-face front" data-hint="Click pentru a întoarce"><img src="${c.initial_face === "back" ? c.back_image_url : c.front_image_url}" /></div>
+        <div class="flip-face back" data-hint="${c.back_image_url_2 ? "Click pentru pagina 2/2" : "Click pentru a reveni"}"><img src="${c.initial_face === "back" ? c.front_image_url : c.back_image_url}" /></div>
       </div>
     `;
     // handler-ul e mereu atasat; verifica starea LIVE la fiecare click, nu una capturata la creare
@@ -271,6 +271,10 @@ function buildGrid() {
       flip.classList.toggle("flipped", flippedLocal[c.id]);
       const backImg = flip.querySelector(".flip-face.back img");
       backImg.src = backPageLocal[c.id] === 2 ? c.back_image_url_2 : (c.initial_face === "back" ? c.front_image_url : c.back_image_url);
+      if (hasSecondBack) {
+        flip.querySelector(".flip-face.back").dataset.hint =
+          backPageLocal[c.id] === 2 ? "Click pentru a reveni · pagina 2/2" : "Click pentru pagina 2/2";
+      }
       updateExplanation(wrap, c, flippedLocal[c.id]);
     });
 
@@ -469,7 +473,7 @@ function renderSelectionChoiceGrid() {
           <img class="mini-flip-face" src="${c.front_image_url}" alt="${escapeHtml(c.title)}" />
           <img class="mini-flip-face back" src="${c.back_image_url}" alt="${escapeHtml(c.title)}" />
         </div>
-        ${canFlip ? `<div class="mini-flip-hint front-hint">Click pentru a întoarce</div><div class="mini-flip-hint back-hint">Click pentru a reveni</div>` : ""}
+        ${canFlip ? `<div class="mini-flip-hint front-hint">Click pentru a întoarce</div><div class="mini-flip-hint back-hint">${c.back_image_url_2 ? "Click pentru pagina 2/2" : "Click pentru a reveni"}</div>` : ""}
         <button class="zoom-btn" data-zoom title="Vezi mărit">🔍</button>
       </div>
       <div class="tile-label">${escapeHtml(c.title)}</div>
@@ -497,6 +501,10 @@ function renderSelectionChoiceGrid() {
         const flipEl = tile.querySelector("[data-flip]");
         flipEl.classList.toggle("flipped", flippedLocal[c.id]);
         flipEl.querySelector(".mini-flip-face.back").src = backPageLocal[c.id] === 2 ? c.back_image_url_2 : c.back_image_url;
+        if (hasSecondBack) {
+          flipEl.querySelector(".back-hint").textContent =
+            backPageLocal[c.id] === 2 ? "Click pentru a reveni · pagina 2/2" : "Click pentru pagina 2/2";
+        }
       });
     }
     tile.querySelector("[data-pick]").addEventListener("change", (e) => {
@@ -558,8 +566,8 @@ function renderStaticResultCards(cardList) {
     flip.style.setProperty("--ar", c.aspect_ratio || 0.75);
     flip.innerHTML = `
       <div class="flip-card-inner">
-        <div class="flip-face front"><img src="${c.front_image_url}" alt="${escapeHtml(c.title)}" /></div>
-        <div class="flip-face back"><img src="${c.back_image_url}" alt="${escapeHtml(c.title)}" /></div>
+        <div class="flip-face front" data-hint="Click pentru a întoarce"><img src="${c.front_image_url}" alt="${escapeHtml(c.title)}" /></div>
+        <div class="flip-face back" data-hint="${c.back_image_url_2 ? "Click pentru pagina 2/2" : "Click pentru a reveni"}"><img src="${c.back_image_url}" alt="${escapeHtml(c.title)}" /></div>
       </div>
     `;
     if (canFlip) {
@@ -576,6 +584,10 @@ function renderStaticResultCards(cardList) {
         }
         flip.classList.toggle("flipped", flippedLocal[c.id]);
         flip.querySelector(".flip-face.back img").src = backPageLocal[c.id] === 2 ? c.back_image_url_2 : c.back_image_url;
+        if (hasSecondBack) {
+          flip.querySelector(".flip-face.back").dataset.hint =
+            backPageLocal[c.id] === 2 ? "Click pentru a reveni · pagina 2/2" : "Click pentru pagina 2/2";
+        }
       });
     }
 

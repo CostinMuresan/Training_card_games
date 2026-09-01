@@ -816,9 +816,18 @@ $("create-session-btn").addEventListener("click", async () => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     const code = randomCode();
+    const defaultFlippable = $("default-flippable-toggle").checked;
     const { data: sessionRow, error: sessErr } = await supabase
       .from("training_sessions")
-      .insert({ session_code: code, game_id: activeGameId, set_id: activeSetId, admin_email: user.email, status: "active", max_choices: maxChoices })
+      .insert({
+        session_code: code,
+        game_id: activeGameId,
+        set_id: activeSetId,
+        admin_email: user.email,
+        status: "active",
+        max_choices: maxChoices,
+        default_flippable: defaultFlippable,
+      })
       .select()
       .single();
     if (sessErr) throw sessErr;
@@ -833,7 +842,6 @@ $("create-session-btn").addEventListener("click", async () => {
     const { data: groupRows, error: groupErr } = await supabase.from("session_groups").insert(groupInserts).select();
     if (groupErr) throw groupErr;
 
-    const defaultFlippable = $("default-flippable-toggle").checked;
     const cardRows = [];
     groupRows.forEach((g, i) => {
       assignments[i].forEach((cardId) => cardRows.push({ session_id: sessionRow.id, group_id: g.id, card_id: cardId, is_flippable: defaultFlippable }));
@@ -1366,7 +1374,7 @@ async function addCardToGroup(cardId) {
     session_id: currentSession.id,
     group_id: currentGroupId,
     card_id: cardId,
-    is_flippable: false,
+    is_flippable: currentSession?.default_flippable ?? false,
   });
   await renderControlGrid();
 }

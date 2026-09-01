@@ -255,7 +255,7 @@ input, textarea, select {
 }
 .flip-card.can-flip { cursor: pointer; }
 .flip-card.can-flip .flip-face.front::after {
-  content: "Click pentru a întoarce";
+  content: attr(data-hint);
   position: absolute;
   bottom: 0; left: 0; right: 0;
   background: rgba(47,75,60,0.85);
@@ -265,7 +265,7 @@ input, textarea, select {
   padding: 5px;
 }
 .flip-card.can-flip .flip-face.back::after {
-  content: "Click pentru a reveni";
+  content: attr(data-hint);
   position: absolute;
   bottom: 0; left: 0; right: 0;
   background: rgba(201,153,46,0.9);
