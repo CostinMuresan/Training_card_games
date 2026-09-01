@@ -77,6 +77,7 @@ function updateDeckTotalHint() {
   hint.textContent = total > 0 ? `Setul selectat are ${total} carduri disponibile.` : "Setul selectat nu are încă niciun card.";
   const input = $("cards-per-group");
   if (input && !cardsPerGroupUserEdited) input.value = total > 0 ? total : 1; // se resincronizeaza la fiecare schimbare de set, pana la o editare manuala
+  if (typeof updateDepleteWarning === "function") updateDepleteWarning();
 }
 
 function updateDeckTitle() {
@@ -726,15 +727,14 @@ function assignCardsToGroups(deck, numGroups, cardsPerGroup, allowRepeat) {
     for (let g = 0; g < numGroups; g++) result[g] = shuffle(deck).slice(0, cardsPerGroup).map((c) => c.id);
     return { assignments: result, error: null };
   }
-  const needed = cardsPerGroup * numGroups;
-  if (needed > deck.length) {
-    return {
-      assignments: null,
-      error: `Ai nevoie de ${needed} carduri unice (${cardsPerGroup} × ${numGroups} grupe), dar deck-ul are doar ${deck.length}. Redu numărul per grupă, activează extragerea „dintr-un deck nou”, sau adaugă mai multe carduri.`,
-    };
-  }
+  // "Prin scadere": deck-ul se scurge progresiv, grupa cu grupa - fiecare primeste
+  // cate poate din ce a mai ramas, nu se blocheaza daca nu ajunge pentru toate.
   const shuffled = shuffle(deck);
-  for (let g = 0; g < numGroups; g++) result[g] = shuffled.slice(g * cardsPerGroup, (g + 1) * cardsPerGroup).map((c) => c.id);
+  let pool = shuffled.slice();
+  for (let g = 0; g < numGroups; g++) {
+    result[g] = pool.slice(0, cardsPerGroup).map((c) => c.id);
+    pool = pool.slice(cardsPerGroup);
+  }
   return { assignments: result, error: null };
 }
 
@@ -1532,14 +1532,42 @@ $("cards-per-group").addEventListener("input", () => {
   cardsPerGroupUserEdited = true;
 });
 
-// eroarea de la ultima incercare de creare a sesiunii nu mai are sens de indata ce trainerul
-// schimba orice parametru relevant - o resetam, ca sa nu ramana "inghetata" pe ecran
+// avertisment live (nu blocheaza crearea sesiunii) - arata clar, inainte sa apesi butonul,
+// daca la modul "Prin scadere" nu toate grupele vor primi cate carduri au cerut
+function updateDepleteWarning() {
+  const errorEl = $("groups-error");
+  const drawModeEl = document.querySelector('input[name="draw-mode"]:checked');
+  const drawMode = drawModeEl ? drawModeEl.value : "repeat";
+  if (drawMode !== "deplete") {
+    errorEl.textContent = "";
+    return;
+  }
+  const numGroups = isSelectionGame()
+    ? computeSelectionGroups(Math.max(2, parseInt($("num-participants-total").value, 10) || 3), Math.max(2, parseInt($("participants-per-group").value, 10) || 3)).length
+    : Math.max(1, parseInt($("num-groups").value, 10) || 1);
+  const cardsPerGroup = Math.max(0, parseInt($("cards-per-group").value, 10) || 0);
+  const deckLen = deckCards.length;
+
+  let pool = deckLen;
+  let shortGroups = 0;
+  for (let g = 0; g < numGroups; g++) {
+    const take = Math.min(cardsPerGroup, pool);
+    if (take < cardsPerGroup) shortGroups++;
+    pool -= take;
+  }
+
+  errorEl.textContent =
+    shortGroups > 0
+      ? `⚠️ Nu ai destule carduri pentru toate grupele: deck-ul are ${deckLen}, dar ai nevoie de ${cardsPerGroup * numGroups} (${cardsPerGroup} × ${numGroups} grupe). ${shortGroups} grupă/grupe vor primi mai puține carduri decât ai cerut, sau deloc — poți crea sesiunea oricum, sau ajustează numerele mai sus.`
+      : "";
+}
+
 ["num-groups", "num-participants-total", "participants-per-group", "cards-per-group", "max-choices"].forEach((id) => {
   const el = $(id);
-  if (el) el.addEventListener("input", () => ($("groups-error").textContent = ""));
+  if (el) el.addEventListener("input", updateDepleteWarning);
 });
 document.querySelectorAll('input[name="draw-mode"]').forEach((el) => {
-  el.addEventListener("change", () => ($("groups-error").textContent = ""));
+  el.addEventListener("change", updateDepleteWarning);
 });
 
 // ---------- COLOURBLIND: participanti individuali, carduri private, tipar-tinta ----------
