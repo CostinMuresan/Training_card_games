@@ -1836,4 +1836,13 @@ supabase
   })
   .subscribe();
 
+// avertisment nativ de browser daca trainerul incearca sa inchida/reincarce pagina
+// cat timp are o sesiune activa (nu impiedica inchiderea, doar cere confirmare)
+window.addEventListener("beforeunload", (e) => {
+  if (currentSession) {
+    e.preventDefault();
+    e.returnValue = ""; // necesar pentru Chrome; textul afisat e mereu cel generic al browserului
+  }
+});
+
 checkAuth();
