@@ -367,7 +367,7 @@ function subscribeRealtime() {
     .subscribe();
 }
 
-// ---------- SELECTION (Brain Toughness): cursantul isi alege cardurile ----------
+// ---------- SELECTION (Hardiness): cursantul isi alege cardurile ----------
 let selectionParticipant = null;
 let selectionMaxChoices = 1;
 let selectionLocalPicks = new Set();
@@ -420,16 +420,18 @@ function renderSelectionChoiceGrid() {
     const canFlip = !!flippableMap[c.id];
     const isFlipped = !!flippedLocal[c.id];
     const tile = document.createElement("div");
-    tile.className = "card-tile";
+    tile.className = "card-tile" + (checked ? " selected" : "");
     tile.innerHTML = `
-      <div style="padding:8px 8px 0; text-align:left;">
-        <input type="checkbox" data-pick="${c.id}" ${checked ? "checked" : ""} style="width:auto;" />
-      </div>
+      <label class="pick-row">
+        <input type="checkbox" data-pick="${c.id}" ${checked ? "checked" : ""} />
+        <span>${checked ? "✓ Selectat" : "Selectează"}</span>
+      </label>
       <div class="mini-flip${isFlipped ? " flipped" : ""}" style="aspect-ratio:${c.aspect_ratio || 0.75}; ${canFlip ? "cursor:pointer;" : ""}" data-flip>
         <div class="mini-flip-inner">
           <img class="mini-flip-face" src="${c.front_image_url}" alt="${escapeHtml(c.title)}" />
           <img class="mini-flip-face back" src="${c.back_image_url}" alt="${escapeHtml(c.title)}" />
         </div>
+        ${canFlip ? `<div class="mini-flip-hint front-hint">Click pentru a întoarce</div><div class="mini-flip-hint back-hint">Click pentru a reveni</div>` : ""}
         <button class="zoom-btn" data-zoom title="Vezi mărit">🔍</button>
       </div>
       <div class="tile-label">${escapeHtml(c.title)}</div>
@@ -456,6 +458,8 @@ function renderSelectionChoiceGrid() {
       } else {
         selectionLocalPicks.delete(c.id);
       }
+      tile.classList.toggle("selected", e.target.checked);
+      tile.querySelector(".pick-row span").textContent = e.target.checked ? "✓ Selectat" : "Selectează";
       $("selection-submit-btn").disabled = selectionLocalPicks.size === 0;
     });
     grid.appendChild(tile);

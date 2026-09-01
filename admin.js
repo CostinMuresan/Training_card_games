@@ -1696,7 +1696,7 @@ $("reveal-solution-btn").addEventListener("click", async () => {
   alert("Soluția a fost dezvăluită participanților.");
 });
 
-// ---------- SELECTION (Brain Toughness): progres live al grupei selectate ----------
+// ---------- SELECTION (Hardiness): progres live al grupei selectate ----------
 async function loadSelectionGroupsOverview() {
   const box = $("selection-groups-overview");
   if (!box) return;
@@ -1799,6 +1799,15 @@ supabase
     if (isSelectionGame()) loadSelectionGroupsOverview();
   })
   .subscribe();
+
+// plasa de siguranta: reverifica progresul periodic, indiferent daca abonarea live de mai sus
+// functioneaza sau nu (conexiuni WebSocket instabile, tab-uri lasate deschise mult timp etc.)
+setInterval(() => {
+  if (currentSession && isSelectionGame()) {
+    loadSelectionGroupsOverview();
+    if (currentGroupId) loadSelectionParticipants();
+  }
+}, 5000);
 
 // ---------- PREZENTA (mod Standard): cati au deschis linkul, din cati sunt asteptati ----------
 async function loadPresence() {

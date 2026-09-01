@@ -355,6 +355,7 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
 
 /* --- Flip 3D pentru miniaturile din admin (deck + panou de control) --- */
 .mini-flip {
+  position: relative;
   perspective: 900px;
   width: 100%;
   aspect-ratio: 3 / 4;
@@ -380,6 +381,22 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
   backface-visibility: hidden;
 }
 .mini-flip-face.back { transform: rotateY(180deg); }
+
+/* indicatie "poti intoarce cardul" - doar la mana privata de alegere (Hardiness) */
+.mini-flip-hint {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  font-size: 10px;
+  text-align: center;
+  padding: 4px;
+  color: #fff;
+  pointer-events: none;
+  z-index: 3;
+}
+.mini-flip-hint.front-hint { background: rgba(47,75,60,0.85); }
+.mini-flip-hint.back-hint { background: rgba(201,153,46,0.9); color: var(--ink); display: none; }
+.mini-flip.flipped .mini-flip-hint.front-hint { display: none; }
+.mini-flip.flipped .mini-flip-hint.back-hint { display: block; }
 
 .empty-state {
   text-align: center;
@@ -418,3 +435,45 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
 /* grupa completa (mod Selectie) - toti cursantii au ales */
 .btn.group-complete { background: #88d45f; color: var(--green-deep); border-color: #6bbf3f; }
 .btn.group-complete.group-complete-selected { box-shadow: 0 0 0 3px var(--gold); }
+
+/* butonul "Am ales" - floating, mereu la vedere, indiferent de scroll (mobil si desktop) */
+#selection-submit-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 22px;
+  display: flex;
+  justify-content: center;
+  z-index: 40;
+  pointer-events: none; /* zona goala din jurul butonului nu blocheaza click-urile pe carduri */
+}
+#selection-submit-bar .btn {
+  pointer-events: auto;
+  box-shadow: 0 6px 20px rgba(33, 58, 46, 0.35);
+  padding: 14px 36px;
+  font-size: 15px;
+}
+
+/* selectarea cardurilor la modul Selectie (Hardiness) - bifa vizibila, cu evidentiere puternica a cardului */
+.pick-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green-deep);
+}
+.pick-row input[type="checkbox"] {
+  width: 26px;
+  height: 26px;
+  accent-color: var(--green);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.card-tile.selected {
+  border-color: var(--green);
+  background: #E4F5E7;
+  box-shadow: 0 0 0 2px var(--green);
+}
