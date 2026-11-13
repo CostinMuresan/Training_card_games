@@ -1,0 +1,925 @@
+/* Nodul comunicarii - stiluri specifice activitatilor online */
+.comm-grid {
+  display:grid;
+  gap:18px;
+}
+
+.comm-grid.two {
+  grid-template-columns:1fr 1fr;
+}
+
+.comm-grid.three {
+  grid-template-columns:repeat(3,1fr);
+}
+
+.mode-card {
+  border:2px solid var(--parchment-dark);
+  background:var(--card-bg);
+  border-radius:14px;
+  padding:24px;
+  text-align:left;
+  cursor:pointer;
+  color:var(--ink);
+}
+
+.mode-card:hover {
+  border-color:var(--gold);
+  transform:translateY(-2px);
+}
+
+.mode-card b,.mode-card span {
+  display:block;
+}
+
+.mode-card span {
+  margin-top:8px;
+  color:var(--grey);
+}
+
+.comm-toolbar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.header-link {
+  text-decoration:none;
+  border-color:var(--gold-soft)!important;
+  color:var(--gold-soft)!important;
+}
+
+.rule,.transfer {
+  padding:14px;
+  border-left:5px solid var(--gold);
+  background:var(--parchment);
+  border-radius:8px;
+}
+
+/* Canvas 4:3, responsive: latimea e limitata de container si de inaltimea ferestrei
+   (sa incapa pe verticala), dar nu sub 480px pe ecrane late. Pe telefon in portret ia toata latimea.
+   A doua linie (dvh) o inlocuieste pe prima in browserele care o cunosc. */
+.canvas-wrap {
+  display:block;
+  position:relative;
+  width:100%; /* mărimea o stabilește cadrul .grid-frame.is-canvas */
+  aspect-ratio:4 / 3;
+  margin:0;
+}
+.draw-canvas {
+  display:block;
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
+  background:white;
+  border:2px dashed var(--green-text);
+  border-radius:10px;
+  touch-action:none;
+}
+
+.canvas-tools {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px 14px;
+  margin:10px 0;
+}
+
+.tool-group {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px;
+}
+
+.tool-btn {
+  font-family:inherit;
+  font-weight:600;
+  font-size:14px;
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid var(--green-text);
+  background:transparent;
+  color:var(--green-text);
+  cursor:pointer;
+}
+.tool-btn.active {
+  background:var(--green);
+  color:var(--on-primary);
+}
+.tool-btn.clear {
+  border-color:var(--red);
+  color:var(--red);
+}
+
+.swatch {
+  width:32px;
+  height:32px;
+  padding:0;
+  border-radius:50%;
+  background:var(--c);
+  border:2px solid #fff;
+  box-shadow:0 0 0 1px #b9b09a;
+  cursor:pointer;
+}
+.swatch.active {
+  box-shadow:0 0 0 3px var(--green-text);
+}
+
+/* buline multicolora = culoare la alegere; inelul interior arata culoarea aleasa */
+.swatch.custom {
+  position:relative;
+  display:inline-block;
+  box-sizing:border-box;
+  background:conic-gradient(#e53935, #fdd835, #43a047, #00acc1, #3949ab, #d81b60, #e53935);
+}
+.swatch.custom::after {
+  content:"";
+  position:absolute;
+  inset:9px;
+  border-radius:50%;
+  background:var(--c);
+  border:2px solid #fff;
+  pointer-events:none;
+}
+.swatch.custom input {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  opacity:0;
+  cursor:pointer;
+  border:0;
+  padding:0;
+}
+
+.draw-canvas.erasing {
+  cursor:cell;
+}
+
+.how-to {
+  margin:12px 0 4px;
+  padding:8px 14px;
+  border:1px solid var(--parchment-dark);
+  border-radius:8px;
+  background:var(--card-bg);
+  font-size:14px;
+}
+.how-to summary {
+  cursor:pointer;
+  font-weight:600;
+}
+.how-to ul {
+  margin:8px 0 2px;
+  padding-left:20px;
+}
+.how-to li {
+  margin:3px 0;
+}
+
+.model-grid {
+  display:grid;
+  grid-template-columns:repeat(4,72px);
+  grid-template-rows:repeat(4,72px);
+  gap:6px;
+  justify-content:center;
+  margin:18px auto;
+}
+
+.model-cell {
+  border:1px dashed var(--grey);
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  background:var(--field-bg);
+  cursor:pointer;
+}
+
+.piece-tray {
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.piece {
+  font-size:30px;
+  border:1px solid var(--parchment-dark);
+  background:var(--field-bg);
+  border-radius:8px;
+  padding:8px 13px;
+  cursor:pointer;
+}
+
+.piece.active {
+  outline:3px solid var(--gold);
+}
+
+.results-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:12px;
+}
+
+.result-card {
+  border:1px solid var(--parchment-dark);
+  border-radius:10px;
+  padding:10px;
+  background:var(--field-bg);
+}
+
+.result-card img {
+  width:100%;
+  height:160px;
+  object-fit:contain;
+  background:#fafafa;
+}
+
+.mini-model {
+  display:grid;
+  grid-template-columns:repeat(4,35px);
+  grid-template-rows:repeat(4,35px);
+  gap:2px;
+}
+
+.mini-model span {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--parchment-dark);
+  font-size:20px;
+}
+
+.client-box textarea {
+  width:100%;
+  min-height:110px;
+  margin:8px 0;
+}
+
+.choice-list label {
+  display:block;
+  padding:8px;
+  background:var(--field-bg);
+  border-radius:8px;
+  margin:6px 0;
+}
+
+.submit-fixed {
+  margin-top:16px;
+}
+
+
+@media (max-width: 850px) {
+  .comm-grid.two,.comm-grid.three {
+    grid-template-columns:1fr;
+  }
+  .model-grid {
+    grid-template-columns:repeat(4,60px);
+    grid-template-rows:repeat(4,60px);
+  }
+}
+
+/* Telefon in landscape (ecran scund): instructiunile in stanga, canvasul cat mai mare in dreapta */
+@media (orientation: landscape) and (max-height: 520px) {
+  body.participant-page:has(#activity:not([hidden]) .draw-canvas) header.app-header {
+    display:none;
+  }
+  body.participant-page:has(#activity:not([hidden]) .draw-canvas) main {
+    max-width:none;
+    padding:8px 12px;
+  }
+  #activity .panel:has(.draw-canvas) {
+    display:grid;
+    grid-template-columns:minmax(170px, 272px) 1fr;
+    grid-template-rows:repeat(6, auto) 1fr;
+    column-gap:16px;
+    align-items:start;
+    padding:10px;
+    margin-bottom:0;
+  }
+  #activity .panel:has(.draw-canvas) > *,
+  #activity .panel:has(.draw-canvas) #content > .canvas-tools,
+  #activity .panel:has(.draw-canvas) #content > .how-to {
+    grid-column:1;
+  }
+  #activity .panel:has(.draw-canvas) .how-to {
+    margin:0 0 4px;
+    font-size:12px;
+  }
+  #activity .panel:has(.draw-canvas) .canvas-tools {
+    margin:6px 0;
+    gap:6px;
+  }
+  #activity .panel:has(.draw-canvas) .tool-btn {
+    padding:6px 8px;
+    font-size:12px;
+  }
+  #activity .panel:has(.draw-canvas) .swatch {
+    width:26px;
+    height:26px;
+  }
+  #activity .panel:has(.draw-canvas) .tool-group {
+    gap:5px;
+  }
+  #activity .panel:has(.draw-canvas) #round-title {
+    margin:2px 0 6px;
+    font-size:22px;
+  }
+  #activity .panel:has(.draw-canvas) #rule {
+    margin:6px 0;
+    padding:8px 10px;
+    font-size:13px;
+  }
+  #activity .panel:has(.draw-canvas) #submit {
+    margin-top:4px;
+  }
+  #activity .panel:has(.draw-canvas) #content {
+    display:contents;
+  }
+  #activity .panel:has(.draw-canvas) .grid-frame.is-canvas {
+    grid-column:2;
+    grid-row:1 / 8;
+    width:min(100%, calc((100vh - 56px) * 4 / 3));
+    width:min(100%, calc((100dvh - 56px) * 4 / 3));
+  }
+  /* cu grila pornită, cadrul primește și marginea pentru etichete; canvasul rămâne în ecran pe înălțime */
+  body.grid-on #activity .panel:has(.draw-canvas) .grid-frame.is-canvas {
+    width:min(100%, calc((100dvh - 56px - var(--gutter)) * 4 / 3 + var(--gutter)));
+  }
+}
+
+/* desen de referinta + suprapunere (panoul trainerului) */
+.model-fig-block {
+  margin:10px 0;
+}
+.model-fig {
+  margin-top:10px;
+  max-width:460px;
+  border:1px solid var(--parchment-dark);
+  border-radius:8px;
+  background:#fff;
+  color:#1a1a1a;
+}
+.model-fig svg {
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+.overlay-control {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin:0 0 10px;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.overlay-control[hidden] {
+  display:none;
+}
+
+.results-grid.is-draw {
+  grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+}
+.draw-wrap {
+  position:relative;
+  aspect-ratio:4 / 3;
+  background:#fff;
+  border:1px solid var(--parchment-dark);
+  border-radius:6px;
+  overflow:hidden;
+}
+.result-card .draw-wrap img {
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  background:#fff;
+}
+.model-overlay {
+  display:none;
+  position:absolute;
+  inset:0;
+  color:#d32f2f;
+  opacity:.65;
+  pointer-events:none;
+}
+.model-overlay svg {
+  display:block;
+  width:100%;
+  height:100%;
+}
+.results-grid.show-overlay .model-overlay {
+  display:block;
+}
+
+/* pasul „Compara si observa” (participant): desenul meu / modelul / suprapus */
+.draw-wrap img {
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  background:#fff;
+}
+.view-switch {
+  margin:8px 0 10px;
+}
+.reveal-draw {
+  max-width:none; /* limita de mărime e pe cadru (.grid-frame.reveal), ca etichetele grilei să rămână lipite de desen */
+}
+.reveal-draw[data-view="both"] .model-overlay {
+  display:block;
+}
+.hint {
+  font-size:14px;
+  color:var(--ink-soft, #5a5a4a);
+}
+
+/* Reconstruieste modelul: comparatie model / rezultat */
+.mini-model span.ok {
+  color:#1a1a1a;
+  background:#dcefd8;
+  border-color:#2e7d32;
+}
+.mini-model span.bad {
+  color:#1a1a1a;
+  background:#f8dfd9;
+  border-color:#c0392b;
+}
+.compare-row {
+  display:flex;
+  flex-wrap:wrap;
+  gap:20px 32px;
+  align-items:flex-start;
+  margin:10px 0;
+}
+.compare-row figure {
+  margin:0;
+}
+.compare-row figcaption {
+  font-weight:600;
+  margin-bottom:6px;
+}
+.compare-row .mini-model {
+  grid-template-columns:repeat(4, 46px);
+  grid-template-rows:repeat(4, 46px);
+}
+.compare-row .mini-model span {
+  font-size:26px;
+}
+.score-badge {
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:8px;
+  background:var(--accent-soft);
+  font-weight:600;
+}
+.result-card.mine {
+  border-color:var(--green-text);
+  box-shadow:0 0 0 2px var(--green-text);
+}
+.results-grid.own-result {
+  grid-template-columns:minmax(200px, 300px);
+  margin-bottom:6px;
+}
+
+/* imaginea de referinta (scenarii proprii) */
+.model-fig img {
+  display:block;
+  width:100%;
+  height:auto;
+}
+.model-overlay img {
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:fill;
+}
+.model-overlay img.blend {
+  mix-blend-mode:multiply;
+}
+.draw-wrap img.model-orig {
+  display:none;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  background:#fff;
+}
+.reveal-draw[data-view="model"] img.model-orig {
+  display:block;
+  visibility:visible;
+}
+/* suprapunerea: imaginea roșie trebuie să rămână transparentă (regula generală pentru imagini din chenarul de desen setează fundal alb) */
+.draw-wrap .model-overlay img,
+.result-card .draw-wrap .model-overlay img {
+  background:transparent;
+  object-fit:fill;
+}
+ol.steps {
+  margin:6px 0 2px;
+  padding-left:22px;
+}
+ol.steps li {
+  margin:4px 0;
+}
+
+/* managerul „Scenariile mele” */
+.sc-item {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px 12px;
+  padding:8px 0;
+  border-bottom:1px solid var(--parchment-dark);
+}
+.sc-item b {
+  flex:1 1 200px;
+}
+.sc-item .btn {
+  font-size:13px;
+  padding:5px 10px;
+}
+.scenario-form {
+  margin-top:14px;
+  padding-top:10px;
+  border-top:2px solid var(--parchment-dark);
+}
+.scenario-form label {
+  display:block;
+  margin:10px 0 4px;
+  font-weight:600;
+}
+.scenario-form input[type="text"],
+.scenario-form textarea {
+  width:100%;
+  box-sizing:border-box;
+  font:inherit;
+  padding:8px 10px;
+  border:1px solid var(--parchment-dark);
+  border-radius:8px;
+}
+.scenario-form label.check {
+  font-weight:400;
+}
+.sc-round {
+  margin:12px 0;
+  padding:8px 14px 14px;
+  border:1px solid var(--parchment-dark);
+  border-radius:10px;
+}
+.sc-round legend {
+  font-weight:700;
+  padding:0 6px;
+}
+.sc-preview {
+  margin-top:6px;
+  font-size:14px;
+  background:var(--card-bg);
+  border:1px dashed var(--parchment-dark);
+  border-radius:8px;
+  padding:6px 12px;
+}
+.sc-img-preview img {
+  display:block;
+  max-width:320px;
+  width:100%;
+  margin:8px 0;
+  border:1px solid var(--parchment-dark);
+  border-radius:8px;
+  background:#fff;
+}
+.sc-actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+
+/* instrumente de forma (dreptunghi, triunghi, cerc) */
+.tool-btn svg {
+  vertical-align:-4px;
+  margin-right:6px;
+}
+.draw-canvas.shaping {
+  cursor:crosshair;
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  /* ecran scund: butoanele de forma raman doar cu pictograma, ca sa incapa coloana din stanga */
+  #activity .panel:has(.draw-canvas) .tool-btn .lbl {
+    display:none;
+  }
+  #activity .panel:has(.draw-canvas) .tool-btn svg {
+    margin-right:0;
+  }
+}
+
+/* butoanele formei selectate (peste canvas, ca sa nu mute nimic din pagina) */
+.shape-actions {
+  position:absolute;
+  top:8px;
+  right:8px;
+  z-index:2;
+  display:flex;
+  gap:6px;
+}
+.shape-actions[hidden] {
+  display:none;
+}
+.shape-actions .tool-btn {
+  background:#fff;
+  color:#1a1a1a;
+  box-shadow:0 1px 5px rgba(0,0,0,.28);
+  padding:6px 12px;
+  font-size:13px;
+}
+.shape-actions .tool-btn.done {
+  background:var(--green);
+  color:var(--on-primary);
+}
+
+/* „Ce ai înțeles?”: răspunsurile tuturor (anonim) */
+.answers-list {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.answer-card {
+  border:1px solid var(--parchment-dark);
+  border-radius:10px;
+  padding:8px 14px;
+  background:var(--card-bg);
+}
+.answer-card p {
+  margin:6px 0;
+}
+.answer-card.mine {
+  border-color:var(--green-text);
+  box-shadow:0 0 0 2px var(--green-text);
+  margin:10px 0;
+}
+
+.sc-tabs {
+  margin:8px 0 12px;
+}
+#base-scenarios h3 {
+  margin:18px 0 4px;
+}
+#scenario-form select, #trainer-prompt select {
+  font:inherit;
+  padding:6px 8px;
+  border:1px solid var(--parchment-dark);
+  border-radius:8px;
+  max-width:100%;
+}
+
+/* „Desenele tuturor”: desenul propriu, mai mare */
+.results-grid.is-draw.own-result {
+  grid-template-columns:minmax(220px, 420px);
+}
+
+/* hint deasupra butoanelor de etapa: ce etapa se deschide cu click pe butonul de dedesubt */
+.comm-toolbar {
+  align-items:flex-end;
+}
+.nav-col {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:0;
+}
+.nav-col-right {
+  align-items:flex-end;
+  text-align:right;
+}
+.nav-hint {
+  margin:0;
+  font-size:13px;
+  line-height:1.3;
+  color:var(--ink-soft, #5a5a4a);
+}
+.nav-hint:empty {
+  display:none;
+}
+
+/* „Reconstruiește modelul”, runda 3: rânduri și coloane numerotate (sistem de referință) */
+.model-grid.axes {
+  grid-template-columns:28px repeat(4, 72px);
+  grid-template-rows:28px repeat(4, 72px);
+}
+.axis-label {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:16px;
+  color:var(--green-text);
+}
+@media (max-width: 850px) {
+  .model-grid.axes {
+    grid-template-columns:24px repeat(4, 60px);
+    grid-template-rows:24px repeat(4, 60px);
+  }
+}
+.mini-model.axes {
+  grid-template-columns:18px repeat(4, 35px);
+  grid-template-rows:18px repeat(4, 35px);
+}
+.mini-model span.axis {
+  border:0;
+  font-size:12px;
+  font-weight:700;
+  color:var(--green-text);
+}
+.compare-row .mini-model.axes {
+  grid-template-columns:22px repeat(4, 46px);
+  grid-template-rows:22px repeat(4, 46px);
+}
+.compare-row .mini-model span.axis {
+  font-size:14px;
+}
+
+/* debrief la model: rezumatul scorurilor pe runde */
+.summary-table {
+  width:100%;
+  border-collapse:collapse;
+  margin:6px 0 14px;
+  font-size:14px;
+}
+.summary-table th,
+.summary-table td {
+  padding:7px 8px;
+  text-align:left;
+  vertical-align:middle;
+  border-bottom:1px solid var(--parchment-dark);
+}
+.summary-table .bar {
+  height:8px;
+  min-width:90px;
+  margin-bottom:3px;
+  background:var(--parchment-dark);
+  border-radius:4px;
+  overflow:hidden;
+}
+.summary-table .bar span {
+  display:block;
+  height:100%;
+  background:var(--green);
+}
+
+/* previzualizarea modelelor in lobby (trainer) */
+.preview-row {
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px 24px;
+  margin:12px 0 6px;
+}
+.preview-row figure {
+  margin:0;
+  max-width:260px;
+}
+.preview-row figcaption {
+  margin-bottom:6px;
+  font-size:14px;
+}
+.preview-row details {
+  margin-top:6px;
+  font-size:13px;
+}
+.preview-row summary {
+  cursor:pointer;
+  font-weight:600;
+}
+.preview-guide {
+  margin-top:6px;
+  padding:8px 10px;
+  background:var(--card-bg);
+  border:1px solid var(--parchment-dark);
+  border-radius:8px;
+  max-height:220px;
+  overflow:auto;
+}
+.summary-table td.nw {
+  white-space:nowrap;
+}
+
+/* desene usoare: miniaturi care se deschid marite */
+img[data-sid] {
+  cursor:zoom-in;
+}
+img[data-sid].loading {
+  opacity:.55;
+}
+.lightbox {
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:rgba(20, 24, 20, .86);
+  cursor:zoom-out;
+}
+.lightbox img {
+  max-width:96vw;
+  max-height:92vh;
+  background:#fff;
+  border-radius:8px;
+}
+.lightbox-close {
+  position:absolute;
+  top:12px;
+  right:14px;
+  width:40px;
+  height:40px;
+  border:0;
+  border-radius:50%;
+  background:#fff;
+  color:#1a1a1a;
+  font-size:20px;
+  cursor:pointer;
+}
+
+/* legaturi in antetul paginilor de trainer */
+.header-links {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:flex-end;
+}
+
+/* ---------- grila de pătrățele (reper pentru instrucțiuni) ----------
+   Liniile sunt un strat peste desen. Numerotarea (A–L, 1–9) stă ÎN AFARA zonei de desen, în marginile cadrului .grid-frame. */
+.grid-frame { position:relative; --gutter:22px; --bw:1px; }
+body.grid-on .grid-frame { padding:var(--gutter) 0 0 var(--gutter); }
+.grid-axis-cols,
+.grid-axis-rows {
+  display:none; /* apar doar când participantul / trainerul pornește grila (body.grid-on) */
+  position:absolute;
+  font-size:11px;
+  font-weight:700;
+  line-height:1;
+  color:var(--ink-soft);
+  pointer-events:none;
+}
+body.grid-on .grid-axis-cols,
+body.grid-on .grid-axis-rows { display:grid; }
+.grid-axis-cols { top:0; left:calc(var(--gutter) + var(--bw)); right:var(--bw); height:var(--gutter); grid-template-columns:repeat(12, 1fr); align-items:center; text-align:center; }
+.grid-axis-rows { left:0; top:calc(var(--gutter) + var(--bw)); bottom:var(--bw); width:var(--gutter); grid-template-rows:repeat(9, 1fr); align-items:center; justify-items:center; }
+@media (max-width: 600px) {
+  .grid-frame { --gutter:19px; }
+  .grid-axis-cols, .grid-axis-rows { font-size:10px; }
+}
+/* cadrul canvasului: aceeași mărime ca înainte; doar cu grila pornită se adaugă marginea pentru etichete */
+.grid-frame.is-canvas {
+  --bw:2px;
+  margin:0 auto;
+  width:min(100%, max(480px, calc((100vh - 400px) * 4 / 3)));
+  width:min(100%, max(480px, calc((100dvh - 400px) * 4 / 3)));
+}
+body.grid-on .grid-frame.is-canvas { width:min(100%, max(480px, calc((100dvh - 400px) * 4 / 3 + var(--gutter)))); }
+.grid-frame.model { margin-top:10px; max-width:460px; }
+.grid-frame.reveal { max-width:640px; }
+body.grid-on .grid-frame.reveal { max-width:calc(640px + var(--gutter)); }
+.grid-frame.model > .model-fig { margin-top:0; max-width:none; }
+.canvas-wrap .grid-overlay {
+  display:none; /* apare doar când se pornește grila (body.grid-on) */
+  position:absolute;
+  inset:2px;
+  z-index:1;
+  pointer-events:none;
+  border-radius:8px;
+  overflow:hidden;
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,.16) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,.16) 1px, transparent 1px);
+  background-size:calc(100% / 12) calc(100% / 9);
+}
+body.grid-on .canvas-wrap .grid-overlay { display:block; }
+.grid-control { margin:8px 0; }
+/* aceleași pătrățele, doar linii, peste imaginile de referință și desenele din rezultate / galerie */
+.model-fig { position:relative; }
+.draw-wrap::after,
+.model-fig::after {
+  content:"";
+  display:none; /* doar cu body.grid-on */
+  position:absolute;
+  inset:0;
+  z-index:3;
+  pointer-events:none;
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,.13) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,.13) 1px, transparent 1px);
+  background-size:calc(100% / 12) calc(100% / 9);
+}
+body.grid-on .draw-wrap::after,
+body.grid-on .model-fig::after { display:block; }
+
+/* bifa „Pătrățele” de lângă modelul din „Instrucțiuni trainer” */
+.grid-control-inline { margin:0 0 0 14px; vertical-align:middle; }
+.model-fig-block .hint { margin:8px 0 0; }

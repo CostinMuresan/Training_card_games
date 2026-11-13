@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="ro" data-theme-role="trainer">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Admin · Carduri de training</title>
+<title>Jocuri cu cărți · Admin · Training Activities</title>
 <link rel="stylesheet" href="style.css" />
+<script src="theme.js"></script>
 </head>
 <body>
 
 <div id="login-view" class="login-wrap" style="display:none;">
-  <div class="eyebrow" style="color:var(--gold); font-size:11px; letter-spacing:0.15em; text-transform:uppercase;">Trainer</div>
+  <div class="eyebrow" style="color:var(--accent-text); font-size:11px; letter-spacing:0.15em; text-transform:uppercase;">Trainer</div>
   <h2>Autentificare</h2>
   <label>Email</label>
   <input id="login-email" type="email" placeholder="trainer@exemplu.ro" />
@@ -23,13 +24,27 @@
   <header class="app-header">
     <div>
       <div class="eyebrow">Panou Trainer</div>
-      <h1>Carduri de training · Admin</h1>
+      <h1>Training Activities · Jocuri cu cărți</h1>
     </div>
-    <div style="display:flex; gap:8px;">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="btn outline" id="stats-btn" style="border-color:var(--gold-soft); color:var(--gold-soft);">📊 Statistici</button>
+      <a href="trainer.html" class="btn outline" style="border-color:var(--gold-soft); color:var(--gold-soft); text-decoration:none; display:inline-block;">← Meniu trainer</a>
       <a href="manual.html" target="_blank" class="btn outline" style="border-color:var(--gold-soft); color:var(--gold-soft); text-decoration:none; display:inline-block;">📖 Manual</a>
+      <button class="btn outline" id="theme-btn" hidden style="border-color:var(--gold-soft); color:var(--gold-soft);">🎨 Temă</button>
       <button class="btn outline" id="logout-btn" style="border-color:var(--gold-soft); color:var(--gold-soft);">Deconectare</button>
     </div>
   </header>
+
+  <div id="stats-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:6px;">
+        <h2 class="serif" style="margin:0;">Statistici traineri</h2>
+        <button class="btn outline" id="stats-close-btn" style="padding:4px 10px;">✕</button>
+      </div>
+      <p style="font-size:13px; color:var(--grey); margin:0 0 16px;">Sesiuni cu cel puțin un cursant înregistrat, defalcate pe joc. Vizibile tuturor trainerilor.</p>
+      <div id="stats-content"><p style="color:var(--grey); margin:0;">Se încarcă…</p></div>
+    </div>
+  </div>
 
   <main>
     <div class="panel" id="game-set-switcher" style="margin-bottom:16px;">
@@ -57,17 +72,17 @@
       <div class="error-msg" id="gs-switcher-error"></div>
     </div>
 
-    <div style="display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
+    <div style="display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; align-items:center;">
       <button class="btn gold" id="tab-sessions-btn">Sesiuni & Control live</button>
       <button class="btn outline" id="tab-deck-btn">Administrare carduri</button>
+      <button class="btn outline" id="layout-toggle-btn" style="display:none;">⇄ Vezi pe o coloană</button>
+      <button class="btn danger" id="end-session-btn-tabs" style="display:none;">Încheie sesiunea</button>
     </div>
 
     <div id="view-sessions">
+    <div id="sessions-grid-wrap">
     <div class="panel" id="control-panel" style="display:none;">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:6px;">
-        <h3 style="margin:0;">Control carduri (sesiune live)</h3>
-        <button class="btn danger" id="end-session-btn-top">Încheie sesiunea (toate grupele)</button>
-      </div>
+      <h3 style="margin:0 0 6px;">Control carduri (sesiune live)</h3>
       <p style="font-size:13px; color:var(--grey);" id="control-panel-hint">Click pe un card pentru a-l evidenția la grupa selectată. Butonul „Permite răsturnarea” activează flip-ul pentru acel card, doar la această grupă.</p>
       <div id="group-tabs" style="display:flex; gap:8px; margin:12px 0; flex-wrap:wrap;"></div>
 
@@ -100,7 +115,7 @@
       <div class="card-grid" id="control-grid"></div>
       </div>
 
-      <div id="colourblind-mode-panel" style="display:none;">
+      <div id="generic-mode-panel" style="display:none;">
         <h4 class="serif" style="margin:6px 0 10px;">Participanți — grupa selectată</h4>
         <div id="participants-list" style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;"></div>
         <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:24px;">
@@ -125,11 +140,32 @@
 
       <div id="selection-mode-panel" style="display:none;">
         <h4 class="serif" style="margin:6px 0 10px;">Progres — toate grupele</h4>
+        <p style="font-size:12px; color:var(--grey); margin:0 0 10px;">Click pe o grupă pentru a-i vedea alegerile cursanților, direct sub ea.</p>
         <div id="selection-groups-overview" style="display:flex; flex-direction:column; gap:8px; margin-bottom:24px;"></div>
+      </div>
 
-        <h4 class="serif" style="margin:6px 0 4px;">Detalii — grupa selectată</h4>
-        <p id="selection-progress" style="font-size:14px; font-weight:600; margin:0 0 14px;"></p>
-        <div id="selection-participants-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+      <div id="colourblind-mode-panel" style="display:none;">
+        <h4 class="serif" style="margin:6px 0 10px;">Cardurile tale (secrete — doar tu le vezi)</h4>
+        <div id="cbn-trainer-cards" style="display:flex; gap:14px; flex-wrap:wrap; margin-bottom:20px;"></div>
+
+        <div id="cbn-not-started-box">
+          <p style="font-size:13px; color:var(--grey); margin:0 0 10px;">Participanții își aleg alias-ul pe link și așteaptă, fără să vadă vreun card, până apeși „Pornește sesiunea". După asta, cardurile se împart automat, cât mai egal, între cei care s-au alăturat până în acel moment.</p>
+          <p id="cbn-participants-count-pre" class="status-chip"></p>
+          <div class="error-msg" id="cbn-start-error"></div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn gold" id="cbn-start-btn">Pornește sesiunea</button>
+            <button class="btn outline" id="cbn-cancel-session-btn" style="border-color:var(--red); color:var(--red);">Anulează sesiunea</button>
+          </div>
+        </div>
+
+        <div id="cbn-started-box" style="display:none;">
+          <button class="btn danger" id="cbn-reveal-all-btn">🎉 Marele reveal — arată tuturor cine ce a avut</button>
+          <p style="font-size:12px; color:var(--grey); margin:8px 0 0;">Ireversibil — folosește-l la finalul rundei.</p>
+        </div>
+
+        <h4 class="serif" style="margin:22px 0 10px;">Participanți</h4>
+        <p id="cbn-participants-count" style="font-size:13px; color:var(--grey); margin:0 0 10px;"></p>
+        <div id="cbn-participants-list" style="display:flex; flex-direction:column; gap:10px;"></div>
       </div>
     </div>
 
@@ -137,34 +173,43 @@
       <h3>Sesiune și grupuri</h3>
 
       <div id="no-session-box">
+        <div id="group-based-create-fields">
         <p style="font-size:13px; color:var(--grey); margin-bottom:16px;">
           Alege câte grupe vrei și câte carduri primește fiecare.
         </p>
 
-        <div id="standard-group-fields">
-          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Număr de grupe</label>
-          <input id="num-groups" type="number" min="1" value="4" style="width:100px;" />
+        <div class="form-two-col">
+          <div>
+            <div id="standard-group-fields">
+              <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Număr de grupe</label>
+              <input id="num-groups" type="number" min="1" value="4" style="width:100px;" />
 
-          <label style="display:block; font-size:13px; font-weight:600; margin:16px 0 4px;">Cursanți așteptați per grupă (opțional)</label>
-          <input id="expected-per-group" type="number" min="0" value="" placeholder="ex. 4" style="width:100px;" />
-          <p style="font-size:12px; color:var(--grey); margin:6px 0 0;">Dacă îl completezi, vezi live în panoul de control câți au deschis linkul din câți sunt așteptați. Lasă gol dacă nu vrei acest indicator.</p>
+              <label style="display:block; font-size:13px; font-weight:600; margin:16px 0 4px;">Cursanți așteptați per grupă (opțional)</label>
+              <input id="expected-per-group" type="number" min="0" value="" placeholder="ex. 4" style="width:100px;" />
+              <p style="font-size:12px; color:var(--grey); margin:6px 0 0;">Dacă îl completezi, vezi live în panoul de control câți au deschis linkul din câți sunt așteptați. Lasă gol dacă nu vrei acest indicator.</p>
+            </div>
+
+            <div id="selection-group-fields" style="display:none;">
+              <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Număr total de cursanți</label>
+              <input id="num-participants-total" type="number" min="2" value="9" style="width:100px;" />
+
+              <label style="display:block; font-size:13px; font-weight:600; margin:16px 0 4px;">Cursanți per grupă</label>
+              <input id="participants-per-group" type="number" min="2" value="3" style="width:100px;" />
+              <p id="selection-groups-preview" style="font-size:12px; color:var(--grey); margin:6px 0 0;"></p>
+            </div>
+          </div>
+
+          <div>
+            <div id="selection-max-choices-field" style="display:none;">
+              <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Carduri alese per cursant</label>
+              <input id="max-choices" type="number" min="1" value="1" style="width:100px;" />
+            </div>
+
+            <label style="display:block; font-size:13px; font-weight:600; margin:16px 0 4px;" id="cards-per-group-label">Carduri per grupă</label>
+            <input id="cards-per-group" type="number" min="1" style="width:100px;" />
+            <p id="deck-total-hint" style="font-size:12px; color:var(--grey); margin:6px 0 0;"></p>
+          </div>
         </div>
-
-        <div id="selection-group-fields" style="display:none;">
-          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Număr total de cursanți</label>
-          <input id="num-participants-total" type="number" min="2" value="9" style="width:100px;" />
-
-          <label style="display:block; font-size:13px; font-weight:600; margin:16px 0 4px;">Cursanți per grupă</label>
-          <input id="participants-per-group" type="number" min="2" value="3" style="width:100px;" />
-          <p id="selection-groups-preview" style="font-size:12px; color:var(--grey); margin:6px 0 0;"></p>
-
-          <label style="display:block; font-size:13px; font-weight:600; margin:16px 0 4px;">Carduri alese per cursant</label>
-          <input id="max-choices" type="number" min="1" value="1" style="width:100px;" />
-        </div>
-
-        <label style="display:block; font-size:13px; font-weight:600; margin:16px 0 4px;" id="cards-per-group-label">Carduri per grupă</label>
-        <input id="cards-per-group" type="number" min="1" style="width:100px;" />
-        <p id="deck-total-hint" style="font-size:12px; color:var(--grey); margin:6px 0 0;"></p>
         <div class="error-msg" id="groups-error"></div>
 
         <label style="display:block; font-size:13px; font-weight:600; margin:16px 0 6px;">Cum se extrag cardurile?</label>
@@ -189,12 +234,39 @@
         </div>
 
         <button class="btn gold" id="create-session-btn" style="margin-top:18px;">Creează sesiune și generează grupe</button>
+        </div>
+
+        <div id="cbn-create-fields" style="display:none;">
+          <p style="font-size:13px; color:var(--grey); margin-bottom:16px;">
+            Se creează un singur link, comun pentru toată echipa. Deck-ul folosește automat cardurile din <strong>toate seturile</strong> jocului „Colourblind" (nu doar setul selectat sus) — ai nevoie de cel puțin 3 carduri în total (2 pentru tine, minimum 1 pentru participanți).
+          </p>
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Număr de cursanți (opțional)</label>
+          <input id="cbn-expected-participants" type="number" min="0" value="0" style="width:100px;" />
+          <p style="font-size:12px; color:var(--grey); margin:6px 0 16px;">Dacă pui un număr &gt; 0, vezi live câți s-au alăturat din câți sunt așteptați, ca la Selecție. Lasă pe 0 dacă vrei doar să împarți cardurile la toți cei intrați până apeși „Pornește sesiunea", indiferent câți sunt.</p>
+          <div class="error-msg" id="cbn-create-error"></div>
+          <button class="btn gold" id="cbn-create-session-btn">Creează sesiunea Colourblind</button>
+        </div>
       </div>
 
       <div id="active-session-box" style="display:none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-          <p style="font-size:14px; margin:0;">Sesiune activă: <span class="badge" id="session-code-badge"></span></p>
-          <button class="btn danger" id="end-session-btn">Încheie sesiunea (toate grupele)</button>
+        <div id="group-link-section">
+        <button class="btn outline" id="toggle-groups-list-btn" style="font-size:13px; padding:8px 14px;">Linkuri & QR grupe ▾</button>
+        <div id="groups-list" style="display:none; flex-direction:column; gap:12px; margin-top:14px;"></div>
+        </div>
+
+        <div id="cbn-link-section" style="display:none;">
+          <h4 class="serif" style="margin:0 0 8px;">Linkul echipei (unul singur, comun tuturor)</h4>
+          <div class="code-box"><span class="code-label">Cod de sesiune:</span><b class="code-value" id="cbn-code"></b></div>
+          <div class="session-link-box" id="cbn-link-box" style="margin-bottom:10px;">
+            <span id="cbn-link-text"></span>
+            <button class="btn outline" id="cbn-link-copy-btn" style="padding:4px 10px; font-size:12px;">Copiază</button>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn outline" id="cbn-qr-btn" style="font-size:12px; padding:5px 10px;">Arată codul QR</button>
+            <button class="btn outline" id="cbn-qr-dl-png-btn" style="font-size:12px; padding:5px 10px;">⬇ Descarcă PNG</button>
+            <button class="btn outline" id="cbn-qr-dl-jpg-btn" style="font-size:12px; padding:5px 10px;">⬇ Descarcă JPG</button>
+          </div>
+          <img id="cbn-qr-img" style="display:none; margin-top:8px; width:160px; height:160px; border-radius:8px; border:1px solid var(--parchment-dark); background:#fff;" />
         </div>
 
         <div id="timer-panel" style="margin-top:16px; padding:14px; border:1px solid var(--parchment-dark); border-radius:10px; background:var(--card-bg);">
@@ -202,13 +274,16 @@
 
           <div id="timer-setup-box">
             <p style="font-size:12px; color:var(--grey); margin:0 0 8px;">Cursanții nu văd cardurile până pornești cronometrul (sau alegi să sari peste el).</p>
-            <div style="display:flex; gap:6px; align-items:center; font-size:13px; flex-wrap:wrap;">
+            <div style="display:flex; gap:6px; align-items:center; font-size:13px; flex-wrap:wrap; margin-bottom:10px;">
               <input id="timer-h" type="number" min="0" value="0" style="width:55px;" /><span>h</span>
               <input id="timer-m" type="number" min="0" max="59" value="15" style="width:55px;" /><span>m</span>
               <input id="timer-s" type="number" min="0" max="59" value="0" style="width:55px;" /><span>s</span>
-              <button class="btn gold" id="timer-start-btn">Pornește cronometrul</button>
             </div>
-            <button class="btn outline" id="timer-skip-btn" style="margin-top:10px;">Începe sesiunea fără cronometru</button>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn gold" id="timer-start-btn" style="font-size:13px; padding:8px 14px;">Start cronometru</button>
+              <button class="btn outline" id="timer-skip-btn" style="font-size:13px; padding:8px 14px;">Start fără timp</button>
+              <button class="btn outline" id="cancel-session-btn" style="display:none; font-size:13px; padding:8px 14px; border-color:var(--red); color:var(--red);">Anulează sesiunea</button>
+            </div>
           </div>
 
           <div id="timer-none-box" style="display:none;">
@@ -217,20 +292,20 @@
           </div>
 
           <div id="timer-running-box" style="display:none;">
-            <div id="timer-display" style="font-size:34px; font-family:'Fraunces',serif; font-weight:700; color:var(--green);">00:00:00</div>
+            <div id="timer-display" style="font-size:34px; font-family:'Fraunces',serif; font-weight:700; color:var(--green-text);">00:00:00</div>
             <p id="timer-status-label" style="font-size:12px; color:var(--grey); margin:2px 0 12px;"></p>
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
               <button class="btn outline" id="timer-pause-btn">Pauză</button>
-              <input id="timer-extend-min" type="number" min="1" value="5" style="width:60px;" />
-              <span style="font-size:12px;">minute</span>
+              <input id="timer-extend-min" type="number" min="0" value="5" style="width:55px;" />
+              <span style="font-size:12px;">min</span>
+              <input id="timer-extend-sec" type="number" min="0" max="59" value="0" style="width:55px;" />
+              <span style="font-size:12px;">sec</span>
               <button class="btn outline" id="timer-extend-btn">Adaugă timp</button>
             </div>
           </div>
         </div>
-
-        <button class="btn outline" id="toggle-groups-list-btn" style="margin-top:16px;">Arată linkurile și codurile QR ale grupelor ▾</button>
-        <div id="groups-list" style="display:none; flex-direction:column; gap:12px; margin-top:14px;"></div>
       </div>
+    </div>
     </div>
     </div>
 
@@ -308,7 +383,7 @@
     <input type="file" id="bulk-file-input" accept="image/*" multiple style="width:100%;" />
     <div id="bulk-preview" style="margin-top:16px; display:flex; flex-direction:column; gap:10px;"></div>
     <div class="error-msg" id="bulk-error"></div>
-    <div id="bulk-progress" style="font-size:13px; color:var(--green); margin-top:8px;"></div>
+    <div id="bulk-progress" style="font-size:13px; color:var(--green-text); margin-top:8px;"></div>
     <div style="display:flex; gap:10px; margin-top:16px; justify-content:flex-end;">
       <button class="btn outline" id="bulk-cancel-btn">Închide</button>
       <button class="btn" id="bulk-save-btn" disabled>Încarcă toate cardurile</button>
@@ -334,12 +409,16 @@
         Standard — evidențiere card + flip, la nivel de grupă
       </label>
       <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:6px;">
-        <input type="radio" name="gs-mode" value="colourblind" style="width:auto;" />
-        Colourblind — carduri private, per participant individual
+        <input type="radio" name="gs-mode" value="generic" style="width:auto;" />
+        Joc generic — carduri private, per participant individual
       </label>
-      <label style="display:flex; align-items:center; gap:8px; font-size:13px;">
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:6px;">
         <input type="radio" name="gs-mode" value="selection" style="width:auto;" />
         Selecție (Hardiness) — cursanții aleg carduri dintr-un deck comun al grupei
+      </label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px;">
+        <input type="radio" name="gs-mode" value="colourblind" style="width:auto;" />
+        Colourblind — trainerul are 2 carduri secrete, echipa ghicește verbal, în plen
       </label>
     </div>
     <div class="error-msg" id="gs-error"></div>

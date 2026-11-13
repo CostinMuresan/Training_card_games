@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Nodul comunicării</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="communication.css">
+<script src="theme.js"></script>
+</head>
+<body class="participant-page">
+  <header class="app-header">
+    <div>
+      <div class="eyebrow">Activitate online</div>
+      <h1 id="title">Nodul comunicării</h1>
+    </div>
+  </header>
+
+  <main>
+    <section id="error" class="panel" hidden></section>
+
+    <section id="join" class="panel" hidden>
+      <h2>Intră în activitate</h2>
+      <p>Alege un alias. Nu este necesară adresa de email.</p>
+      <input id="alias" maxlength="40" placeholder="Alias">
+      <button class="btn" id="join-btn">Intră</button>
+      <div class="error-msg" id="join-error"></div>
+      <div class="rule" id="alias-suggest" hidden>
+        <p id="alias-suggest-text"></p>
+        <button class="btn gold" id="alias-yes"></button>
+        <button class="btn outline" id="alias-no">Nu, aleg altul</button>
+      </div>
+    </section>
+
+    <section id="waiting" class="panel" hidden>
+      <h2>Ești înregistrat ca <span id="my-alias"></span></h2>
+      <p>Așteaptă ca trainerul să pornească activitatea.</p>
+    </section>
+
+    <section id="activity" hidden>
+      <div class="panel">
+        <span class="badge" id="round-badge"></span>
+        <h2 id="round-title"></h2>
+        <p class="rule" id="rule"></p>
+        <div id="content"></div>
+        <button class="btn gold submit-fixed" id="submit">Trimite răspunsul</button>
+        <p id="submitted" hidden>✓ Răspuns trimis. Poți să îl actualizezi până la schimbarea etapei.</p>
+      </div>
+    </section>
+
+    <section id="reveal" class="panel" hidden>
+      <h2 id="reveal-title">Compară și observă</h2>
+      <div id="reveal-content"></div>
+      <p>Așteaptă următoarea etapă indicată de trainer.</p>
+    </section>
+
+    <section id="debrief" class="panel" hidden>
+      <h2>Debrief</h2>
+      <ol id="debrief-list"></ol>
+      <div id="debrief-summary"></div>
+      <div class="transfer" id="debrief-transfer">Un client poate părea agresiv sau irațional când, de fapt, nu se simte înțeles. Clarificarea poate preveni escaladarea.</div>
+    </section>
+  </main>
+
+  <script>
+    // Diagnostic: arata erorile direct pe ecran (pe telefon nu exista consola).
+    (function () {
+      function show(msg) {
+        var e = document.getElementById("error");
+        if (!e || window.__commReady) return;
+        e.hidden = false;
+        e.textContent = msg;
+      }
+      window.addEventListener("error", function (ev) {
+        var t = ev.target;
+        if (t && t.tagName === "SCRIPT") show("Nu s-a putut încărca scriptul: " + (t.src || "inline"));
+        else show("Eroare: " + (ev.message || "necunoscută"));
+      }, true);
+      window.addEventListener("unhandledrejection", function (ev) {
+        show("Eroare: " + ((ev.reason && ev.reason.message) || ev.reason));
+      });
+      setTimeout(function () {
+        show("Pagina nu s-a încărcat complet (conexiune lentă sau blocată). Reîncarcă pagina.");
+      }, 10000);
+    })();
+  </script>
+  <script type="module" src="communication.js"></script>
+</body>
+</html>

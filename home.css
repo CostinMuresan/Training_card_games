@@ -1,0 +1,79 @@
+/* Pagina inițială (index.html) și hub-ul trainerului (trainer.html). Folosesc variabilele de temă: pagina inițială rămâne mereu pe aspectul implicit,
+   hub-ul primește tema trainerului. */
+body.home { margin: 0; background: var(--parchment); color: var(--ink); font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+.home-header { background: var(--green-deep); padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.home-header .eyebrow { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-soft); }
+.home-header h1 { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700; color: var(--on-header); line-height: 1.2; margin: 0; }
+.home-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.home-hbtn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 1px solid var(--gold-soft); border-radius: 8px; background: transparent; color: var(--gold-soft); text-decoration: none; font: 600 14px 'Inter', sans-serif; cursor: pointer; }
+.home-hbtn[hidden] { display: none; }
+.home-user { font-size: 13px; color: var(--on-header); }
+.home-main { flex: 1; width: 100%; max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 56px 24px 24px; }
+.home-main h1.big { font-family: 'Fraunces', serif; font-size: 42px; line-height: 1.15; margin: 0 0 12px; }
+.home-lead { margin: 0 0 32px; font-size: 18px; line-height: 1.5; color: var(--ink-soft); max-width: 640px; }
+.home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; align-items: stretch; }
+.home-card { background: var(--card-bg); border: 1px solid var(--parchment-dark); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 14px; box-sizing: border-box; }
+.home-card[hidden], .home-hbtn[hidden], .home-grid [hidden], .code-choices[hidden], .running[hidden] { display: none; }
+.home-card.primary { background: var(--green); border-color: var(--green); color: var(--on-primary); }
+.home-card h2 { font-family: 'Fraunces', serif; font-size: 28px; line-height: 1.2; margin: 0; }
+.home-card p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink-soft); }
+.home-card.primary p { color: var(--on-primary); }
+.card-top { display: flex; align-items: center; gap: 12px; }
+.card-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--accent-soft); color: var(--green-text); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.home-card.primary .card-icon { background: var(--green-deep); color: var(--gold-soft); }
+.card-eyebrow { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-text); font-weight: 600; }
+.home-card.primary .card-eyebrow { color: var(--gold-soft); }
+.home-card label { font-size: 14px; font-weight: 600; }
+.code-input { height: 48px; width: 100%; box-sizing: border-box; border: 2px solid transparent; border-radius: 10px; padding: 0 14px; font: 600 18px 'Inter', sans-serif; letter-spacing: 0.08em; background: var(--field-bg); color: var(--ink); }
+.code-input:focus, .home-gold:focus-visible, .home-btn:focus-visible, .home-hbtn:focus-visible, .home-link:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.home-gold { min-height: 48px; border: none; border-radius: 10px; background: var(--gold); color: var(--on-accent); font: 700 16px 'Inter', sans-serif; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.home-gold:disabled { opacity: .6; cursor: default; }
+.home-btn { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 10px; background: var(--green); color: var(--on-primary); text-decoration: none; font: 700 16px 'Inter', sans-serif; border: none; cursor: pointer; }
+.home-msg { min-height: 20px; font-size: 14px; font-weight: 600; }
+.home-card.primary .home-msg { color: var(--gold-soft); }
+.code-choices { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.code-choices button { width: 100%; min-height: 48px; border: 1px solid var(--gold-soft); border-radius: 10px; background: var(--green-deep); color: var(--on-primary); font: 600 15px 'Inter', sans-serif; cursor: pointer; text-align: left; padding: 0 14px; }
+.home-link { display: flex; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 14px; border: 1px solid var(--parchment-dark); border-radius: 12px; background: var(--field-bg); text-decoration: none; color: var(--ink); }
+.home-link strong { display: block; font-size: 16px; }
+.home-link span.sub { display: block; font-size: 13px; color: var(--ink-soft); line-height: 1.4; }
+.home-link .grow { flex: 1; }
+.home-note { margin: 28px 0 0; font-size: 14px; line-height: 1.5; color: var(--ink-soft); display: flex; gap: 8px; align-items: flex-start; }
+.home-footer { padding: 20px 24px 28px; text-align: center; font-size: 13px; color: var(--ink-soft); }
+.login-card { max-width: 440px; margin: 16px auto 0; padding: 36px; }
+.login-card h1 { font-family: 'Fraunces', serif; font-size: 34px; margin: 0 0 8px; }
+.login-card input { height: 48px; width: 100%; box-sizing: border-box; border: 1px solid var(--parchment-dark); border-radius: 10px; padding: 0 14px; font: 400 16px 'Inter', sans-serif; background: var(--field-bg); color: var(--ink); }
+.login-card input:focus { outline: 3px solid var(--gold); outline-offset: 2px; }
+.login-card .home-btn { margin-top: 10px; }
+.home-err { min-height: 18px; color: var(--red); font-size: 14px; font-weight: 600; }
+
+/* hub */
+.running { background: var(--card-bg); border: 1px solid var(--parchment-dark); border-radius: 14px; padding: 18px 20px; margin-bottom: 28px; }
+.running h2 { font-family: 'Fraunces', serif; font-size: 20px; margin: 0 0 10px; }
+.run-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 10px 0; border-top: 1px solid var(--parchment-dark); }
+.run-badge { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--on-accent); background: var(--gold); border-radius: 999px; padding: 4px 10px; }
+.run-main { flex: 1; min-width: 200px; }
+.run-main strong { display: block; font-size: 16px; }
+.run-main span { display: block; font-size: 13px; color: var(--ink-soft); }
+.run-go { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 18px; border-radius: 8px; background: var(--green); color: var(--on-primary); text-decoration: none; font-weight: 700; font-size: 14px; }
+.tile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; align-items: stretch; }
+.tile { background: var(--card-bg); border: 1px solid var(--parchment-dark); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: var(--ink); min-height: 260px; box-sizing: border-box; }
+.tile:hover { border-color: var(--green); }
+.tile:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.tile .card-icon { width: 52px; height: 52px; border-radius: 14px; }
+.tile-title { font-family: 'Fraunces', serif; font-size: 25px; font-weight: 700; line-height: 1.2; }
+.tile-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.tile-chips span { font-size: 12px; font-weight: 600; color: var(--ink); background: var(--select-bg); border-radius: 999px; padding: 4px 10px; }
+.tile-text { font-size: 15px; line-height: 1.5; color: var(--ink-soft); }
+.tile-open { margin-top: auto; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; color: var(--green-text); }
+@media (max-width: 700px) {
+  .home-header { padding: 14px 16px; }
+  .home-header h1 { font-size: 22px; }
+  .home-main { padding: 24px 16px 8px; }
+  .home-main h1.big { font-size: 30px; }
+  .home-lead { font-size: 15px; margin-bottom: 20px; }
+  .home-card { padding: 20px; }
+  .home-card h2 { font-size: 24px; }
+  .code-input, .home-gold, .home-btn { min-height: 52px; height: auto; }
+  .code-input { height: 52px; }
+  .login-card { padding: 24px 20px; }
+}

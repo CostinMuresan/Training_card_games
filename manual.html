@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="ro" data-theme-role="trainer">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Manual de utilizare · Carduri de training</title>
+<title>Manual de utilizare · Training Activities</title>
 <link rel="stylesheet" href="style.css" />
 <style>
   .manual-wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 80px; }
   .manual-wrap h2 { font-size: 22px; margin-top: 46px; padding-top: 10px; border-top: 1px solid var(--parchment-dark); }
   .manual-wrap h2:first-of-type { border-top: none; margin-top: 20px; }
-  .manual-wrap h3 { font-size: 17px; margin-top: 26px; color: var(--green-deep); }
+  .manual-wrap h3 { font-size: 17px; margin-top: 26px; color: var(--green-text); }
   .manual-wrap p, .manual-wrap li { font-size: 15px; line-height: 1.65; }
   .manual-wrap ul, .manual-wrap ol { padding-left: 22px; }
   .manual-wrap li { margin-bottom: 6px; }
@@ -17,12 +17,13 @@
   .toc { background: var(--card-bg); border: 1px solid var(--parchment-dark); border-radius: 12px; padding: 20px 24px; margin: 24px 0 40px; }
   .toc h3 { margin: 0 0 10px; color: var(--ink); }
   .toc ol { columns: 2; column-gap: 30px; }
-  .toc a { color: var(--green-deep); text-decoration: none; font-size: 14px; }
+  .toc a { color: var(--green-text); text-decoration: none; font-size: 14px; }
   .toc a:hover { text-decoration: underline; }
   .note { background: var(--parchment); border-left: 4px solid var(--gold); border-radius: 6px; padding: 10px 16px; font-size: 14px; margin: 14px 0; }
-  .warn { background: #FCEAE8; border-left: 4px solid var(--red); border-radius: 6px; padding: 10px 16px; font-size: 14px; margin: 14px 0; }
+  .warn { background: var(--danger-bg); border-left: 4px solid var(--red); border-radius: 6px; padding: 10px 16px; font-size: 14px; margin: 14px 0; }
   @media (max-width: 640px) { .toc ol { columns: 1; } }
 </style>
+<script src="theme.js"></script>
 </head>
 <body>
 
@@ -46,19 +47,24 @@
     <li><a href="#al-doilea-verso">Al doilea verso (cazuri excepționale)</a></li>
     <li><a href="#bulk-upload">Încărcare în bulk</a></li>
     <li><a href="#creare-standard">Creare sesiune — mod Standard</a></li>
-    <li><a href="#creare-colourblind">Creare sesiune — mod Colourblind</a></li>
+    <li><a href="#creare-generic">Creare sesiune — Joc generic</a></li>
     <li><a href="#creare-selectie">Creare sesiune — mod Selecție (Hardiness)</a></li>
     <li><a href="#linkuri-qr">Linkuri și coduri QR</a></li>
     <li><a href="#cronometru">Cronometrul sesiunii</a></li>
     <li><a href="#control-live">Control live: evidențiere și flip</a></li>
     <li><a href="#prezenta">Prezența cursanților (mod Standard)</a></li>
-    <li><a href="#live-colourblind">În timpul sesiunii — Colourblind</a></li>
+    <li><a href="#live-generic">În timpul sesiunii — Joc generic</a></li>
     <li><a href="#live-selectie">În timpul sesiunii — Selecție</a></li>
     <li><a href="#gestiune-manuala">Gestionarea manuală a cardurilor unei grupe</a></li>
     <li><a href="#zoom">Zoom pe imagini</a></li>
     <li><a href="#incheiere">Încheierea sesiunii</a></li>
     <li><a href="#pagina-cursant">Ce vede cursantul</a></li>
     <li><a href="#blocaje">Blocaje de siguranță</a></li>
+    <li><a href="#creare-colourblind-nou">Creare sesiune — mod Colourblind</a></li>
+    <li><a href="#live-colourblind-nou">În timpul sesiunii — Colourblind</a></li>
+    <li><a href="#nodul-comunicarii">Nodul comunicării — trei activități online</a></li>
+    <li><a href="#recapitulare">Recapitulare — două echipe, întrebări aruncate ca bulgări de hârtie</a></li>
+    <li><a href="#tema">Tema de culori</a></li>
   </ol>
 </div>
 
@@ -75,8 +81,9 @@
 <p>La crearea sau editarea unui joc, alegi și <strong>tipul lui</strong> — aceasta e alegerea cea mai importantă, pentru că schimbă complet cum funcționează sesiunile pentru acel joc:</p>
 <ul>
   <li><strong>Standard</strong> — trainerul evidențiază carduri și activează răsturnarea, la nivel de grupă; toți membrii unei grupe văd același lucru</li>
-  <li><strong>Colourblind</strong> — fiecare participant dintr-o grupă primește propriul link, cu un set privat de carduri, invizibil colegilor lui</li>
+  <li><strong>Joc generic</strong> — fiecare participant dintr-o grupă primește propriul link, cu un set privat de carduri, invizibil colegilor lui</li>
   <li><strong>Selecție (Hardiness)</strong> — cursanții intră toți pe linkul comun al grupei și își aleg individual cardurile preferate dintr-un deck comun</li>
+  <li><strong>Colourblind</strong> — trainerul are 2 carduri secrete; toată echipa (o singură grupă, un singur link) discută verbal, fără să-și arate ecranele, și încearcă să le ghicească — vezi secțiunile 20-21</li>
 </ul>
 <div class="note">Opțiunile din liste sunt ordonate alfabetic. Dacă nu ai nicio alegere salvată dintr-o sesiune de lucru anterioară, listele pornesc pe „— Alege un joc —" / „— Alege un set —", fără să selecteze automat prima opțiune.</div>
 <p>Un joc nu poate fi șters cât timp mai conține seturi — șterge întâi seturile lui. Ștergerea unui set nu afectează cardurile din el: ele rămân în baza de date, doar fără set asignat.</p>
@@ -120,7 +127,7 @@
 </ul>
 <p>Apasă <strong>„Creează sesiune și generează grupe"</strong>.</p>
 
-<h2 id="creare-colourblind">7. Creare sesiune — mod Colourblind</h2>
+<h2 id="creare-generic">7. Creare sesiune — Joc generic</h2>
 <p>Formularul de creare arată identic cu cel de la Standard (număr de grupe, carduri per grupă, mod de extragere) — cardurile alocate aici formează „rezerva" grupei, din care vei împărți ulterior mâinile private ale participanților (secțiunea 13).</p>
 
 <h2 id="creare-selectie">8. Creare sesiune — mod Selecție (Hardiness)</h2>
@@ -135,35 +142,37 @@
 <div class="warn">Cronometrul sesiunii nu poate porni decât după ce <strong>toți</strong> cursanții, din <strong>toate</strong> grupele, și-au ales cardurile — vezi secțiunea 10.</div>
 
 <h2 id="linkuri-qr">9. Linkuri și coduri QR</h2>
-<p>Fiecare grupă primește <strong>propriul link</strong> și <strong>propriul cod QR</strong> (folosit la toate cele trei moduri — la Colourblind, participanții individuali primesc, în plus, linkuri separate ale lor, vezi secțiunea 13). Lista de grupe e restrânsă implicit — apasă <strong>„Arată linkurile și codurile QR ale grupelor"</strong> pentru a o deschide.</p>
+<p>Fiecare grupă primește <strong>propriul link</strong> și <strong>propriul cod QR</strong> (folosit la modurile Standard, Selecție și Joc generic — la Joc generic, participanții individuali primesc, în plus, linkuri separate ale lor, vezi secțiunea 13; Colourblind are un link unic, propriu, vezi secțiunea 20). Lista de grupe e restrânsă implicit — apasă <strong>„Linkuri & QR grupe"</strong> pentru a o deschide.</p>
 <p>Pentru fiecare grupă poți: <strong>copia</strong> linkul, <strong>afișa</strong> codul QR direct în pagină, sau <strong>descărca</strong> o versiune PNG/JPG la rezoluție mare (600×600px), potrivită pentru afișare pe un ecran separat sau pentru print.</p>
 
 <h2 id="cronometru">10. Cronometrul sesiunii</h2>
 <p>Cronometrul funcționează la nivelul <strong>întregii sesiuni</strong>, nu per grupă — pornește, se pune pe pauză sau se prelungește simultan, pentru toate grupele, la orice mod de joc.</p>
 <ul>
-  <li>Setezi ore, minute și secunde, apoi apeși <strong>„Pornește cronometrul"</strong></li>
-  <li>Sau apeși <strong>„Începe sesiunea fără cronometru"</strong> — cardurile devin vizibile cursanților, fără nicio numărătoare afișată</li>
+  <li>Setezi ore, minute și secunde, apoi apeși <strong>„Start cronometru"</strong></li>
+  <li>Sau apeși <strong>„Start fără timp"</strong> — cardurile devin vizibile cursanților, fără nicio numărătoare afișată</li>
+  <li>Înainte să apeși oricare din cele două, mai ai și <strong>„Anulează sesiunea"</strong> — util dacă ai creat sesiunea din greșeală (grupe greșite, joc greșit) și vrei s-o închizi înainte s-o vadă cineva. Odată ce sesiunea a fost lansată (una din cele două opțiuni de mai sus), acest buton dispare — vezi secțiunea 17</li>
   <li><strong>Pauză / Reia</strong> — îngheață sau repornește numărătoarea la toți cursanții deodată</li>
-  <li><strong>Adaugă timp</strong> — introduci câte minute vrei să adaugi; funcționează atât cât timp cronometrul rulează, cât și în pauză</li>
+  <li><strong>Adaugă timp</strong> — introduci câte minute și secunde vrei să adaugi; funcționează atât cât timp cronometrul rulează, cât și în pauză</li>
 </ul>
-<div class="warn">La modul <strong>Selecție</strong>, ambele butoane de pornire (cu sau fără cronometru) rămân blocate până când toți cursanții, din toate grupele sesiunii, și-au ales cardurile — nu există opțiune de pornire manuală forțată.</div>
+<div class="warn">La modul <strong>Selecție</strong>, dacă nu toți cursanții din toate grupele au ales încă, apeși oricum butonul de pornire și primești un avertisment cu situația exactă pe grupe — poți alege să continui, sau să anulezi și să mai aștepți.</div>
 <p>La expirare, cursanții văd un ecran negru semitransparent, cu mesajul „⏰ Timpul a expirat". Cardurile nu se blochează în acest moment — tu decizi separat când închei efectiv sesiunea.</p>
 <div class="note">Dacă încerci să închizi sau să reîncarci pagina de admin cât timp ai o sesiune activă, browserul afișează un avertisment de confirmare, ca să nu pierzi accidental controlul unei sesiuni în desfășurare.</div>
 
 <h2 id="control-live">11. Control live: evidențiere și flip</h2>
 <p>Panoul „Control carduri (sesiune live)" are câte un <strong>tab pentru fiecare grupă</strong>. Selectezi o grupă, iar acțiunile de mai jos se aplică <em>doar</em> ei, cu excepția celor marcate explicit „Toate grupele".</p>
-<p>Comutatoarele de flip apar la modurile <strong>Standard</strong> și <strong>Selecție</strong> (nu la Colourblind, unde nu există flip):</p>
+<p>Comutatoarele de flip apar la modurile <strong>Standard</strong> și <strong>Selecție</strong> (nu la Joc generic sau Colourblind, unde nu există flip):</p>
 <ul>
   <li><strong>Grupa curentă</strong> — un comutator (on/off) care activează sau dezactivează flip-ul pe tot deck-ul grupei selectate, plus butonul „Dezactivează și întoarce la față"</li>
   <li><strong>Toate grupele</strong> — același comutator, dar aplicat simultan tuturor grupelor din sesiune</li>
 </ul>
 <p>Cele două comutatoare rămân sincronizate cu realitatea: dacă activezi flip pe fiecare grupă în parte și ajungi să le activezi pe toate, comutatorul „Toate grupele" se aprinde singur; dacă dezactivezi flip pe măcar o grupă, comutatorul „Toate grupele" se stinge.</p>
 <p>La modul <strong>Standard</strong>, mai poți: da click pe un card pentru a-l evidenția live la grupa selectată (contur verde pulsatoriu, vizibil pe orice fundal).</p>
+<p>Lângă tab-urile de sus, cât timp ai o sesiune activă, apare și butonul <strong>„⇄ Vezi pe o coloană / pe două coloane"</strong> — schimbă pe loc așezarea ecranului (o singură coloană lată, sau două mai compacte). Implicit, Standard pornește pe o coloană (mai mult spațiu pentru grila de carduri), iar Joc generic/Selecție/Colourblind pornesc pe două — dar poți suprascrie oricând cu acest buton; alegerea ta rămâne salvată în acest browser, pentru orice sesiune viitoare.</p>
 
 <h2 id="prezenta">12. Prezența cursanților (mod Standard)</h2>
 <p>Dacă ai completat „Cursanți așteptați per grupă" la crearea sesiunii, în panoul de control apare un indicator live: <strong>„👤 Prezență: 3 / 4"</strong>. Fiecare cursant care deschide linkul grupei primește, invizibil, un id salvat local în browser-ul lui (o singură dată — refresh-ul nu mai creează unul nou), ceea ce permite acest număr live.</p>
 
-<h2 id="live-colourblind">13. În timpul sesiunii — Colourblind</h2>
+<h2 id="live-generic">13. În timpul sesiunii — Joc generic</h2>
 <p>Pentru grupa selectată, panoul arată:</p>
 <ul>
   <li><strong>Participanți</strong> — adaugi oameni, fiecare primește propriul link</li>
@@ -175,7 +184,7 @@
 
 <h2 id="live-selectie">14. În timpul sesiunii — Selecție</h2>
 <p>Panoul arată, pentru toate grupele deodată, <strong>„Progres — toate grupele"</strong>: un rând per grupă, cu progresul curent („2 / 3 au ales"). Grupele complete apar cu <strong>fundal verde deschis</strong>, ca să le identifici dintr-o privire — click pe orice rând te duce direct la detaliile ei.</p>
-<p>Detaliile grupei selectate arată câte un rând per cursant (etichetat „Cursant 1", „Cursant 2" etc. — cursanții nu introduc nume, se înregistrează silențios) cu statusul lui: „…încă alege" sau „✓ A ales: [titlurile cardurilor]".</p>
+<p>Detaliile grupei selectate arată câte un rând per cursant (etichetat „Cursant 1", „Cursant 2" etc. — cursanții nu introduc nume, se înregistrează silențios) cu statusul lui: „…încă alege" sau „✓ A ales: [titlurile cardurilor]". Lângă fiecare, butonul <strong>🗑 Elimină</strong> șterge participantul (și alegerea lui, dacă a apucat s-o facă) — util dacă a intrat cineva în plus pe linkul grupei (ex. chiar tu, testând).</p>
 <p>Progresul se actualizează live, iar dacă din orice motiv conexiunea live nu funcționează, panoul se reverifică automat la fiecare 5 secunde.</p>
 
 <h2 id="gestiune-manuala">15. Gestionarea manuală a cardurilor unei grupe</h2>
@@ -191,12 +200,14 @@
 <p>La cardurile cu al doilea verso (secțiunea 4), lightbox-ul afișează și o etichetă („Verso — pagina 1 din 2" / „pagina 2 din 2"), ca să știi mereu ce pagină vezi mărită.</p>
 
 <h2 id="incheiere">17. Încheierea sesiunii</h2>
-<p>Butonul <strong>„Încheie sesiunea (toate grupele)"</strong> apare în <strong>două locuri</strong>, ambele fac exact același lucru: sus, chiar lângă titlul „Control carduri (sesiune live)", și în panoul „Sesiune și grupuri", lângă codul sesiunii. Apăsarea lui închide toate grupele simultan — cursanții primesc live mesajul de sesiune încheiată, fără să reîncarce pagina. Editarea deck-ului și selectorul de joc/set se deblochează automat imediat după.</p>
+<p>Butonul <strong>„Încheie sesiunea"</strong> apare lângă tab-urile „Sesiuni & Control live" / „Administrare carduri", mereu vizibil, indiferent pe ce tab ești sau cât ai derulat pe ecran — dar doar <em>după</em> ce sesiunea a fost efectiv lansată (ai apăsat „Start cronometru" sau „Start fără timp"). Apăsarea lui închide toate grupele simultan — cursanții primesc live mesajul de sesiune încheiată, fără să reîncarce pagina. Editarea deck-ului și selectorul de joc/set se deblochează automat imediat după.</p>
+<p>Dacă ai creat o sesiune dar încă n-ai apăsat niciunul din cele două butoane de pornire, acest buton nu apare încă — în locul lui, ai <strong>„Anulează sesiunea"</strong>, în panoul cronometrului (secțiunea 10), pentru exact acest caz.</p>
 
 <h2 id="pagina-cursant">18. Ce vede cursantul</h2>
 <p><strong>Mod Standard:</strong> numele grupei (afișat permanent), cardurile alocate grupei lui, cu forma reală a imaginii; la click pe un card cu flip activat, animație 3D de răsturnare; derulare automată la cardul evidențiat de trainer.</p>
-<p><strong>Mod Colourblind:</strong> participantul intră pe linkul lui personal și vede doar mâna lui privată de carduri — invizibile celorlalți din grupă. După dezvăluirea soluției, apare live secțiunea cu tiparul-țintă complet.</p>
+<p><strong>Joc generic:</strong> participantul intră pe linkul lui personal și vede doar mâna lui privată de carduri — invizibile celorlalți din grupă. După dezvăluirea soluției, apare live secțiunea cu tiparul-țintă complet.</p>
 <p><strong>Mod Selecție:</strong> cursantul intră pe linkul comun al grupei, vede tot deck-ul comun, bifează până la N carduri și apasă <strong>„Am ales"</strong> (buton fix pe ecran, mereu vizibil, indiferent cât derulează). După ce apasă, îi rămân vizibile doar cardurile alese de el; când toată grupa a terminat, i se arată live uniunea cardurilor alese de toată echipa.</p>
+<p><strong>Mod Colourblind:</strong> participantul își alege un alias (nu email) pe linkul unic al echipei și așteaptă — vede mesajul „sesiunea nu a început încă" — până când trainerul pornește sesiunea. Din acel moment, își vede propriile carduri, complet (formă și culoare), plus orice card al trainerului pe care acesta îl dezvăluie, live, pe rând. La finalul rundei, „marele reveal" îi arată dintr-o privire cine a avut ce, în toată echipa. Detalii complete la secțiunile 20-21.</p>
 <p>Cursanții nu au nevoie de cont — intră direct pe link. Sincronizarea funcționează și pe rețele care blochează WebSocket-uri, printr-un mecanism automat de verificare periodică.</p>
 
 <h2 id="blocaje">19. Blocaje de siguranță</h2>
@@ -204,6 +215,65 @@
   <li><strong>Deck blocat</strong> — editarea cardurilor dintr-o combinație (joc + set) se dezactivează cât timp există o sesiune activă care folosește exact acea combinație, indiferent care trainer a creat-o. Mesajul afișat arată exact cine are sesiunea deschisă.</li>
   <li><strong>Selector blocat</strong> — cât timp ai propria sesiune activă, nu poți schimba jocul sau setul ales, ca să nu ajungă accidental carduri din alt set în sesiunea live.</li>
 </ul>
+
+<h2 id="creare-colourblind-nou">20. Creare sesiune — mod Colourblind</h2>
+<p>Mecanica: tu (trainerul) ai <strong>2 carduri secrete</strong>, alese aleatoriu. Toată echipa — o singură grupă, un singur link, fără sub-grupe — discută <strong>doar verbal, fără să-și arate ecranele</strong>, descriind unii altora propriile carduri, și încearcă să ghicească cele 2 ale tale.</p>
+<p>Formularul de creare e minimal — nu alegi grupe, nici carduri per grupă:</p>
+<ul>
+  <li>Deck-ul folosește automat <strong>toate seturile</strong> jocului „Colourblind" (nu doar setul selectat sus în pagină) — ai nevoie de cel puțin 3 carduri, în total, pe toate seturile</li>
+  <li>2 carduri sunt alese aleatoriu pentru tine, chiar la creare</li>
+  <li>Apeși <strong>„Creează sesiunea Colourblind"</strong> — primești imediat linkul unic al echipei (secțiunea 9 descrie linkurile per-grupă; aici e un singur link, afișat similar, cu QR și descărcare)</li>
+</ul>
+<div class="note">Nu există câmp pentru „număr de grupe" sau „carduri per grupă" la acest mod — nu au sens, fiindcă nu există sub-grupe și deck-ul e fix, cel al jocului întreg.</div>
+
+<h2 id="live-colourblind-nou">21. În timpul sesiunii — Colourblind</h2>
+<p><strong>Înainte de „Pornește sesiunea":</strong> cursanții își aleg alias-ul (text liber, fără email) pe linkul echipei și apar, live, în lista de participanți — dar nimeni nu vede încă niciun card. Panoul tău arată câți s-au alăturat până acum.</p>
+<p><strong>Cardurile tale</strong> apar sus, cu un buton <strong>„Dezvăluie"</strong> pentru fiecare — poți arăta una, alta, sau ambele, în orice ordine, în orice moment al rundei; o dată dezvăluit, un card rămâne vizibil tuturor participanților (nu poți „ascunde" înapoi).</p>
+<p>Apeși <strong>„Pornește sesiunea"</strong> când vrei să înceapă — din acel moment, restul cardurilor din deck (minus cele 2 ale tale) se împart automat între cei alăturați până în acel moment: <strong>cât mai egal ca număr</strong>, dar <strong>ce anume</strong> primește fiecare e aleatoriu. Cei care se alătură <em>după</em> acest moment nu mai primesc carduri la runda curentă.</p>
+<p>Lista de participanți arată, live, alias-ul fiecăruia și thumbnail-urile cardurilor lui (click pentru zoom) — util ca să urmărești ce anume are fiecare, cât echipa discută verbal.</p>
+<p>La final, <strong>„🎉 Marele reveal"</strong> (ireversibil) arată tuturor cursanților, dintr-o privire, exact ce vezi și tu: cine a avut ce, plus cele 2 carduri ale tale, indiferent dacă le-ai dezvăluit deja pe toate sau nu.</p>
+<div class="note">O singură rundă per sesiune — cardurile se împart o dată; pentru o rundă nouă, încheie sesiunea și creează una nouă.</div>
+
+<section class="panel" id="nodul-comunicarii"><h3>22. Nodul comunicării — trei activități online</h3><p>Din panoul Admin, apasă <b>🧩 Nodul comunicării</b>. Alege unul dintre cele trei moduri, distribuie linkul participanților și avansează controlat prin etapele fiecărui mod (descrise mai jos, pentru fiecare mod).</p><ul><li><b>Desenează după instrucțiuni:</b> participanții desenează individual pe canvas, cu creion, <b>forme (dreptunghi, triunghi, cerc — se trag în diagonală; după ce le-ai tras rămân selectate: le rotești liber trăgând mânerul rotund, le muți trăgându-le, le recolorezi alegând o culoare, apoi apeși „✓ Gata” sau „✕” ca să le fixezi sau să le ștergi)</b>, paletă de culori (plus culoare la alegere), radieră și „Șterge tot”; pe ecran au un bloc „Cum desenezi” cu instrucțiuni. Butonul <b>„▦ Grilă”</b> afișează <b>pătrățele de reper</b> (12 coloane, A–L, și 9 rânduri, 1–9), cu <b>numerotarea în afara zonei de desen</b> (literele deasupra, cifrele în stânga), ca să poți spune „începe în C4” sau „cercul în F6”; <b>participantul o pornește și o oprește singur</b>; <b>implicit e oprită, la toți</b>, pe laptop și pe telefon, iar alegerea se păstrează doar în sesiunea curentă (o sesiune nouă începe mereu cu grila oprită), iar grila <b>nu apare în desenul trimis</b>. La reveal și la „Desenele tuturor” are o bifă „Pătrățele” (peste desene și peste modelul de referință), iar <b>trainerul are grila pornită implicit</b>, cu numerotare, peste <b>modelul din „Instrucțiuni trainer”</b> și peste <b>desenele participanților din „Rezultate”</b>, ca să poată da și verifica indicații precise, cu coordonate („începe în C4”). O poate opri din bifa „Pătrățele” de lângă model sau din „Rezultate” (cele două bife merg împreună, iar alegerea rămâne pe dispozitiv). Pot retrimite desenul: se păstrează ultima versiune. În „Rezultate” și la „Desenele tuturor” desenele apar ca miniaturi (aplicația rămâne rapidă și la grupuri mari); <b>atinge un desen ca să-l vezi mărit</b> (Escape sau un click îl închide). <b>Scenariile sunt ale tale:</b> în „Scenariile mele” (pe pagina Nodul comunicării, înainte să pornești o sesiune) creezi un scenariu cu nume și una sau mai multe runde (până la 10), fiecare cu instrucțiunile pe care le vei rosti ca <b>listă numerotată</b> (scrii câte una pe rând; numerotarea e automată), opțional o <b>imagine de referință</b> (PNG, JPG sau BMP) și dacă participanții pot pune întrebări în acea rundă. La sfârșitul formularului ai secțiunea <b>„Întrebări de debrief (opțional)”</b>: scrii <b>întrebările de debrief ale acelui scenariu</b>, câte una pe rând (cel mult 10, fiecare de cel mult 300 de caractere; numerotarea e automată), cu previzualizare. <b>„Încarcă întrebările standard”</b> le pune în câmp ca să le modifici, iar <b>gol</b> înseamnă că se folosesc cele standard. Se aplică și la „Ce ai înțeles?” (la scenariile tale, inclusiv cele copiate din cele de bază). Participanții și tu le vedeți la etapa „Debrief”; cu întrebări proprii, textul standard de sub listă se ascunde. Sesiunea păstrează o copie a întrebărilor, deci modificările ulterioare nu o schimbă. Scenariile sunt private: le vezi doar tu. În Lobby alegi scenariul din listă. În „Instrucțiuni trainer” vezi instrucțiunile numerotate, iar cu <b>Arată modelul</b> (ascuns în timpul rundei, vizibil implicit la Reveal) imaginea de referință; în „Rezultate” bifează <b>Suprapune modelul</b> ca să vezi imaginea, în roșu, peste desenul fiecărui participant. La pasul <b>Reveal</b>, fiecare participant vede, pe pagina lui, instrucțiunile originale și propriul desen cu butoanele <b>Desenul meu / Modelul / Suprapus</b>. <b>După fiecare Reveal</b> urmează pasul <b>Desenele tuturor</b>: fiecare participant vede modelul (dacă runda are imagine), apoi <b>desenul propriu primul</b> și desenele celorlalți, <b>anonim</b> (fără aliasuri; tu vezi aliasurile în „Rezultate”), cu o bifă „Suprapune modelul” pentru toate desenele. Desenul de pe canvas se trimite automat când treci la pasul următor, dacă are ceva desenat. Etapele: Lobby → pentru fiecare rundă N: Runda N → Reveal N → Desenele tuturor (runda N) → Debrief; numărul de runde îl stabilești în scenariu.</li><li><b>Reconstruiește modelul:</b> piese geometrice pe o grilă 4×4, în <b>exact 3 runde</b>, fiecare cu un alt model și un alt stil de descriere pe care o citești tu, fără să arăți grila: <b>runda 1 — interpretabilă</b> (indicii vagi, de ex. „lângă cerc”; aceeași descriere se potrivește mai multor așezări), <b>runda 2 — stufoasă</b> (informația corectă e acolo, dar îngropată în cuvinte), <b>runda 3 — exactă, cu sistem de referință</b> (rând și coloană pentru fiecare piesă; pe ecranul participanților rândurile și coloanele sunt numerotate). În fiecare rundă: <b>(1) poziționare</b> — participanții așază piesele, iar ce au pe grilă se trimite automat când treci la pasul următor; <b>(2) reveal individual</b> — fiecare vede modelul și ce a realizat (verde = piesă la locul ei, roșu = greșită sau în plus, plus scorul); <b>(3) rezultatele tuturor</b> — fiecare participant vede modelul, rezultatul propriu (primul) și rezultatele celorlalți, <b>anonim</b>; tu vezi aliasurile. Apoi urmează runda următoare, iar după runda 3 — debrief. Pentru fiecare rundă vezi stilul, o indicație și descrierea gata scrisă, de citit. <b>În Lobby</b> poți apăsa „👁 Previzualizează modelele” ca să vezi cele 3 modele pe grila 4×4 (și descrierile) înainte de start; e ascuns implicit, ca să nu apară pe ecranul proiectat, iar „🎲 Altă variantă” le schimbă. <b>La Debrief</b> apar 6 întrebări pe cele 3 runde (dacă ai puțin timp: 2, 4 și 6) și un rezumat al scorurilor pe runde: pe ecranul fiecărui participant, scorul lui și media grupului, anonim.</li><li><b>Ce ai înțeles?:</b> participanții formulează interpretări (runda 1), întrebări de clarificare (runda 2) și răspunsuri pentru mesaje ambigue. După fiecare Reveal urmează un pas nou, <b>Răspunsurile tuturor</b>: fiecare participant vede, pe ecranul lui, răspunsurile tuturor colegilor, <b>anonim</b> (fără aliasuri), cu al lui primul și fără informația lipsă (aceasta rămâne vizibilă doar pentru tine, ca trainer). Etapele sunt: Lobby → Runda 1 → Reveal 1 → Răspunsurile tuturor (runda 1) → Runda 2 → Reveal 2 → Răspunsurile tuturor (runda 2) → Debrief. Ce a scris un participant și nu a trimis se salvează automat când treci la pasul următor. <b>Scenariile</b>: în „Scenariile mele” → fila „Ce ai înțeles?” creezi scenarii cu 1 sau 2 runde (mesajul clientului + informația lipsă, pe care o vezi doar tu), le editezi sau le ștergi; cele 4 scenarii de bază nu se modifică, dar le poți <b>copia</b> în scenariile tale ca punct de pornire. În Lobby alegi scenariul din listă; un scenariu cu o singură rundă sare peste runda 2.</li></ul><p>La model se alege automat o <b>variantă</b> (cele 3 modele și textele lor se generează diferit de fiecare dată); în Lobby o poți schimba cu <b>🎲 Altă variantă</b>. La desen și la „Ce ai înțeles?” alegi tu scenariul, din listă (la „Ce ai înțeles?” implicit se folosește ultimul ales). Sub linkul participanților ai <b>cod QR</b> și butoane de descărcare PNG/JPG, ca la celelalte jocuri.</p><p>Dacă doi participanți aleg același alias, al doilea este întrebat dacă vrea să apară cu un sufix, de exemplu „Ana (2)”. <b>Participanții:</b> titlul listei arată câți s-au înscris, de ex. „Participanți (12)”, în Lobby și pe tot parcursul activității. <b>Navigarea între etape:</b> deasupra butoanelor „← Etapa anterioară” și „Etapa următoare →” vezi un hint cu numele etapei la care ajungi dacă apeși butonul de dedesubt. Butonul <b>Încheie</b> cere confirmare; după încheiere rămân vizibile rezultatele tuturor rundelor, iar pentru o sesiune nouă alegi din nou o activitate.</p></section>
+<section class="panel" id="recapitulare"><h3>23. Recapitulare — două echipe, întrebări aruncate ca bulgări de hârtie</h3>
+<p>Modul independent, care poate urma după <b>orice activitate</b> (un joc cu cărți, o activitate din Nodul comunicării sau un curs fără joc): participanții sunt împărțiți aleatoriu în două echipe și își scriu întrebări pentru echipa adversă. Este o <b>activitate de sine stătătoare</b>, nelegată de Nodul comunicării: o deschizi din <b>meniul trainerului</b> (pagina <code>trainer.html</code>), cu placa <b>Recapitulare</b>, sau direct la <code>recap-admin.html</code> (poți pune linkul la favorite). Se folosește la fel după orice activitate sau fără nicio activitate înainte.</p>
+<ol>
+<li><b>Creează sesiunea:</b> scrii tema recapitulării (apare pe ecranele participanților) și stabilești <b>numărul maxim de întrebări pe participant</b> într-un câmp numeric cu săgeți (<b>0 = fără limită</b>; nu coboară sub 0), apoi apeși „Creează sesiunea”. Primești link și cod QR, ca la celelalte activități. Limita o poți schimba oricând, cât timp sesiunea nu e încheiată, din panoul sesiunii: participanții își văd „Întrebări rămase: 2 din 3” și, la limită, câmpul se dezactivează (regula e impusă și în baza de date). Pe ecranul de creare și în panoul sesiunii ai un bloc <b>„📖 Instrucțiuni”</b> cu pașii.</li>
+<li><b>Lobby:</b> participanții intră cu un alias (fără cont). Vezi „Participanți (n)”. Nu li se afișează echipele încă.</li>
+<li><b>Start:</b> în Lobby alegi <b>„Start cu timp”</b> (cu minutele și secundele scrise alături; implicit 5 min 0 sec) sau <b>„Start fără timp”</b>. La start, participanții sunt împărțiți aleatoriu în echipa <b>Roșii</b> și echipa <b>Albaștri</b>, cât mai egal (minimum 2 participanți). Cine intră mai târziu este pus automat în echipa mai mică. „🔀 Reîmparte echipele” amestecă din nou; întrebările deja aruncate rămân la echipa care le-a aruncat.</li>
+<li><b>Pe telefon, panoul de scris se poate minimiza:</b> participanții au sus, în panoul de scris, o <b>bară „✏️ Scrie o întrebare”</b> (cu câte întrebări le mai rămân). O ating ca să strângă panoul la o singură bară și să aibă loc pentru lista de întrebări, și o ating din nou ca să-l deschidă (cursorul ajunge în câmp). Panoul se <b>strânge singur după fiecare întrebare trimisă</b> și cât <b>nu se mai poate scrie</b> (limita atinsă, pauză, timp expirat); textul început nu se pierde la minimizare (bara spune „Continuă întrebarea”). Câmpul de scris e mai mic pe telefon și crește singur pe măsură ce scrii. Pe laptop nu se schimbă nimic.</li>
+<li><b>Bara live și „Permite aruncarea”:</b> cât timp jocul rulează, deasupra câmpului de luptă ai o <b>bară live</b>, care <b>rămâne vizibilă când derulezi</b>. În ea ai <b>comutatorul „Aruncare”</b> (mare, cu starea scrisă: „Aruncare oprită” / „Aruncare permisă”, și o confirmare scurtă la fiecare schimbare) și <b>cronometrul</b> (timpul, Pauză/Reia, <b>+1 min</b>, Adaugă timp). Comutatorul controlează butonul <b>„↩ Aruncă înapoi”</b> din dreptul întrebărilor primite și este <b>oprit implicit</b>; îl poți porni și opri <b>oricând, de câte ori vrei</b>. <b>Cât e oprit</b>, fiecare participant poate <b>scrie și trimite întrebări către echipa adversă</b>, în limita pe care ai stabilit-o (<b>0 = nelimitat</b>), dar în dreptul întrebărilor <b>nu apare niciun buton</b>. <b>Când îl pornești</b>, în acel moment <b>apare butonul „Aruncă înapoi”</b> la fiecare întrebare primită de la echipa adversă, iar echipele le pot arunca înapoi. În tot acest timp, orice participant poate scrie întrebări noi, cât îi permite limita. <b>Dacă îl oprești</b> în timpul aruncărilor, butoanele dispar, iar <b>întrebările rămân fixe, în echipele în care erau în clipa opririi</b>. Regula e impusă și în baza de date; dacă un participant apasă „Aruncă înapoi” exact când oprești, întrebarea nu se mută și primește un mesaj.</li>
+<li><b>Pagina trainerului, aranjată după cât de des folosești un control:</b> sus sunt lucrurile făcute o singură dată, adică <b>„Setări sesiune”</b> (link, cod QR, limita de întrebări; deschise în Lobby, <b>se strâng singure la start</b>, iar rezumatul arată limita curentă) și <b>„Încheie”</b>, singur, sus în dreapta, departe de comutator, ca să nu se apese din greșeală. Controalele folosite live sunt în bara de lângă câmpul de luptă. În <b>„Mod proiector”</b>, bara devine o <b>pastilă mică</b>, în stânga sus, cu comutatorul „Aruncare”, ca să-l poți folosi fără să ieși din modul proiector; timpul rămâne mare, pe ecranul din sală.</li>
+<li><b>Cronometrul</b> (ca la jocurile cu cărți): cu timp, participanții văd sus <b>timpul rămas</b> (cu avertisment roșu în ultimele 10 secunde). <b>Pauză</b> îngheață timpul și <b>Reia</b> îl repornește; <b>Adaugă timp</b> (minute și secunde) prelungește timpul, iar după expirare îl repornește. <b>Cât timp cronometrul e în pauză sau a expirat, participanții nu mai pot arunca nimic</b>: nici întrebări noi, nici „Aruncă înapoi”; întrebările rămân vizibile, pentru discuție. Regula e impusă și în baza de date, iar timpul se calculează cu ora serverului, deci e același pe toate ecranele, chiar dacă ceasul unui telefon e decalat. Dacă ai pornit „fără timp”, poți apăsa oricând „Activează un cronometru acum”. În <b>Mod proiector</b> timpul apare mare, pe ecranul din sală. „Încheie” oprește totul, cu sau fără timp rămas.</li>
+<li><b>Ecranul participantului:</b> pe laptop, <b>în stânga</b> câmpul în care scrie întrebarea (maximum 200 de caractere) și butonul <b>Aruncă întrebarea</b>, iar <b>în dreapta</b> câmpul de luptă; pe telefon, <b>sus</b> câmpul de luptă și <b>jos</b> câmpul de întrebare. Câmpul de luptă are cele două tabere; când cineva aruncă o întrebare, un <b>bulgăre de hârtie mototolită</b> zboară din tabăra echipei lui spre cea adversă și rămâne în gramada ei. Sub câmpul de luptă, întrebările sunt listate pe <b>echipa care trebuie să răspundă</b> (coloana „Întrebări pentru echipa …”). Participanții nu văd cine a aruncat o întrebare, nici aliasul, nici echipa din etichete. Pauza între două întrebări ale aceluiași participant este de 8 secunde.</li>
+<li><b>Ecranul trainerului:</b> același câmp de luptă și aceleași liste, dar cu <b>aliasul autorului</b> la fiecare întrebare. Poți <b>ascunde</b> o întrebare nepotrivită: dispare de pe ecranele participanților, iar în lista ta <b>coboară sub celelalte, cu fundal și font roșii</b>, sub eticheta „Ascunse de trainer”; cele rămase afișate urcă și rămân numerotate ca la participanți. Dacă ascunzi mai multe, cea mai recent ascunsă e prima dintre ele. „Arată” o readuce la locul ei, în ordinea aruncării. <b>🖥 Mod proiector</b> păstrează doar câmpul de luptă și întrebările, mărite, pentru ecranul din sală. <b>📋 Copiază întrebările</b> pune în clipboard lista, grupată pe echipe, pentru a o păstra. Bulgării apar la participanți la 1–3 secunde după ce au fost aruncați (aplicația nu ține conexiuni permanente, ca să rămână ușoară și la grupuri mari).</li>
+<li><b>Aruncă înapoi (schimb de întrebări între echipe):</b> fiecare întrebare apare <b>o singură dată, la echipa care trebuie să răspundă</b>. Cine din acea echipă vrea să o paseze mai departe apasă <b>„↩ Aruncă înapoi”</b>: aceeași întrebare pleacă, ca un bulgăre, spre cealaltă echipă și <b>se mută din lista echipei care a aruncat-o în lista celeilalte</b> (nu rămâne la amândouă, iar întrebările nu au etichete). Schimbul se poate repeta <b>fără limită, până încheie trainerul sesiunea</b>. Dacă doi colegi apasă în aceeași clipă, întrebarea se mută o singură dată (al doilea primește un mesaj, iar baza de date refuză dubla aruncare). Aruncările înapoi <b>nu consumă</b> din limita personală de întrebări și nu au pauză. „Ascunde” acționează pe ultima aruncare, iar „Copiază întrebările” grupează lista pe echipa care răspunde.</li>
+<li><b>Încheie:</b> participanții nu mai pot arunca întrebări și văd, sus, mesajul <b>„Recapitularea s-a încheiat. Trainerul a oprit aruncarea de întrebări. Mulțumim pentru participare!”</b>; câmpul de luptă și întrebările rămân vizibile la ei, pentru discuția finală. (La „Închide de tot” sesiunea se șterge, iar participanții văd „Recapitularea a fost închisă de trainer”.)</li>
+<li><b>Închide de tot:</b> apare după „Încheie” (în Lobby apare ca „Anulează sesiunea”). Șterge definitiv sesiunea, participanții și întrebările; linkul nu mai funcționează, iar participanții văd „Recapitularea a fost închisă de trainer”. Apasă mai întâi „📋 Copiază întrebările”, dacă vrei să le păstrezi. „Sesiune nouă” doar te duce la ecranul de creare: sesiunea veche rămâne, iar linkul ei încă afișează câmpul de luptă.</li>
+</ol>
+<p>La prima folosire (și la actualizarea de la v58 la v59), rulează în Supabase scriptul <code>supabase/add-recap.sql</code> (idempotent: îl poți rula din nou fără risc). Persoanele cu setarea „reduce mișcarea” activată în dispozitiv văd bulgării aterizând direct, fără zbor.</p></section>
+<section class="panel" id="tema"><h3>24. Tema de culori</h3>
+<p>În antetul paginilor de trainer (Jocuri cu cărți, Nodul comunicării, Recapitulare) apare butonul <b>🎨 Temă</b>. Tema se aplică <b>în toată aplicația</b>: pe paginile tale de trainer și pe <b>ecranele participanților la sesiunile pornite de tine</b>, la jocurile cu cărți, la Nodul comunicării și la Recapitulare. Fiecare trainer își are tema lui, salvată în cont; un alt trainer poate avea alta.</p>
+<ol>
+<li><b>Alege o temă gata făcută:</b> Pergament (aspectul de până acum, implicit), Noapte, Grafit, Albastru corporate, Bordo, Contrast înalt. Se previzualizează imediat, pe pagina pe care ești.</li>
+<li><b>Sau creează-ți una (Personalizată):</b> alegi doar <b>patru culori</b>: <b>fundal</b>, <b>suprafață</b> (carduri și panouri), <b>culoare principală</b> (antet și butoane) și <b>accent</b>.</li>
+<li><b>Culoarea textului se alege automat:</b> pe fundal închis, text deschis, iar pe fundal deschis, text închis; la fel pentru textul de pe butoane și de pe antet. Contrastul de citire este garantat (minimum 4,5:1). Dacă suprafața aleasă nu se potrivește cu fundalul (de ex. fundal negru și carduri albe), aplicația o apropie automat de fundal și îți spune.</li>
+<li><b>Ecranul de autentificare are mereu tema implicită (Pergament), la toți</b>: tema ta se aplică abia după ce te autentifici, iar după „Deconectare” următoarea persoană din același browser nu primește tema ta. Un cont care n-a salvat nicio temă folosește Pergament.</li>
+<li>Apasă <b>„Salvează ca tema mea”</b> ca să rămână (sau „Anulează” / Escape ca să revii). <b>„Resetează la Pergament”</b> readuce aspectul de până acum.</li>
+</ol>
+<p>Elementele care trebuie să rămână fixe nu se schimbă: pânza de desen (albă), culorile echipelor (roșu și albastru), culorile de stare (verde la „completat”) și scena din câmpul de luptă. La prima folosire, rulează în Supabase <code>supabase/add-themes.sql</code> (idempotent). Participanții primesc <b>doar tema</b>, nu și adresa ta de email.</p></section>
+
+<h3 id="pagina-initiala">25. Pagina inițială, intrarea cu cod și meniul trainerului</h3>
+<p><b>Pagina inițială</b> (adresa principală a aplicației) o poate deschide <b>oricine, fără cont</b>. Are trei intrări:</p>
+<ul>
+<li><b>„Am un cod de sesiune”</b> (pentru participanți): participantul scrie <b>codul</b> primit de la trainer și apasă „Intră în sesiune”. Pagina află ce activitate este (joc cu cărți, Colourblind, Nodul comunicării sau Recapitulare) și îl duce direct acolo. Nu contează literele mari sau mici și nici spațiile din jur. Dacă un cod se potrivește cu două activități, participantul alege. Dacă lipește în câmp un link întreg de pe același site, deschide direct activitatea. După 5 coduri greșite la rând, pagina cere o pauză de 30 de secunde.</li>
+<li><b>„Jocuri de training”</b> (fără cont): apare doar când aplicația are jocuri individuale. Acum nu apare.</li>
+<li><b>„Sunt trainer”</b>: duce la autentificare.</li>
+</ul>
+<p><b>Linkurile și codurile QR pe care le-ai dat deja rămân valabile</b>, inclusiv cele de grupă de la jocurile cu cărți (adresa veche <code>index.html?g=…</code> este redirecționată automat). Linkurile noi de grupă folosesc <code>grupa.html</code>.</p>
+<p><b>Unde găsești codul ca să-l spui participanților:</b> la <b>Recapitulare</b> și la <b>Nodul comunicării</b>, în partea de sus a sesiunii („Cod de sesiune”, cu „Copiază codul” și indicația adresei unde se scrie); la <b>jocurile cu cărți</b>, în „Linkuri &amp; QR grupe”, pentru fiecare grupă („Cod”), iar la <b>Colourblind</b> în secțiunea linkului echipei. Codul de la jocurile cu cărți este cel al <b>grupei</b>.</p>
+<p><b>Meniul trainerului</b> (<code>trainer.html</code>): după autentificare alegi <b>activitatea</b> pe care o lansezi (Jocuri cu cărți, Jocuri de comunicare, Recapitulare), cu <b>Manual</b>, <b>Temă</b> și <b>Deconectare</b> sus. Deasupra plăcilor vezi <b>„Sesiuni în desfășurare”</b>, adică sesiunile tale neîncheiate, cu participanții și codul, și <b>Reia</b> care te duce în panoul activității. Din fiecare panou revii cu <b>„← Meniu trainer”</b>. O sesiune anonimă (de exemplu a unui jucător) nu e considerată trainer autentificat. Activitățile viitoare vor apărea aici ca plăci noi.</p>
+<p><b>Atenție la confidențialitate:</b> codul nu este o parolă. Cere participanților să folosească un <b>pseudonim</b>, nu numele real, și să nu scrie date sensibile în întrebări sau desene.</p>
 </main>
 </body>
 </html>

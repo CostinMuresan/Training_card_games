@@ -1,0 +1,398 @@
+/* Modul „Recapitulare” */
+:root {
+  --team1-text: #c0392b;
+  --team2-text: #1f5fa8;
+  --team1: #c0392b;
+  --team1-soft: #f7dfdb;
+  --team2: #1f5fa8;
+  --team2-soft: #dbe7f6;
+  /* valori de rezervă; tema (theme.js) le calculează pentru fiecare temă, cu contrast garantat */
+  --hidden-bg: #f8d7d3;
+  --hidden-fg: #a61b12;
+  --hidden-line: #c0392b;
+}
+
+/* ---------- aranjarea ecranului ---------- */
+.recap-layout {
+  display:grid;
+  grid-template-columns:minmax(280px, 340px) 1fr;
+  gap:16px;
+  align-items:start;
+}
+.recap-composer { order:1; }
+.recap-visual   { order:2; min-width:0; }
+
+@media (max-width: 800px) {
+  /* telefon: sus campul de lupta, jos campul pentru intrebare (ramane vizibil) */
+  body.recap-playing { overflow:hidden; }
+  .recap-layout {
+    display:flex;
+    flex-direction:column;
+    height:calc(100dvh - 110px); /* ajustat exact din JavaScript (fitLayout) */
+    gap:8px;
+    align-items:stretch;
+  }
+  .recap-visual { order:1; flex:1 1 auto; min-height:0; overflow:auto; }
+  .recap-composer { order:2; flex:0 0 auto; padding:10px 12px; margin:0; }
+  .recap-composer textarea { height:64px; min-height:56px; } /* mai mic; crește singur pe măsură ce scrii (până la ~5 rânduri) */
+  .recap-composer.collapsed { padding:6px 8px; }
+  .recap-composer.collapsed .composer-body { display:none; }
+  .recap-composer.collapsed .composer-bar { margin:0; }
+  /* bara panoului de scris: minimizează / deschide */
+  .composer-bar { display:flex; align-items:center; gap:8px; width:100%; margin:0 0 8px; padding:9px 12px; font:inherit; font-weight:700; text-align:left; color:var(--ink); background:var(--field-bg); border:1px solid var(--parchment-dark); border-radius:10px; cursor:pointer; }
+  .composer-bar:disabled { cursor:default; }
+  .composer-bar-title { flex:1 1 auto; }
+  .composer-bar-info { font-weight:500; font-size:13px; color:var(--ink-soft); }
+  .composer-bar-chev { font-size:15px; }
+}
+.composer-bar { display:none; } /* doar pe telefon; pe laptop panoul e mereu deschis */
+@media (max-width: 800px) { .composer-bar { display:flex; } }
+
+/* ---------- compozitor ---------- */
+.team-banner {
+  display:inline-block;
+  margin-bottom:10px;
+  padding:6px 12px;
+  border-radius:999px;
+  color:#fff;
+  font-weight:700;
+  font-size:14px;
+}
+.team-banner.team-1 { background:var(--team1); }
+.team-banner.team-2 { background:var(--team2); }
+.recap-composer label { display:block; font-weight:600; margin-bottom:6px; }
+.recap-composer textarea {
+  width:100%;
+  box-sizing:border-box;
+  font:inherit;
+  padding:10px 12px;
+  border:1px solid var(--parchment-dark);
+  border-radius:10px;
+  resize:vertical;
+}
+.q-meta {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin:6px 0 10px;
+  font-size:13px;
+  color:var(--grey);
+}
+#q-msg { color:var(--red); text-align:right; }
+#throw-btn { width:100%; }
+#game.ended .recap-composer { display:none; }
+#game.ended .recap-layout { grid-template-columns:1fr; display:block; height:auto; }
+
+/* ---------- zona vizuala ---------- */
+.topic-line {
+  margin:0 0 8px;
+  font-size:15px;
+  color:var(--ink-soft);
+}
+.topic-line b { font-family:"Fraunces", Georgia, serif; }
+
+/* campul de lupta */
+.arena {
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:end;
+  height:250px;
+  border:1px solid var(--parchment-dark);
+  border-radius:16px;
+  overflow:hidden;
+  background:linear-gradient(#fdf9ec 0%, #f3ead2 62%, #d6dfae 62%, #c3d093 100%);
+}
+.arena .front {
+  position:absolute;
+  left:50%;
+  top:10px;
+  bottom:0;
+  border-left:2px dashed rgba(120, 100, 50, .35);
+  pointer-events:none;
+}
+.camp {
+  position:relative;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  padding-bottom:8px;
+}
+.camp-art svg { width:112px; height:auto; display:block; }
+.camp-name {
+  margin-top:2px;
+  padding:2px 10px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:700;
+  color:#fff;
+}
+.camp-1 .camp-name { background:var(--team1); }
+.camp-2 .camp-name { background:var(--team2); }
+.camp-stats { font-size:11.5px; color:#4a4636; margin-top:2px; }
+.pile {
+  position:absolute;
+  left:6%;
+  right:6%;
+  bottom:42px;
+  height:34px;
+  pointer-events:none;
+}
+.pile .ball { position:absolute; width:24px; height:24px; }
+.ball { pointer-events:none; }
+.ball svg { width:100%; height:100%; display:block; filter:drop-shadow(0 2px 2px rgba(0,0,0,.25)); }
+.ball.flying { position:absolute; left:0; top:0; z-index:5; will-change:transform; }
+.ball.pop { animation:ball-pop .35s ease-out; }
+@keyframes ball-pop {
+  0%   { transform:scale(.4); }
+  60%  { transform:scale(1.25); }
+  100% { transform:scale(1); }
+}
+@media (max-width: 800px) {
+  .arena { height:190px; }
+  .camp-art svg { width:78px; }
+  .camp-name { font-size:11.5px; padding:1px 8px; }
+  .camp-stats { font-size:10.5px; }
+  .pile { bottom:36px; height:26px; }
+  .pile .ball { width:22px; height:22px; }
+}
+
+/* liste de intrebari, pe echipe */
+.qlists {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:12px;
+  align-items:start;
+}
+.qcol {
+  min-width:0;
+  background:var(--card-bg);
+  border:1px solid var(--parchment-dark);
+  border-radius:12px;
+  overflow:hidden;
+}
+.qhead {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin:0;
+  padding:8px 12px;
+  font-size:14px;
+  color:#fff;
+}
+.qcol.team-1 .qhead { background:var(--team1); }
+.qcol.team-2 .qhead { background:var(--team2); }
+.qcount { background:rgba(0,0,0,.24); border-radius:999px; padding:1px 9px; font-size:13px; }
+.qdir { padding:4px 12px; font-size:12px; color:var(--grey); border-bottom:1px solid var(--parchment-dark); }
+.qlist { margin:0; padding:6px 12px 8px 30px; }
+.qitem { margin:7px 0; line-height:1.35; word-break:break-word; }
+.qitem .qauthor { display:block; color:var(--grey); font-size:11.5px; }
+.qitem.is-new { animation:q-flash 2.2s ease-out; }
+@keyframes q-flash { 0% { background:var(--accent-soft); } 100% { background:transparent; } }
+/* intrebari ascunse (doar la trainer): la finalul listei, cu fundal si font rosii */
+.qhidden-head {
+  margin:6px 12px 0;
+  padding-top:8px;
+  border-top:1px dashed var(--hidden-line);
+  font-size:12px;
+  font-weight:700;
+  color:var(--hidden-fg);
+}
+.qlist.qhidden { list-style:none; padding:6px 12px 10px; }
+.qitem.is-hidden {
+  position:relative;
+  padding:7px 10px;
+  border-left:4px solid var(--hidden-line);
+  border-radius:6px;
+  background:var(--hidden-bg);
+  color:var(--hidden-fg);
+}
+.qitem.is-hidden .qauthor { color:var(--hidden-fg); }
+.qitem.is-hidden .qbtn { border-color:var(--hidden-line); background:var(--field-bg); color:var(--hidden-fg); }
+.qempty { list-style:none; margin-left:-18px; color:var(--grey); }
+.qbtn {
+  margin-left:8px;
+  font:inherit;
+  font-size:11.5px;
+  padding:1px 8px;
+  border:1px solid var(--parchment-dark);
+  border-radius:999px;
+  background:var(--field-bg);
+  color:var(--ink);
+  cursor:pointer;
+}
+@media (max-width: 800px) {
+  .qlists { grid-template-columns:1fr; }
+}
+
+/* ---------- pagina trainerului ---------- */
+.recap-controls { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:10px 0; }
+.team-box { background:var(--card-bg); border:1px solid var(--parchment-dark); border-radius:10px; padding:8px 12px; min-width:140px; }
+.team-box h4 { margin:0 0 4px; font-size:14px; }
+.team-box.team-1 h4 { color:var(--team1-text); }
+.team-box.team-2 h4 { color:var(--team2-text); }
+.team-box.team-0 h4 { color:var(--grey); }
+.team-box div { font-size:14px; }
+.team-boxes { display:flex; flex-wrap:wrap; gap:10px; margin-top:6px; }
+.recap-admin-grid { display:grid; grid-template-columns:minmax(260px, 340px) 1fr; gap:16px; align-items:start; }
+@media (max-width: 900px) { .recap-admin-grid { grid-template-columns:1fr; } }
+
+/* mod proiector: doar campul de lupta si intrebarile, mai mari */
+body.projector .app-header,
+body.projector .recap-side,
+body.projector #recap-top { display:none; }
+body.projector .recap-admin-grid { grid-template-columns:1fr; }
+body.projector .arena { height:min(46vh, 420px); }
+body.projector .camp-art svg { width:min(18vw, 170px); }
+body.projector .qitem { font-size:19px; }
+body.projector .qhead { font-size:18px; }
+#projector-exit { display:none; position:fixed; top:10px; right:12px; z-index:20; opacity:.55; }
+body.projector #projector-exit { display:inline-block; }
+body.projector #projector-exit:hover { opacity:1; }
+
+/* limita de intrebari + instructiuni */
+.q-left { min-height:18px; margin:-4px 0 8px; font-size:13px; color:var(--ink-soft); }
+.num-input { width:110px; font:inherit; padding:8px 10px; border:1px solid var(--parchment-dark); border-radius:10px; box-sizing:border-box; }
+.limit-row { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:12px 0 4px; }
+.limit-row label { margin:0; font-weight:600; }
+#creator label { display:block; margin:12px 0 4px; font-weight:600; }
+.recap-help {
+  margin-top:14px;
+  padding:10px 14px;
+  background:var(--card-bg);
+  border:1px solid var(--parchment-dark);
+  border-radius:10px;
+  font-size:14.5px;
+}
+.recap-help summary { cursor:pointer; font-weight:700; }
+.recap-help ol { margin:10px 0 2px; padding-left:22px; }
+.recap-help li { margin:7px 0; line-height:1.4; }
+body.projector .recap-help { display:none; }
+#creator #topic { display:block; width:100%; max-width:560px; box-sizing:border-box; }
+#creator #max-questions { display:block; }
+#creator #create { display:block; margin-top:16px; }
+
+/* „Aruncă înapoi”: buton pe întrebările la care răspunde echipa mea */
+.qret-btn { border-color:var(--green-text); color:var(--green-text); font-weight:600; }
+.qret-btn:disabled { opacity:.5; cursor:default; }
+
+/* nota afișată participanților când trainerul încheie sesiunea */
+.ended-note {
+  margin:0 0 12px;
+  padding:14px 16px;
+  border:1px solid var(--gold);
+  border-radius:12px;
+  background:var(--accent-soft);
+  color:var(--ink);
+  font-size:15px;
+  line-height:1.45;
+}
+
+/* cronometru (participant): sus, mereu în ecran */
+.timer-bar {
+  position:sticky;
+  top:0;
+  z-index:6;
+  margin:0 0 10px;
+  padding:8px 12px 10px;
+  text-align:center;
+  background:var(--card-bg);
+  border:1px solid var(--parchment-dark);
+  border-radius:12px;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
+}
+.timer-label { font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-text); font-weight:700; }
+.timer-display { font-family:"Fraunces", Georgia, serif; font-size:40px; line-height:1.1; font-weight:700; color:var(--green-text); font-variant-numeric:tabular-nums; }
+.timer-display.paused { color:var(--grey); }
+.timer-display.expired,
+.timer-display.low { color:var(--red); }
+.timer-note { font-size:13px; color:var(--ink-soft); }
+.timer-bar:has(.timer-display.expired) .timer-note { color:var(--red); font-weight:600; }
+@media (max-width: 800px) {
+  .timer-bar { padding:5px 10px 6px; }
+  .timer-display { font-size:30px; }
+  .timer-note { font-size:12px; }
+}
+
+/* cronometru (trainer) */
+.start-box,
+.timer-panel { margin:12px 0; padding:12px 14px; background:var(--card-bg); border:1px solid var(--parchment-dark); border-radius:12px; }
+.start-box h4,
+.timer-panel h4 { margin:0 0 6px; font-family:"Fraunces", Georgia, serif; }
+.timer-inputs { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:8px 0; font-size:14px; }
+.timer-num { width:72px; font:inherit; padding:8px 10px; border:1px solid var(--parchment-dark); border-radius:10px; background:var(--field-bg); color:var(--ink); box-sizing:border-box; }
+.start-btns,
+.timer-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.timer-panel .timer-display { font-size:36px; }
+.timer-status { margin:2px 0 10px; font-size:13px; color:var(--ink-soft); }
+.timer-status.expired { color:var(--red); font-weight:600; }
+.proj-timer { display:none; margin:0 0 10px; text-align:center; font-family:"Fraunces", Georgia, serif; font-weight:700; font-variant-numeric:tabular-nums; font-size:min(10vw, 84px); line-height:1.05; color:var(--green-text); }
+.proj-timer.paused { color:var(--grey); }
+.proj-timer.expired, .proj-timer.low { color:var(--red); }
+body.projector .proj-timer:not([hidden]) { display:block; }
+
+/* „Aruncă înapoi”: apare doar cât bifa „Permite aruncarea” a trainerului e bifată; în timpul trimiterii e inactiv */
+.qret-btn:disabled { opacity:.55; cursor:default; }
+
+/* ---------- trainer: antet, setări strânse, bară live ---------- */
+.top-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
+.top-head-main h2 { margin:6px 0 0; }
+.top-head #end { margin-top:2px; } /* „Încheie”: singur, sus în dreapta, departe de comutatorul de aruncare */
+.setup-details { margin:10px 0 0; border:1px solid var(--parchment-dark); border-radius:12px; padding:2px 12px 10px; background:var(--card-bg); }
+.setup-details > summary { cursor:pointer; padding:9px 0; font-weight:700; list-style-position:inside; }
+.recap-main { min-width:0; }
+.live-bar {
+  position:sticky; top:0; z-index:15;
+  display:flex; flex-wrap:wrap; align-items:center; gap:8px 22px;
+  margin:0 0 12px; padding:10px 14px;
+  background:var(--card-bg); border:1px solid var(--parchment-dark); border-radius:14px;
+  box-shadow:0 3px 10px rgba(0,0,0,.10);
+}
+.live-bar[hidden] { display:none; }
+.live-bar .allow-panel, .live-bar .timer-panel { margin:0; padding:0; border:0; background:none; flex:1 1 300px; min-width:0; }
+.live-bar .allow-panel .hint { margin:2px 0 0; font-size:12.5px; }
+.live-bar .timer-panel { border-left:1px solid var(--parchment-dark); padding-left:18px; }
+.live-bar .timer-panel .hint { margin:0 8px 0 0; }
+.switch-row { display:inline-flex; align-items:center; gap:12px; cursor:pointer; font-weight:700; font-size:16px; }
+.switch-row input[type="checkbox"] {
+  appearance:none; -webkit-appearance:none; flex:0 0 auto;
+  width:54px; height:30px; margin:0; border-radius:999px; position:relative; cursor:pointer;
+  background:var(--grey); transition:background .15s;
+}
+.switch-row input[type="checkbox"]::after {
+  content:""; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%;
+  background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.35); transition:transform .15s;
+}
+.switch-row input[type="checkbox"]:checked { background:var(--green); }
+.switch-row input[type="checkbox"]:checked::after { transform:translateX(24px); }
+.switch-row input[type="checkbox"]:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+.switch-label { min-width:140px; }
+.allow-toast { min-height:18px; font-size:13px; font-weight:600; color:var(--green-text); }
+.timer-line { display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+.timer-icon { font-size:20px; }
+.live-bar .timer-display { font-size:30px; }
+.live-bar .timer-line .btn { padding:6px 12px; font-size:13px; }
+.live-bar .timer-status { margin:4px 0 6px; }
+.live-bar .timer-actions { gap:6px; }
+
+/* modul proiector: bara devine o pastilă mică (comutatorul de aruncare), în colțul din stânga sus */
+body.projector .live-bar {
+  position:fixed; top:10px; left:12px; z-index:30; margin:0; padding:6px 14px; gap:0;
+  border-radius:999px; box-shadow:0 2px 8px rgba(0,0,0,.2);
+}
+body.projector .live-bar .timer-panel,
+body.projector .live-bar .allow-panel .hint { display:none !important; }
+body.projector .live-bar .allow-panel { flex:0 0 auto; }
+body.projector .live-bar .switch-label { min-width:0; font-size:14px; }
+body.projector .live-bar .allow-toast { position:absolute; top:100%; left:8px; margin-top:4px; padding:3px 10px; background:var(--card-bg); border-radius:999px; }
+@media (max-width: 800px) {
+  .live-bar { top:0; padding:8px 10px; }
+  .live-bar .timer-panel { border-left:0; padding-left:0; border-top:1px solid var(--parchment-dark); padding-top:8px; flex:1 1 100%; }
+  .live-bar .allow-panel { flex:1 1 100%; }
+}
+.live-bar .timer-num { width:58px; padding:6px 8px; }
+body.projector .live-bar .allow-toast { white-space:nowrap; }

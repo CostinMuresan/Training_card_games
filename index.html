@@ -3,60 +3,85 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Carduri de training</title>
+<title>Training Activities</title>
+<!-- linkurile vechi ale cursanților de la jocurile cu cărți (index.html?g=…) merg mai departe: pagina lor se numește acum grupa.html -->
+<script>if (/[?&]g=/.test(location.search)) location.replace('grupa.html' + location.search);</script>
 <link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="home.css" />
 </head>
-<body>
-
-<header class="app-header">
+<body class="home">
+<header class="home-header">
   <div>
-    <div class="eyebrow">Joc de training</div>
-    <h1 id="learner-game-title">Carduri de training</h1>
+    <div class="eyebrow">Activități de training</div>
+    <h1>Training Activities</h1>
+  </div>
+  <div class="home-actions">
+    <a class="home-hbtn" href="trainer.html">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
+      Sunt trainer
+    </a>
   </div>
 </header>
 
-<main id="learner-main">
-  <div id="status-box"></div>
-  <div id="learner-group-bar" style="display:none; text-align:center; margin-bottom:14px;">
-    <span class="badge" id="learner-group-badge"></span>
-  </div>
-  <div id="session-timer-bar" style="display:none; text-align:center; margin-bottom:24px;">
-    <div style="font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); font-family:'Inter',sans-serif;">Timp rămas</div>
-    <div id="learner-timer-display" style="font-size:44px; font-family:'Fraunces',serif; font-weight:700; color:var(--green);">00:00:00</div>
-  </div>
-  <div class="learner-grid" id="learner-grid"></div>
+<main class="home-main">
+  <h1 class="big">Cu ce vrei să începi?</h1>
+  <p class="home-lead">Intră într-o sesiune cu codul primit de la trainer, joacă singur sau autentifică-te ca trainer.</p>
 
-  <div id="selection-choosing-section" style="display:none;">
-    <p style="text-align:center; font-size:13px; color:var(--grey); margin-bottom:14px;">Alege până la <strong id="selection-max-label"></strong> card(uri) care ți-au plăcut.</p>
-    <div class="card-grid" id="selection-choice-grid" style="max-width:1100px; margin:0 auto 20px; padding-bottom:90px;"></div>
-    <div id="selection-submit-bar">
-      <button class="btn gold" id="selection-submit-btn" disabled>Am ales</button>
-    </div>
+  <div class="home-grid" id="home-grid">
+
+    <section class="home-card primary" id="code-card" aria-labelledby="code-title">
+      <div class="card-top">
+        <span class="card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/></svg></span>
+        <span class="card-eyebrow">Pentru participanți</span>
+      </div>
+      <h2 id="code-title">Am un cod de sesiune</h2>
+      <p>Îl primești de la trainer, scris pe ecran sau în linkul de la codul QR.</p>
+      <form id="code-form" novalidate style="display:flex; flex-direction:column; gap:14px">
+        <label for="code">Codul sesiunii</label>
+        <input id="code" class="code-input" type="text" placeholder="Scrie codul" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text" aria-describedby="code-msg" />
+        <button type="submit" class="home-gold" id="code-go">
+          Intră în sesiune
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <div class="home-msg" id="code-msg" role="alert" aria-live="polite"></div>
+        <ul class="code-choices" id="code-choices" hidden></ul>
+      </form>
+      <p style="font-size:13px; color:var(--gold-soft)">Funcționează pentru toate activitățile: ajungi direct la cea potrivită.</p>
+    </section>
+
+    <section class="home-card" id="games-card" hidden aria-labelledby="games-title">
+      <div class="card-top">
+        <span class="card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4a2 2 0 114 0v1h4a1 1 0 011 1v4h-1a2 2 0 100 4h1v4a1 1 0 01-1 1h-4v-1a2 2 0 10-4 0v1H6a1 1 0 01-1-1v-4h1a2 2 0 100-4H5V6a1 1 0 011-1h4V4z"/></svg></span>
+        <span class="card-eyebrow">Fără cont</span>
+      </div>
+      <h2 id="games-title">Jocuri de training</h2>
+      <p>Joci singur, în ritmul tău. Nu trebuie să te autentifici.</p>
+      <div id="games-list" style="display:flex; flex-direction:column; gap:12px"></div>
+    </section>
+
+    <section class="home-card" id="trainer-card" aria-labelledby="trainer-title">
+      <div class="card-top">
+        <span class="card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></span>
+        <span class="card-eyebrow">Pentru traineri</span>
+      </div>
+      <h2 id="trainer-title">Sunt trainer</h2>
+      <p>Autentifică-te ca să lansezi și să conduci activități cu participanții tăi.</p>
+      <div style="flex:1"></div>
+      <a class="home-btn" href="trainer.html">
+        Autentifică-te
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <p style="font-size:13px; text-align:center">Folosești contul tău de trainer.</p>
+    </section>
   </div>
 
-  <div id="selection-result-section" style="display:none;">
-    <p id="selection-result-hint" style="text-align:center; font-size:13px; color:var(--grey); margin-bottom:14px;"></p>
-    <div class="learner-grid" id="selection-result-grid"></div>
-  </div>
+  <p class="home-note">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none; margin-top:1px" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+    Ai primit deja un link sau un cod QR de la trainer? Deschide-l ca până acum: funcționează în continuare.
+  </p>
 </main>
 
-<div id="expired-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.78); z-index:80; align-items:center; justify-content:center; text-align:center; padding:20px;">
-  <div>
-    <div style="font-size:56px; margin-bottom:12px;">⏰</div>
-    <div style="font-family:'Fraunces',serif; font-size:32px; font-weight:700; color:#fff;">Timpul a expirat</div>
-    <div style="font-family:'Inter',sans-serif; font-size:14px; color:#ddd; margin-top:8px;">Așteaptă instrucțiunile trainerului.</div>
-  </div>
-</div>
-
-<style>
-  #learner-main { max-width: 1900px; }
-</style>
-
-<div id="learner-lightbox">
-  <img id="learner-lightbox-img" />
-  <div id="lightbox-page-label"></div>
-</div>
-
-<script type="module" src="learner.js"></script>
+<footer class="home-footer">Training Activities · AcademiaBT</footer>
+<script type="module" src="landing.js"></script>
 </body>
 </html>

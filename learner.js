@@ -92,6 +92,7 @@ async function init() {
     return;
   }
   sessionInfo = sessionData;
+  window.TCTheme?.initParticipant(supabase, "cards", sessionId); // tema trainerului
   if (sessionData.games?.name) {
     $("learner-game-title").textContent = sessionData.games.name;
     document.title = sessionData.games.name;
@@ -251,7 +252,7 @@ function buildGrid() {
     flip.innerHTML = `
       <div class="flip-card-inner">
         <div class="flip-face front" data-hint="Click pentru a întoarce"><img src="${c.initial_face === "back" ? c.back_image_url : c.front_image_url}" /></div>
-        <div class="flip-face back" data-hint="${c.back_image_url_2 ? "Click pentru pagina 2/2" : "Click pentru a reveni"}"><img src="${c.initial_face === "back" ? c.front_image_url : c.back_image_url}" /></div>
+        <div class="flip-face back" data-hint="${c.back_image_url_2 ? "Click pentru pagina 2/2" : "Click pentru a reveni"}"><img src="${backPageLocal[c.id] === 2 && c.back_image_url_2 ? c.back_image_url_2 : (c.initial_face === "back" ? c.front_image_url : c.back_image_url)}" /></div>
       </div>
     `;
     // handler-ul e mereu atasat; verifica starea LIVE la fiecare click, nu una capturata la creare
@@ -472,7 +473,7 @@ function renderSelectionChoiceGrid() {
       <div class="mini-flip${isFlipped ? " flipped" : ""}" style="aspect-ratio:${c.aspect_ratio || 0.75}; ${canFlip ? "cursor:pointer;" : ""}" data-flip>
         <div class="mini-flip-inner">
           <img class="mini-flip-face" src="${c.front_image_url}" alt="${escapeHtml(c.title)}" />
-          <img class="mini-flip-face back" src="${c.back_image_url}" alt="${escapeHtml(c.title)}" />
+          <img class="mini-flip-face back" src="${backPageLocal[c.id] === 2 && c.back_image_url_2 ? c.back_image_url_2 : c.back_image_url}" alt="${escapeHtml(c.title)}" />
         </div>
         ${canFlip ? `<div class="mini-flip-hint front-hint">Click pentru a întoarce</div><div class="mini-flip-hint back-hint">${c.back_image_url_2 ? "Click pentru pagina 2/2" : "Click pentru a reveni"}</div>` : ""}
         <button class="zoom-btn" data-zoom title="Vezi mărit">🔍</button>
@@ -568,7 +569,7 @@ function renderStaticResultCards(cardList) {
     flip.innerHTML = `
       <div class="flip-card-inner">
         <div class="flip-face front" data-hint="Click pentru a întoarce"><img src="${c.front_image_url}" alt="${escapeHtml(c.title)}" /></div>
-        <div class="flip-face back" data-hint="${c.back_image_url_2 ? "Click pentru pagina 2/2" : "Click pentru a reveni"}"><img src="${c.back_image_url}" alt="${escapeHtml(c.title)}" /></div>
+        <div class="flip-face back" data-hint="${c.back_image_url_2 ? "Click pentru pagina 2/2" : "Click pentru a reveni"}"><img src="${backPageLocal[c.id] === 2 && c.back_image_url_2 ? c.back_image_url_2 : c.back_image_url}" alt="${escapeHtml(c.title)}" /></div>
       </div>
     `;
     if (canFlip) {

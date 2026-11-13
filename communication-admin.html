@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ro" data-theme-role="trainer">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Nodul comunicării · Trainer</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="communication.css">
+<script src="theme.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <div class="eyebrow">Activități online</div>
+      <h1>Nodul comunicării · Trainer</h1>
+    </div>
+    <div class="header-links">
+      <button class="btn outline header-link" id="theme-btn" hidden>🎨 Temă</button>
+      <a class="btn outline header-link" href="trainer.html">← Meniu trainer</a>
+    </div>
+  </header>
+
+  <main>
+    <section id="auth-box" class="panel">
+      <h2>Autentificare trainer</h2>
+      <input id="email" type="email" placeholder="Email">
+      <input id="password" type="password" placeholder="Parolă">
+      <button class="btn" id="login">Intră</button>
+      <div class="error-msg" id="auth-error"></div>
+    </section>
+
+    <section id="creator" class="panel" hidden>
+      <h2>Creează activitatea</h2>
+      <div class="comm-grid three">
+        <button class="mode-card" data-mode="draw">
+          <b>1. Desenează după instrucțiuni</b>
+          <span>Canvas individual, scenarii proprii, comparare cu imaginea de referință.</span>
+        </button>
+        <button class="mode-card" data-mode="model">
+          <b>2. Reconstruiește modelul</b>
+          <span>3 runde: descriere interpretabilă, stufoasă, exactă; în fiecare: poziționare, reveal, rezultatele tuturor.</span>
+        </button>
+        <button class="mode-card" data-mode="client">
+          <b>3. Ce ai înțeles?</b>
+          <span>Mesaj ambiguu, clarificare și răspuns.</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="scenarios" class="panel" hidden>
+      <h2>Scenariile mele</h2>
+      <div class="tool-group sc-tabs" role="tablist" aria-label="Activitate">
+        <button class="tool-btn active" id="sc-tab-draw" aria-pressed="true">Desenează după instrucțiuni</button>
+        <button class="tool-btn" id="sc-tab-client" aria-pressed="false">Ce ai înțeles?</button>
+      </div>
+      <p class="hint">Scenariile sunt private: le vezi doar tu. La crearea unei sesiuni, scenariul ales se copiază în sesiune, deci modificările ulterioare nu schimbă sesiunile deja pornite.</p>
+      <p class="rule" id="scenario-hint" hidden></p>
+      <div id="scenario-list"></div>
+      <button class="btn outline" id="scenario-new">＋ Scenariu nou</button>
+      <div id="base-scenarios"></div>
+
+      <div id="scenario-form" class="scenario-form" hidden>
+        <h3 id="scenario-form-title">Scenariu nou</h3>
+        <label for="sc-title">Numele scenariului</label>
+        <input id="sc-title" type="text" maxlength="80" placeholder="ex. Casa cu copac">
+        <div id="sc-rounds"></div>
+        <div class="sc-actions">
+          <button class="btn outline" id="sc-add-round">＋ Adaugă runda 2</button>
+          <button class="btn outline" id="sc-remove-round" hidden>Elimină runda 2</button>
+        </div>
+        <fieldset class="sc-round sc-debrief">
+          <legend>Întrebări de debrief (opțional)</legend>
+          <p class="hint">Se afișează participanților și ție în etapa „Debrief”, doar pentru acest scenariu. Scrie <b>câte o întrebare pe rând</b> (cel mult 10, fiecare de cel mult 300 de caractere; se numerotează automat). <b>Lasă gol</b> ca să se folosească întrebările standard ale activității.</p>
+          <label for="sc-debrief">Întrebările de debrief ale scenariului</label>
+          <textarea id="sc-debrief" rows="6" placeholder="ex. Ce ai presupus fără să îți dai seama?&#10;Ce întrebare ar fi clarificat situația?"></textarea>
+          <div class="sc-actions"><button class="btn outline" id="sc-debrief-defaults" type="button">Încarcă întrebările standard, ca să le modifici</button></div>
+          <div class="sc-preview"><b>Previzualizare:</b> <span class="hint" id="sc-debrief-count"></span><div id="sc-debrief-preview"></div></div>
+        </fieldset>
+        <div class="error-msg" id="sc-error"></div>
+        <div class="sc-actions">
+          <button class="btn" id="sc-save">Salvează scenariul</button>
+          <button class="btn outline" id="sc-cancel">Renunță</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="live" hidden>
+      <div class="panel">
+        <div class="comm-toolbar">
+          <div>
+            <span class="badge" id="mode-badge"></span>
+            <h2 id="activity-title"></h2>
+            <div class="code-box" id="code-box">
+              <span class="code-label">Cod de sesiune:</span><b class="code-value" id="session-code"></b>
+              <button class="btn outline" id="copy-code" type="button" style="padding:4px 10px; font-size:12px">Copiază codul</button>
+              <span class="code-hint" id="code-hint"></span>
+            </div>
+          </div>
+          <button class="btn danger" id="end">Încheie</button>
+        </div>
+        <p class="rule" id="ended-note" hidden>Sesiunea s-a încheiat: participanții nu mai pot intra. Mai jos rămân rezultatele tuturor rundelor. Pentru o sesiune nouă alege o activitate de mai sus.</p>
+        <div id="link-area">
+        <p>Link participanți:</p>
+        <div class="session-link-box">
+          <span id="join-link"></span>
+          <button class="btn outline" id="copy">Copiază</button>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+          <button class="btn outline" id="qr-btn" style="font-size:12px; padding:5px 10px;">Arată codul QR</button>
+          <button class="btn outline" id="qr-dl-png-btn" style="font-size:12px; padding:5px 10px;">⬇ Descarcă PNG</button>
+          <button class="btn outline" id="qr-dl-jpg-btn" style="font-size:12px; padding:5px 10px;">⬇ Descarcă JPG</button>
+        </div>
+        <img id="qr-img" alt="Cod QR" style="display:none; margin-top:8px; width:160px; height:160px; border-radius:8px; border:1px solid var(--parchment-dark); background:#fff;">
+        </div>
+        <p id="status-line"></p>
+        <div class="comm-toolbar">
+          <div class="nav-col">
+            <p class="nav-hint" id="back-hint"></p>
+            <button class="btn" id="back">← Etapa anterioară</button>
+          </div>
+          <div class="nav-col nav-col-right">
+            <p class="nav-hint" id="next-hint"></p>
+            <button class="btn gold" id="next">Etapa următoare →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="comm-grid two">
+        <section class="panel">
+          <h3>Instrucțiuni trainer</h3>
+          <div id="trainer-prompt"></div>
+          <div id="target"></div>
+          <h3>Participanți <span id="participants-count">(0)</span></h3>
+          <div id="participants"></div>
+        </section>
+        <section class="panel">
+          <h3>Rezultate</h3>
+          <label class="overlay-control" id="overlay-control" hidden>
+            <input type="checkbox" id="overlay-toggle"> Suprapune modelul (roșu) peste desene
+          </label>
+          <label class="overlay-control" id="grid-control" hidden>
+            <input type="checkbox" id="grid-toggle" class="grid-check-admin"> Pătrățele (reper: coloane A–L, rânduri 1–9)
+          </label>
+          <div id="results" class="results-grid"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="communication-admin.js"></script>
+</body>
+</html>

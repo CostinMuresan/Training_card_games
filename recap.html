@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Recapitulare</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="communication.css">
+  <link rel="stylesheet" href="recap.css">
+<script src="theme.js"></script>
+</head>
+<body class="participant-page">
+  <header class="app-header">
+    <div>
+      <div class="eyebrow">Activitate online</div>
+      <h1 id="title">Recapitulare</h1>
+    </div>
+  </header>
+
+  <main>
+    <section id="error" class="panel" hidden></section>
+
+    <section id="join" class="panel" hidden>
+      <h2>Intră în recapitulare</h2>
+      <p id="join-topic"></p>
+      <p>Alege un alias. Nu este necesară adresa de email. Colegii nu îți vor vedea aliasul: vor vedea doar echipa din care faci parte.</p>
+      <input id="alias" maxlength="40" placeholder="Alias">
+      <button class="btn" id="join-btn">Intră</button>
+      <div class="error-msg" id="join-error"></div>
+      <div class="rule" id="alias-suggest" hidden>
+        <p id="alias-suggest-text"></p>
+        <button class="btn gold" id="alias-yes"></button>
+        <button class="btn outline" id="alias-no">Nu, aleg altul</button>
+      </div>
+    </section>
+
+    <section id="waiting" class="panel" hidden>
+      <h2>Ești înregistrat ca <span id="my-alias"></span></h2>
+      <p id="waiting-text">Așteaptă ca trainerul să împartă echipele și să pornească recapitularea.</p>
+    </section>
+
+    <section id="game" hidden>
+      <div class="recap-layout">
+        <div class="recap-composer panel" id="composer">
+          <button type="button" class="composer-bar" id="composer-bar" aria-expanded="true" aria-controls="composer-body">
+            <span class="composer-bar-title" id="composer-bar-title">✏️ Scrie o întrebare</span>
+            <span class="composer-bar-info" id="composer-bar-info"></span>
+            <span class="composer-bar-chev" id="composer-bar-chev" aria-hidden="true">▾</span>
+          </button>
+          <div class="composer-body" id="composer-body">
+            <div class="team-banner" id="team-banner"></div>
+            <label for="q-text" id="q-label">Întrebare pentru echipa adversă</label>
+            <textarea id="q-text" maxlength="200" rows="4" placeholder="Scrie o întrebare din ce ați recapitulat…"></textarea>
+            <div class="q-meta"><span id="q-count">0/200</span><span id="q-msg" role="status"></span></div>
+            <div class="q-left" id="q-left"></div>
+            <button class="btn gold" id="throw-btn" disabled>Aruncă întrebarea</button>
+          </div>
+        </div>
+        <div class="recap-visual">
+          <div class="timer-bar" id="timer-bar" hidden>
+            <div class="timer-label" id="timer-label">Timp rămas</div>
+            <div class="timer-display" id="timer-display" role="timer" aria-live="off">00:00</div>
+            <div class="timer-note" id="timer-note" role="status"></div>
+          </div>
+          <div class="ended-note" id="ended-note" role="status" hidden>
+            <b>Recapitularea s-a încheiat.</b> Trainerul a oprit aruncarea de întrebări. Mulțumim pentru participare!
+          </div>
+          <p class="topic-line" id="topic-line"></p>
+          <div id="arena"></div>
+          <div id="qlists"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="recap.js"></script>
+</body>
+</html>

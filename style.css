@@ -11,6 +11,18 @@
   --grey: #8B8A85;
   --card-bg: #FFFCF4;
   --red: #8B3A2E;
+  /* derivate din temă (theme.js le înlocuiește); valorile de aici sunt cele ale temei „Pergament” */
+  --ink-soft: #5D5B56;
+  --field-bg: #FFFFFF;
+  --green-text: #2F4B3C;
+  --accent-text: #83682E;
+  --accent-soft: #EBDDB5;
+  --on-primary: #FFFCF4;
+  --on-header: #FFFCF4;
+  --on-accent: #1E1D1B;
+  --on-red: #FFFCF4;
+  --select-bg: #E6E7DE;
+  --danger-bg: #F3E9E0;
 }
 
 * { box-sizing: border-box; }
@@ -43,7 +55,7 @@ header.app-header .eyebrow {
 }
 
 header.app-header h1 {
-  color: var(--card-bg);
+  color: var(--on-header);
   font-size: 24px;
   margin: 0;
 }
@@ -56,7 +68,7 @@ main {
 
 .btn {
   background: var(--green);
-  color: var(--card-bg);
+  color: var(--on-primary);
   border: none;
   padding: 10px 18px;
   border-radius: 8px;
@@ -66,18 +78,18 @@ main {
   cursor: pointer;
   transition: opacity 0.15s;
 }
-.btn:hover { opacity: 0.9; }
+.btn:hover { filter: brightness(0.93); } /* nu opacitate: textul păstrează contrastul și la hover */
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.btn.gold { background: var(--gold); color: var(--ink); }
-.btn.outline { background: transparent; border: 1px solid var(--green); color: var(--green); }
-.btn.danger { background: var(--red); }
+.btn.gold { background: var(--gold); color: var(--on-accent); }
+.btn.outline { background: transparent; border: 1px solid var(--green-text); color: var(--green-text); }
+.btn.danger { background: var(--red); color: var(--on-red); }
 
 input, textarea, select {
   font-family: 'Inter', sans-serif;
   border: 1px solid var(--parchment-dark);
   border-radius: 6px;
   padding: 8px 10px;
-  background: #fff;
+  background: var(--field-bg);
   color: var(--ink);
   font-size: 14px;
 }
@@ -93,7 +105,7 @@ input, textarea, select {
 .badge {
   display: inline-block;
   background: var(--gold);
-  color: var(--ink);
+  color: var(--on-accent);
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -114,7 +126,7 @@ input, textarea, select {
 .login-wrap input { width: 100%; }
 .error-msg { color: var(--red); font-size: 13px; margin-top: 10px; }
 .error-msg:not(:empty) {
-  background: #FCEAE8;
+  background: var(--danger-bg);
   border: 1px solid var(--red);
   border-left: 4px solid var(--red);
   border-radius: 6px;
@@ -149,18 +161,18 @@ input, textarea, select {
 }
 .card-tile:hover { transform: translateY(-2px); }
 .card-tile.highlighted {
-  border-color: var(--green-deep);
+  border-color: var(--green-text);
   animation: tile-highlight-pulse 1.6s ease-in-out infinite;
 }
 @keyframes tile-highlight-pulse {
   0%, 100% {
     box-shadow:
-      0 0 0 3px var(--green-deep),
+      0 0 0 3px var(--green-text),
       0 0 14px 5px rgba(33, 58, 46, 0.4);
   }
   50% {
     box-shadow:
-      0 0 0 5px var(--green-deep),
+      0 0 0 5px var(--green-text),
       0 0 28px 12px rgba(33, 58, 46, 0.2);
   }
 }
@@ -178,12 +190,12 @@ input, textarea, select {
   font-size: 11px;
   padding: 4px 8px;
   border-radius: 5px;
-  border: 1px solid var(--green);
+  border: 1px solid var(--green-text);
   background: transparent;
-  color: var(--green);
+  color: var(--green-text);
   cursor: pointer;
 }
-.toggle-flip.active { background: var(--green); color: var(--card-bg); }
+.toggle-flip.active { background: var(--green); color: var(--on-primary); }
 
 /* --- Cursant: carduri flip --- */
 .learner-grid {
@@ -236,7 +248,7 @@ input, textarea, select {
 }
 .static-card img { width: 100%; height: 100%; object-fit: contain; }
 
-.flip-card.is-highlighted .flip-face { border-color: var(--green-deep); }
+.flip-card.is-highlighted .flip-face { border-color: var(--green-text); }
 .flip-card.is-highlighted {
   border-radius: 12px;
   animation: card-highlight-pulse 1.6s ease-in-out infinite;
@@ -244,12 +256,12 @@ input, textarea, select {
 @keyframes card-highlight-pulse {
   0%, 100% {
     box-shadow:
-      0 0 0 4px var(--green-deep),
+      0 0 0 4px var(--green-text),
       0 0 16px 6px rgba(33, 58, 46, 0.45);
   }
   50% {
     box-shadow:
-      0 0 0 6px var(--green-deep),
+      0 0 0 6px var(--green-text),
       0 0 34px 14px rgba(33, 58, 46, 0.25);
   }
 }
@@ -269,7 +281,7 @@ input, textarea, select {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   background: rgba(201,153,46,0.9);
-  color: var(--ink);
+  color: #2B2A28;
   font-size: 11px;
   font-weight: 600;
   text-align: center;
@@ -286,7 +298,15 @@ input, textarea, select {
   border-radius: 8px;
   padding: 10px 14px;
   font-size: 13px;
+}
+.session-link-box span {
+  flex: 1 1 auto;
+  min-width: 0; /* permite linkului sa se ingusteze/desparta pe mai multe randuri, in loc sa impinga butonul */
   word-break: break-all;
+}
+.session-link-box button {
+  flex-shrink: 0; /* butonul "Copiaza" nu se mai comprima niciodata - textul ramane pe un singur rand */
+  white-space: nowrap;
 }
 
 #qr-canvas { border-radius: 8px; border: 1px solid var(--parchment-dark); }
@@ -356,7 +376,7 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
   left: 50%;
   transform: translateX(-50%);
   background: rgba(201,153,46,0.95);
-  color: var(--ink);
+  color: #2B2A28;
   font-weight: 700;
   font-size: 13px;
   padding: 6px 16px;
@@ -388,6 +408,33 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
   transform: scale(1.5);
   cursor: zoom-out;
 }
+
+/* Modal generic (folosit pt. Statistici traineri) */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(43,42,40,0.6);
+  z-index: 70;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow: auto;
+}
+.modal-box {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 22px 24px 26px;
+  max-width: 720px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.stats-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.stats-table th, .stats-table td { padding: 8px 10px; border-bottom: 1px solid var(--parchment-dark); text-align: center; white-space: nowrap; }
+.stats-table th:first-child, .stats-table td:first-child { text-align: left; white-space: normal; }
+.stats-table thead th { font-family: 'Fraunces', serif; font-weight: 600; }
+.stats-table tfoot td { font-weight: 700; border-top: 2px solid var(--parchment-dark); border-bottom: none; }
+.stats-table tbody tr:hover { background: var(--parchment); }
 
 .picker-row {
   display: flex;
@@ -444,7 +491,7 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
   z-index: 3;
 }
 .mini-flip-hint.front-hint { background: rgba(47,75,60,0.85); }
-.mini-flip-hint.back-hint { background: rgba(201,153,46,0.9); color: var(--ink); display: none; }
+.mini-flip-hint.back-hint { background: rgba(201,153,46,0.9); color: #2B2A28; display: none; }
 .mini-flip.flipped .mini-flip-hint.front-hint { display: none; }
 .mini-flip.flipped .mini-flip-hint.back-hint { display: block; }
 
@@ -454,6 +501,44 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
   color: var(--grey);
 }
 .learner-grid .empty-state { flex: 1 1 100%; }
+
+/* Colourblind (desktop): fara text pe carduri, deci le facem mai mici, 3-4 pe rand */
+@media (min-width: 641px) {
+  #cb-main .learner-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    justify-items: center;
+  }
+  #cb-main .flip-card-wrap { width: 100%; }
+  #cb-main .flip-card {
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--ar);
+    min-height: 0;
+    max-height: none;
+  }
+}
+
+/* Colourblind: panoul evidentiat cu cardurile dezvaluite de trainer - ascuns cat timp nu s-a dezvaluit nimic */
+.trainer-reveal-panel {
+  background: var(--accent-soft);
+  border: 2px solid var(--gold);
+  border-radius: 16px;
+  padding: 18px 20px 22px;
+  margin: 0 auto 28px;
+  max-width: 480px;
+}
+/* 1-2 carduri, mereu centrate, indiferent de layout-ul grid folosit de restul grilelor Colourblind mai sus */
+#cb-main #cb-trainer-reveal-grid { display: flex; flex-wrap: wrap; justify-content: center; }
+#cb-main #cb-trainer-reveal-grid .flip-card-wrap { width: auto; }
+#cb-main #cb-trainer-reveal-grid .flip-card {
+  width: 190px;
+  max-width: 40vw;
+  height: auto;
+  aspect-ratio: var(--ar);
+  min-height: 0;
+  max-height: none;
+}
 
 /* --- Responsive / mobil --- */
 @media (max-width: 640px) {
@@ -483,8 +568,23 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
 .switch-row { display: flex; align-items: center; gap: 12px; }
 
 /* grupa completa (mod Selectie) - toti cursantii au ales */
-.btn.group-complete { background: #88d45f; color: var(--green-deep); border-color: #6bbf3f; }
+.btn.group-complete { background: #88d45f; color: #1E3A24; border-color: #6bbf3f; }
 .btn.group-complete.group-complete-selected { box-shadow: 0 0 0 3px var(--gold); }
+
+/* chip de prezenta (dreptunghi rotunjit) - aceleasi culori ca la grupa completa/incompleta din Selectie/Hardiness */
+.status-chip {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  margin: 0 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--parchment-dark);
+  background: var(--parchment-dark);
+  color: var(--ink);
+}
+.status-chip.incomplete { background: transparent; border-color: var(--green-text); color: var(--green-text); }
+.status-chip.complete { background: #88d45f; border-color: #6bbf3f; color: #1E3A24; }
 
 /* butonul "Am ales" - floating, mereu la vedere, indiferent de scroll (mobil si desktop) */
 #selection-submit-bar {
@@ -513,7 +613,7 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
   cursor: pointer;
   font-size: 13px;
   font-weight: 700;
-  color: var(--green-deep);
+  color: var(--green-text);
 }
 .pick-row input[type="checkbox"] {
   width: 26px;
@@ -523,7 +623,42 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
   flex-shrink: 0;
 }
 .card-tile.selected {
-  border-color: var(--green);
-  background: #E4F5E7;
-  box-shadow: 0 0 0 2px var(--green);
+  border-color: var(--green-text);
+  background: var(--select-bg);
+  box-shadow: 0 0 0 2px var(--green-text);
 }
+
+/* Sesiuni & Control live: doua coloane cat timp o sesiune e activa (control in stanga,
+   sesiune/linkuri/cronometru in dreapta) - clasa se adauga/elimina din JS, ca sa nu ramana
+   o coloana goala cand doar sesion-panel e vizibil (inainte de creare sesiune). */
+#sessions-grid-wrap.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  #sessions-grid-wrap.two-col {
+    grid-template-columns: 1fr; /* pe ecrane mai mici (inclusiv mobil), cele doua panouri cad intr-o singura coloana, cu scroll normal */
+  }
+}
+
+/* formularul de creare sesiune: coloana "cursanti" si coloana "carduri", una langa alta */
+.form-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 640px) {
+  .form-two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* codul sesiunii, afișat trainerului: participanții îl scriu pe pagina inițială */
+.code-box { display:flex; align-items:center; flex-wrap:wrap; gap:6px 12px; margin:8px 0 4px; }
+.code-label { font-size:13px; color:var(--ink-soft); font-weight:600; }
+.code-value { font-family:'Inter', sans-serif; font-size:24px; letter-spacing:0.12em; color:var(--ink); background:var(--field-bg); border:2px solid var(--gold); border-radius:8px; padding:0 12px; }
+.code-hint { flex-basis:100%; font-size:12.5px; color:var(--ink-soft); }
+

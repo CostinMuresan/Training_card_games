@@ -215,6 +215,7 @@ async function checkAuth() {
     showAdmin();
   } else {
     $("login-view").style.display = "block";
+    window.TCTheme?.useDefault(); // ecranul de autentificare: mereu tema implicită, la toți
   }
 }
 
@@ -238,12 +239,118 @@ $("login-btn").addEventListener("click", async () => {
 
 $("logout-btn").addEventListener("click", async () => {
   await supabase.auth.signOut();
+  window.TCTheme?.useDefault(); // după deconectare, următorul utilizator nu primește tema celui dinainte
   location.reload();
 });
+
+// ---------- STATISTICI TRAINERI (sesiuni livrate = cel putin un cursant inregistrat, pe joc) ----------
+$("stats-btn").addEventListener("click", async () => {
+  $("stats-modal").style.display = "flex";
+  await loadTrainerStats();
+});
+$("stats-close-btn").addEventListener("click", () => {
+  $("stats-modal").style.display = "none";
+});
+$("stats-modal").addEventListener("click", (e) => {
+  if (e.target.id === "stats-modal") $("stats-modal").style.display = "none";
+});
+
+async function loadTrainerStats() {
+  const box = $("stats-content");
+  box.innerHTML = `<p style="color:var(--grey); margin:0;">Se încarcă…</p>`;
+
+  const [
+    { data: sessions },
+    { data: selPartRows },
+    { data: cbPartRows },
+    { data: allGames },
+    { data: commSessions },
+    { data: commPartRows },
+  ] = await Promise.all([
+    supabase.from("training_sessions").select("id, game_id, admin_email"),
+    supabase.from("session_participants").select("session_id"),
+    supabase.from("cb_participants").select("session_id"),
+    supabase.from("games").select("id, name"),
+    // Nodul comunicarii: daca migrarea SQL nu a fost rulata inca, interogarea intoarce eroare -> tratam ca "nimic"
+    supabase.from("communication_sessions").select("id, mode, admin_email"),
+    supabase.from("communication_participants").select("session_id"),
+  ]);
+
+  // sesiune "livrata" = are macar un cursant inregistrat, indiferent de mod
+  // (session_participants acopera Standard + Selectie, cb_participants acopera Colourblind,
+  //  communication_participants acopera Nodul comunicarii)
+  const deliveredIds = new Set([
+    ...(selPartRows || []).map((r) => r.session_id),
+    ...(cbPartRows || []).map((r) => r.session_id),
+    ...(commPartRows || []).map((r) => r.session_id),
+  ]);
+
+  // Activitatile din Nodul comunicarii nu sunt in tabelul "games": le tratam ca "jocuri" virtuale
+  // (cheie "comm:<mod>"), ca sa apara in aceeasi defalcare pe coloane.
+  const COMM_NAMES = {
+    draw: "Nodul comunicării · Desenează după instrucțiuni",
+    model: "Nodul comunicării · Reconstruiește modelul",
+    client: "Nodul comunicării · Ce ai înțeles?",
+  };
+  const allSessions = [
+    ...(sessions || []),
+    ...(commSessions || []).map((c) => ({ id: c.id, game_id: `comm:${c.mode}`, admin_email: c.admin_email })),
+  ];
+  const delivered = allSessions.filter((s) => deliveredIds.has(s.id));
+
+  if (delivered.length === 0) {
+    box.innerHTML = `<p style="color:var(--grey); margin:0;">Nicio sesiune livrată încă (cu cel puțin un cursant înregistrat).</p>`;
+    return;
+  }
+
+  const gameNameById = {};
+  (allGames || []).forEach((g) => (gameNameById[g.id] = g.name));
+  Object.entries(COMM_NAMES).forEach(([mode, name]) => (gameNameById[`comm:${mode}`] = name));
+  const usedGameIds = [...new Set(delivered.map((s) => s.game_id))];
+  const gameCols = usedGameIds
+    .map((id) => ({ id, name: gameNameById[id] || "(joc șters)" }))
+    .sort((a, b) => a.name.localeCompare(b.name, "ro"));
+
+  // matrice: email trainer -> { [gameId]: nr. sesiuni, total: nr. sesiuni }
+  const matrix = {};
+  delivered.forEach((s) => {
+    if (!matrix[s.admin_email]) matrix[s.admin_email] = { total: 0 };
+    matrix[s.admin_email][s.game_id] = (matrix[s.admin_email][s.game_id] || 0) + 1;
+    matrix[s.admin_email].total += 1;
+  });
+  const trainers = Object.keys(matrix).sort((a, b) => matrix[b].total - matrix[a].total);
+
+  const colTotals = {};
+  gameCols.forEach((g) => (colTotals[g.id] = 0));
+  let grandTotal = 0;
+  trainers.forEach((email) => {
+    gameCols.forEach((g) => (colTotals[g.id] += matrix[email][g.id] || 0));
+    grandTotal += matrix[email].total;
+  });
+
+  const headerCells = gameCols.map((g) => `<th>${escapeHtml(g.name)}</th>`).join("");
+  const bodyRows = trainers
+    .map((email) => {
+      const cells = gameCols.map((g) => `<td>${matrix[email][g.id] || 0}</td>`).join("");
+      return `<tr><td>${escapeHtml(email)}</td>${cells}<td><strong>${matrix[email].total}</strong></td></tr>`;
+    })
+    .join("");
+  const footCells = gameCols.map((g) => `<td>${colTotals[g.id]}</td>`).join("");
+
+  box.innerHTML = `
+    <div style="overflow-x:auto;">
+      <table class="stats-table">
+        <thead><tr><th>Trainer</th>${headerCells}<th>Total</th></tr></thead>
+        <tbody>${bodyRows}</tbody>
+        <tfoot><tr><td>Total</td>${footCells}<td>${grandTotal}</td></tr></tfoot>
+      </table>
+    </div>`;
+}
 
 async function showAdmin() {
   $("login-view").style.display = "none";
   $("admin-view").style.display = "block";
+  supabase.auth.getSession().then(({ data }) => data.session && window.TCTheme?.initTrainer(supabase, data.session.user.email)); // tema salvată de trainer
   await loadGames(); // incarca jocuri -> seturi -> deck -> verificare blocare, in cascada corecta
   await loadActiveSession();
 }
@@ -391,17 +498,26 @@ function syncDeckLockUI() {
 let deckLocked = false; // adevarat daca EXISTA orice sesiune activa, a oricarui trainer (nu doar a mea)
 
 async function refreshDeckLockState() {
-  if (!activeGameId || !activeSetId) {
+  if (!activeGameId) {
     deckLocked = false;
     syncDeckLockUI();
     return;
   }
-  const { data } = await supabase
+  const cbn = isColourblindGame();
+  // La Colourblind, o sesiune foloseste cardurile din TOATE seturile jocului (set_id e null pe sesiune),
+  // deci verificarea trebuie facuta dupa game_id chiar daca nu ai ales inca un set anume mai sus.
+  if (!cbn && !activeSetId) {
+    deckLocked = false;
+    syncDeckLockUI();
+    return;
+  }
+  let query = supabase
     .from("training_sessions")
-    .select("admin_email, session_code")
+    .select("admin_email")
     .eq("status", "active")
-    .eq("game_id", activeGameId)
-    .eq("set_id", activeSetId);
+    .eq("game_id", activeGameId);
+  if (!cbn) query = query.eq("set_id", activeSetId);
+  const { data } = await query;
   deckLocked = !!(data && data.length > 0);
   if (deckLocked) {
     const gameName = games.find((g) => g.id === activeGameId)?.name || "acest joc";
@@ -411,7 +527,10 @@ async function refreshDeckLockState() {
     const noun = count > 1 ? "sesiuni" : "sesiune";
     const adj = count > 1 ? "active" : "activă";
     const deschisa = count > 1 ? "deschise" : "deschisă";
-    $("deck-locked-note").innerHTML = `🔒 Editarea setului „${escapeHtml(setName)}” din jocul „${escapeHtml(gameName)}” e dezactivată — există ${count} ${noun} ${adj}, ${deschisa} de: <strong>${escapeHtml(who)}</strong>. Alte jocuri și seturi rămân editabile. Dacă e sesiunea ta de test, poți încheia din tab-ul „Sesiuni & Control live”.`;
+    const scopeText = cbn
+      ? `Editarea cardurilor din jocul „${escapeHtml(gameName)}” (toate seturile)`
+      : `Editarea setului „${escapeHtml(setName)}” din jocul „${escapeHtml(gameName)}”`;
+    $("deck-locked-note").innerHTML = `🔒 ${scopeText} e dezactivată — există ${count} ${noun} ${adj}, ${deschisa} de: <strong>${escapeHtml(who)}</strong>. Alte jocuri și seturi rămân editabile. Dacă e sesiunea ta de test, poți încheia din tab-ul „Sesiuni & Control live”.`;
   }
   syncDeckLockUI();
 }
@@ -878,13 +997,26 @@ async function endSession() {
   renderSessionPanel();
   refreshDeckLockState();
 }
-$("end-session-btn").addEventListener("click", endSession);
-$("end-session-btn-top").addEventListener("click", endSession);
+$("end-session-btn-tabs").addEventListener("click", endSession);
+$("cancel-session-btn").addEventListener("click", endSession);
+$("cbn-cancel-session-btn").addEventListener("click", endSession);
+
+$("layout-toggle-btn").addEventListener("click", () => {
+  const wantsTwoColNow = !$("sessions-grid-wrap").classList.contains("two-col");
+  localStorage.setItem("adminLayoutOverride", wantsTwoColNow ? "two" : "one");
+  $("sessions-grid-wrap").classList.toggle("two-col", wantsTwoColNow);
+  $("layout-toggle-btn").textContent = wantsTwoColNow ? "⇄ Vezi pe o coloană" : "⇄ Vezi pe două coloane";
+});
 
 function groupLink(code) {
   // functioneaza indiferent daca adresa curenta contine "admin.html" sau doar "admin" (URL curat, fara extensie)
-  const path = location.pathname.replace(/admin(\.html)?$/, "index.html");
+  const path = location.pathname.replace(/admin(\.html)?$/, "grupa.html"); // pagina cursantului; index.html e pagina inițială (linkurile vechi index.html?g= sunt redirecționate)
   return `${location.origin}${path}?g=${code}`;
+}
+
+function colourblindLink(code) {
+  const path = location.pathname.replace(/admin(\.html)?$/, "colourblind.html");
+  return `${location.origin}${path}?s=${code}`;
 }
 
 async function downloadQr(link, filename, format, triggerBtn) {
@@ -926,17 +1058,26 @@ function renderGroupsList() {
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
         <strong class="serif">${escapeHtml(g.name)}</strong>
       </div>
+      <div class="code-box">
+        <span class="code-label">Cod:</span><b class="code-value">${escapeHtml(g.group_code)}</b>
+        <button class="btn outline" data-copy-code style="padding:4px 10px; font-size:12px;">Copiază codul</button>
+      </div>
       <div class="session-link-box" style="margin-top:8px;">
         <span>${link}</span>
         <button class="btn outline" data-copy style="padding:4px 10px; font-size:12px;">Copiază</button>
       </div>
-      <button class="btn outline" data-qr style="margin-top:8px; font-size:12px; padding:5px 10px;">Arată codul QR</button>
-      <div style="display:flex; gap:8px; margin-top:8px;">
+      <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+        <button class="btn outline" data-qr style="font-size:12px; padding:5px 10px;">Arată codul QR</button>
         <button class="btn outline" data-dl-png style="font-size:12px; padding:5px 10px;">⬇ Descarcă PNG</button>
         <button class="btn outline" data-dl-jpg style="font-size:12px; padding:5px 10px;">⬇ Descarcă JPG</button>
       </div>
       <img data-qr-img style="display:none; margin-top:8px; width:160px; height:160px; border-radius:8px; border:1px solid var(--parchment-dark); background:#fff;" />
     `;
+    card.querySelector("[data-copy-code]").addEventListener("click", (e) => {
+      navigator.clipboard.writeText(g.group_code);
+      e.target.textContent = "Copiat!";
+      setTimeout(() => (e.target.textContent = "Copiază codul"), 1500);
+    });
     card.querySelector("[data-copy]").addEventListener("click", (e) => {
       navigator.clipboard.writeText(link);
       e.target.textContent = "Copiat!";
@@ -963,6 +1104,245 @@ function renderGroupsList() {
     );
     box.appendChild(card);
   });
+}
+
+function renderCbnLink() {
+  if (!currentSession) return;
+  const link = colourblindLink(currentSession.session_code);
+  $("cbn-link-text").textContent = link;
+  $("cbn-code").textContent = currentSession.session_code;
+  $("cbn-link-copy-btn").onclick = (e) => {
+    navigator.clipboard.writeText(link);
+    e.target.textContent = "Copiat!";
+    setTimeout(() => (e.target.textContent = "Copiază"), 1500);
+  };
+  const qrBtn = $("cbn-qr-btn");
+  const qrImg = $("cbn-qr-img");
+  qrBtn.onclick = () => {
+    if (qrImg.style.display === "none") {
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(link)}`;
+      qrImg.style.display = "block";
+      qrBtn.textContent = "Ascunde codul QR";
+    } else {
+      qrImg.style.display = "none";
+      qrBtn.textContent = "Arată codul QR";
+    }
+  };
+  $("cbn-qr-dl-png-btn").onclick = (e) => downloadQr(link, "qr-echipa.png", "png", e.target);
+  $("cbn-qr-dl-jpg-btn").onclick = (e) => downloadQr(link, "qr-echipa.jpg", "jpg", e.target);
+}
+
+async function createColourblindSession() {
+  $("cbn-create-error").textContent = "";
+  if (!activeGameId) {
+    $("cbn-create-error").textContent = "Alege întâi un joc, sus, în panoul de selecție.";
+    return;
+  }
+  const btn = $("cbn-create-session-btn");
+  btn.disabled = true;
+  btn.textContent = "Se creează...";
+  try {
+    // deck-ul Colourblind acopera TOATE seturile jocului, nu doar setul selectat
+    const { data: allCards, error: cardsErr } = await supabase.from("cards").select("*").eq("game_id", activeGameId);
+    if (cardsErr) throw cardsErr;
+    if (!allCards || allCards.length < 3) {
+      $("cbn-create-error").textContent = `Jocul are doar ${allCards ? allCards.length : 0} carduri, în total, pe toate seturile — ai nevoie de cel puțin 3 (2 pentru tine, minimum 1 pentru participanți).`;
+      return;
+    }
+    const shuffled = shuffle(allCards);
+    const trainerCards = shuffled.slice(0, 2);
+
+    const expectedParticipants = Math.max(0, parseInt($("cbn-expected-participants").value, 10) || 0);
+    const { data: { user } } = await supabase.auth.getUser();
+    const code = randomCode();
+    const { data: sessionRow, error: sessErr } = await supabase
+      .from("training_sessions")
+      .insert({
+        session_code: code,
+        game_id: activeGameId,
+        set_id: null,
+        admin_email: user.email,
+        status: "active",
+        cb_expected_participants: expectedParticipants,
+      })
+      .select()
+      .single();
+    if (sessErr) throw sessErr;
+
+    const { error: tcErr } = await supabase
+      .from("cb_trainer_cards")
+      .insert(trainerCards.map((c) => ({ session_id: sessionRow.id, card_id: c.id })));
+    if (tcErr) throw tcErr;
+
+    currentSession = sessionRow;
+    groups = [];
+    currentGroupId = null;
+    await renderSessionPanel();
+    refreshDeckLockState();
+  } catch (err) {
+    $("cbn-create-error").textContent = "Eroare: " + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Creează sesiunea Colourblind";
+  }
+}
+$("cbn-create-session-btn").addEventListener("click", createColourblindSession);
+
+async function loadColourblindPanel() {
+  if (!currentSession || !isColourblindGame()) return;
+
+  const { data: trainerCardRows } = await supabase
+    .from("cb_trainer_cards")
+    .select("*")
+    .eq("session_id", currentSession.id)
+    .order("id", { ascending: true });
+  const { data: partRows } = await supabase
+    .from("cb_participants")
+    .select("*")
+    .eq("session_id", currentSession.id)
+    .order("joined_at", { ascending: true });
+  const parts = partRows || [];
+  const partIds = parts.map((p) => p.id);
+  const { data: pcRows } = await supabase
+    .from("cb_participant_cards")
+    .select("*")
+    .in("participant_id", partIds.length > 0 ? partIds : ["00000000-0000-0000-0000-000000000000"]);
+
+  // aducem cardurile direct din baza de date, dupa id - "deckCards" (folosit in alte tab-uri) e populat
+  // doar din setul selectat sus, iar la Colourblind nu se alege niciun set (deck-ul acopera toate seturile),
+  // deci deckCards ar ramane gol si cardurile trainerului/participantilor n-ar mai fi gasite.
+  const cbAllCardIds = [
+    ...new Set([...(trainerCardRows || []).map((r) => r.card_id), ...(pcRows || []).map((r) => r.card_id)]),
+  ];
+  const cbCardsMap = {};
+  if (cbAllCardIds.length > 0) {
+    const { data: cbCardData } = await supabase.from("cards").select("*").in("id", cbAllCardIds);
+    (cbCardData || []).forEach((c) => (cbCardsMap[c.id] = c));
+  }
+
+  const started = !!currentSession.cb_started_at;
+  $("cbn-not-started-box").style.display = started ? "none" : "block";
+  $("cbn-started-box").style.display = started ? "block" : "none";
+  $("end-session-btn-tabs").style.display = started ? "inline-block" : "none";
+
+  const expected = currentSession.cb_expected_participants || 0;
+  const preText =
+    expected > 0
+      ? `${parts.length} / ${expected} cursanți s-au alăturat până acum.`
+      : `${parts.length} participant${parts.length === 1 ? "" : "i"} s-au alăturat până acum.`;
+  const preEl = $("cbn-participants-count-pre");
+  preEl.textContent = preText;
+  const allJoined = expected > 0 && parts.length >= expected;
+  preEl.classList.toggle("complete", allJoined);
+  preEl.classList.toggle("incomplete", expected > 0 && !allJoined);
+  $("cbn-participants-count").textContent = `${parts.length} participant${parts.length === 1 ? "" : "i"}`;
+
+  // cardurile trainerului
+  const tcBox = $("cbn-trainer-cards");
+  tcBox.innerHTML = "";
+  (trainerCardRows || []).forEach((tc) => {
+    const card = cbCardsMap[tc.card_id] || { title: "?", front_image_url: "" };
+    const revealed = !!tc.revealed_at;
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "width:140px; text-align:center;";
+    wrap.innerHTML = `
+      <img src="${card.front_image_url}" style="width:100%; border-radius:8px; border:2px solid ${revealed ? "var(--green)" : "var(--parchment-dark)"}; cursor:zoom-in;" data-zoom />
+      <p style="font-size:12px; margin:6px 0;">${escapeHtml(card.title)}</p>
+      <button class="btn ${revealed ? "outline" : "gold"}" data-reveal style="font-size:12px; padding:5px 10px; width:100%;" ${revealed ? "disabled" : ""}>${revealed ? "✓ Dezvăluit" : "Dezvăluie"}</button>
+    `;
+    wrap.querySelector("[data-zoom]").addEventListener("click", () => openLightbox(card.front_image_url));
+    if (!revealed) {
+      wrap.querySelector("[data-reveal]").addEventListener("click", async () => {
+        await supabase.from("cb_trainer_cards").update({ revealed_at: new Date().toISOString() }).eq("id", tc.id);
+        await loadColourblindPanel();
+      });
+    }
+    tcBox.appendChild(wrap);
+  });
+
+  // lista participantilor
+  const pBox = $("cbn-participants-list");
+  pBox.innerHTML = "";
+  if (parts.length === 0) {
+    pBox.innerHTML = `<p style="font-size:13px; color:var(--grey); margin:0;">Niciun participant nu s-a alăturat încă.</p>`;
+  }
+  parts.forEach((p) => {
+    const myCardIds = (pcRows || []).filter((r) => r.participant_id === p.id).map((r) => r.card_id);
+    const thumbsHtml = myCardIds
+      .map((cid) => {
+        const c = cbCardsMap[cid];
+        return c ? `<img src="${c.front_image_url}" title="${escapeHtml(c.title)}" style="width:48px; height:48px; object-fit:cover; border-radius:6px; border:1px solid var(--parchment-dark); cursor:zoom-in;" data-zoom-card="${c.front_image_url}" />` : "";
+      })
+      .join("");
+    const row = document.createElement("div");
+    row.className = "panel";
+    row.style.cssText = "padding:10px 14px; margin:0; display:flex; align-items:center; gap:12px; flex-wrap:wrap;";
+    row.innerHTML = `
+      <strong style="min-width:110px;">${escapeHtml(p.alias)}</strong>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">${thumbsHtml || '<span style="font-size:12px; color:var(--grey);">— fără carduri încă —</span>'}</div>
+    `;
+    row.querySelectorAll("[data-zoom-card]").forEach((img) => {
+      img.addEventListener("click", () => openLightbox(img.dataset.zoomCard));
+    });
+    pBox.appendChild(row);
+  });
+}
+
+$("cbn-start-btn").addEventListener("click", async () => {
+  $("cbn-start-error").textContent = "";
+  const { data: partRows } = await supabase.from("cb_participants").select("*").eq("session_id", currentSession.id);
+  const parts = partRows || [];
+  if (parts.length === 0) {
+    $("cbn-start-error").textContent = "Niciun participant nu s-a alăturat încă pe link — așteaptă-i înainte să pornești.";
+    return;
+  }
+  const { data: trainerCardRows } = await supabase.from("cb_trainer_cards").select("card_id").eq("session_id", currentSession.id);
+  const trainerCardIds = new Set((trainerCardRows || []).map((r) => r.card_id));
+  const { data: allCards } = await supabase.from("cards").select("id").eq("game_id", activeGameId);
+  const pool = shuffle((allCards || []).filter((c) => !trainerCardIds.has(c.id)));
+
+  // impartire cat mai egala, aleatoriu ce anume primeste fiecare
+  const buckets = parts.map(() => []);
+  pool.forEach((card, i) => buckets[i % parts.length].push(card.id));
+
+  const rows = [];
+  parts.forEach((p, i) => buckets[i].forEach((cardId) => rows.push({ participant_id: p.id, card_id: cardId })));
+  if (rows.length > 0) await supabase.from("cb_participant_cards").insert(rows);
+
+  await supabase.from("training_sessions").update({ cb_started_at: new Date().toISOString() }).eq("id", currentSession.id);
+  currentSession.cb_started_at = new Date().toISOString();
+  await loadColourblindPanel();
+});
+
+$("cbn-reveal-all-btn").addEventListener("click", async () => {
+  if (!confirm("Sigur? Toți participanții vor vedea instant cine ce a avut — acțiunea nu poate fi anulată.")) return;
+  await supabase.from("training_sessions").update({ cb_revealed_all_at: new Date().toISOString() }).eq("id", currentSession.id);
+  currentSession.cb_revealed_all_at = new Date().toISOString();
+  alert("Gata — participanții văd acum imaginea completă.");
+});
+
+// actualizare live a panoului Colourblind (participanti noi, dezvaluiri) - admin nu trebuie sa dea refresh manual
+supabase
+  .channel("cbn-admin-watch")
+  .on("postgres_changes", { event: "*", schema: "public", table: "cb_participants" }, () => {
+    if (isColourblindGame()) loadColourblindPanel();
+  })
+  .on("postgres_changes", { event: "*", schema: "public", table: "cb_participant_cards" }, () => {
+    if (isColourblindGame()) loadColourblindPanel();
+  })
+  .on("postgres_changes", { event: "*", schema: "public", table: "cb_trainer_cards" }, () => {
+    if (isColourblindGame()) loadColourblindPanel();
+  })
+  .subscribe();
+
+// plasa de siguranta, ca la Selectie: reverifica periodic, indiferent daca abonarea live functioneaza
+setInterval(() => {
+  if (currentSession && isColourblindGame()) loadColourblindPanel();
+}, 5000);
+
+function isGenericGame() {
+  const g = games.find((g) => g.id === activeGameId);
+  return g && g.mode === "generic";
 }
 
 function isColourblindGame() {
@@ -1003,8 +1383,12 @@ function computeSelectionGroups(total, groupSize) {
 
 function syncSessionCreationFields() {
   const sel = isSelectionGame();
+  const cbn = isColourblindGame();
+  $("group-based-create-fields").style.display = cbn ? "none" : "block";
+  $("cbn-create-fields").style.display = cbn ? "block" : "none";
   $("standard-group-fields").style.display = sel ? "none" : "block";
   $("selection-group-fields").style.display = sel ? "block" : "none";
+  $("selection-max-choices-field").style.display = sel ? "block" : "none";
   if (sel) updateSelectionGroupsPreview();
 }
 
@@ -1018,17 +1402,22 @@ $("num-participants-total").addEventListener("input", updateSelectionGroupsPrevi
 $("participants-per-group").addEventListener("input", updateSelectionGroupsPreview);
 
 function syncGameModeUI() {
-  const cb = isColourblindGame();
+  const generic = isGenericGame();
   const sel = isSelectionGame();
-  $("flip-controls-panel").style.display = cb ? "none" : "block";
-  $("card-picker-shared-panel").style.display = cb ? "none" : "block";
-  $("standard-mode-panel").style.display = cb || sel ? "none" : "block";
-  $("colourblind-mode-panel").style.display = cb ? "block" : "none";
+  const cbn = isColourblindGame();
+  $("flip-controls-panel").style.display = generic || cbn ? "none" : "block";
+  $("card-picker-shared-panel").style.display = generic || cbn ? "none" : "block";
+  $("standard-mode-panel").style.display = generic || sel || cbn ? "none" : "block";
+  $("generic-mode-panel").style.display = generic ? "block" : "none";
   $("selection-mode-panel").style.display = sel ? "block" : "none";
-  $("control-panel-hint").textContent = cb
+  $("colourblind-mode-panel").style.display = cbn ? "block" : "none";
+  $("group-tabs").style.display = cbn ? "none" : "flex";
+  $("control-panel-hint").textContent = generic
     ? "Grupa selectată reprezintă o echipă. Fiecare participant din ea primește propriul link, cu propriul set privat de carduri."
     : sel
     ? "Cursanții din grupa selectată intră toți pe același link și își aleg individual cardurile preferate din deck-ul comun."
+    : cbn
+    ? "Tu ai 2 carduri secrete. Echipa discută verbal, fără share screen, și încearcă să le ghicească."
     : "Click pe un card pentru a-l evidenția la grupa selectată. Butonul „Permite răsturnarea” activează flip-ul pentru acel card, doar la această grupă.";
 }
 
@@ -1044,9 +1433,8 @@ function renderGroupTabs() {
       currentGroupId = g.id;
       renderGroupTabs();
       await renderControlGrid();
-      if (isColourblindGame()) await loadParticipants();
-      if (!isColourblindGame() && !isSelectionGame()) await loadPresence();
-      if (isSelectionGame()) await loadSelectionParticipants();
+      if (isGenericGame()) await loadParticipants();
+      if (!isGenericGame() && !isSelectionGame()) await loadPresence();
       if (isSelectionGame()) await loadSelectionGroupsOverview();
     });
     box.appendChild(btn);
@@ -1081,6 +1469,11 @@ function renderTimerPanel() {
   $("timer-none-box").style.display = status === "none" ? "block" : "none";
   $("timer-running-box").style.display = status === "running" || status === "paused" || status === "expired" ? "block" : "none";
 
+  // "Incheie sesiunea" de sus apare doar dupa ce chiar a fost lansata catre cursanti
+  // (cronometru pornit, sau ales explicit "fara cronometru") - nu doar creata.
+  $("end-session-btn-tabs").style.display = status !== "not_started" ? "inline-block" : "none";
+  $("cancel-session-btn").style.display = status === "not_started" ? "inline-block" : "none";
+
   if (status === "running" || status === "paused" || status === "expired") {
     $("timer-display").textContent = secondsToHMS(liveRemaining(currentSession));
     const labels = { running: "Cronometru pornit — vizibil live la cursanți", paused: "Pauză — cursanții văd timpul înghețat", expired: "⏰ Timpul a expirat" };
@@ -1109,8 +1502,8 @@ $("timer-skip-btn").addEventListener("click", async () => {
   if (isSelectionGame()) {
     const { allDone, summary } = await checkAllGroupsSelectionComplete();
     if (!allDone) {
-      alert(`Nu toți cursanții au ales încă, în toate grupele:\n${summary}`);
-      return;
+      const proceed = confirm(`Nu toți cursanții au ales încă, în toate grupele:\n${summary}\n\nVrei să pornești sesiunea oricum?`);
+      if (!proceed) return;
     }
   }
   const { error } = await supabase.from("training_sessions").update({ timer_status: "none" }).eq("id", currentSession.id);
@@ -1147,8 +1540,8 @@ $("timer-start-btn").addEventListener("click", async () => {
   if (isSelectionGame()) {
     const { allDone, summary } = await checkAllGroupsSelectionComplete();
     if (!allDone) {
-      alert(`Nu poți porni cronometrul — nu toți cursanții au ales încă, în toate grupele:\n${summary}`);
-      return;
+      const proceed = confirm(`Nu toți cursanții au ales încă, în toate grupele:\n${summary}\n\nVrei să pornești cronometrul oricum?`);
+      if (!proceed) return;
     }
   }
   const h = parseInt($("timer-h").value, 10) || 0;
@@ -1190,8 +1583,10 @@ $("timer-pause-btn").addEventListener("click", async () => {
 });
 
 $("timer-extend-btn").addEventListener("click", async () => {
-  const extraMin = Math.max(1, parseInt($("timer-extend-min").value, 10) || 0);
-  const extraSeconds = extraMin * 60;
+  const extraMin = Math.max(0, parseInt($("timer-extend-min").value, 10) || 0);
+  const extraSec = Math.max(0, parseInt($("timer-extend-sec").value, 10) || 0);
+  const extraSeconds = extraMin * 60 + extraSec;
+  if (extraSeconds <= 0) return;
   let update;
   if (currentSession.timer_status === "running") {
     const newRemaining = Math.round(liveRemaining(currentSession)) + extraSeconds;
@@ -1236,23 +1631,45 @@ async function renderSessionPanel() {
     $("no-session-box").style.display = "none";
     $("active-session-box").style.display = "block";
     $("control-panel").style.display = "block";
-    $("session-code-badge").textContent = currentSession.session_code;
-    $("groups-list").style.display = "none";
-    $("toggle-groups-list-btn").textContent = `Arată linkurile și codurile QR ale grupelor (${groups.length}) ▾`;
-    renderGroupsList();
-    renderGroupTabs();
+    // Format implicit, per mod: Standard = o coloana (grila de carduri conteaza, ii dam toata latimea).
+    // Colourblind/Selectie = doua coloane (nu se vede/nu se da click pe carduri aici).
+    // Trainerul poate suprascrie oricand cu butonul "⇄ Vezi pe...", alegerea ramane salvata local (browser).
+    const layoutOverride = localStorage.getItem("adminLayoutOverride"); // "one" | "two" | null
+    const cbn = isColourblindGame();
+    const defaultTwoCol = isGenericGame() || isSelectionGame() || cbn;
+    const wantTwoCol = layoutOverride ? layoutOverride === "two" : defaultTwoCol;
+    $("sessions-grid-wrap").classList.toggle("two-col", wantTwoCol);
+    $("layout-toggle-btn").style.display = "inline-block";
+    $("layout-toggle-btn").textContent = wantTwoCol ? "⇄ Vezi pe o coloană" : "⇄ Vezi pe două coloane";
+
+    $("group-link-section").style.display = cbn ? "none" : "block";
+    $("cbn-link-section").style.display = cbn ? "block" : "none";
+    $("timer-panel").style.display = cbn ? "none" : "block";
+
     syncGameModeUI();
-    await renderControlGrid();
-    if (isColourblindGame()) await loadParticipants();
-    if (isSelectionGame()) await loadSelectionParticipants();
-    if (!isColourblindGame() && !isSelectionGame()) await loadPresence();
-    if (isSelectionGame()) await loadSelectionGroupsOverview();
-    renderTimerPanel();
+
+    if (cbn) {
+      renderCbnLink();
+      await loadColourblindPanel();
+    } else {
+      $("groups-list").style.display = "none";
+      $("toggle-groups-list-btn").textContent = `Linkuri & QR grupe (${groups.length}) ▾`;
+      renderGroupsList();
+      renderGroupTabs();
+      await renderControlGrid();
+      if (isGenericGame()) await loadParticipants();
+      if (!isGenericGame() && !isSelectionGame()) await loadPresence();
+      if (isSelectionGame()) await loadSelectionGroupsOverview();
+      renderTimerPanel();
+    }
     if (!timerInterval) timerInterval = setInterval(tickTimer, 1000);
   } else {
     $("no-session-box").style.display = "block";
     $("active-session-box").style.display = "none";
     $("control-panel").style.display = "none";
+    $("end-session-btn-tabs").style.display = "none";
+    $("layout-toggle-btn").style.display = "none";
+    $("sessions-grid-wrap").classList.remove("two-col");
     if (timerInterval) {
       clearInterval(timerInterval);
       timerInterval = null;
@@ -1264,7 +1681,7 @@ $("toggle-groups-list-btn").addEventListener("click", () => {
   const box = $("groups-list");
   const open = box.style.display !== "none";
   box.style.display = open ? "none" : "flex";
-  $("toggle-groups-list-btn").textContent = `${open ? "Arată" : "Ascunde"} linkurile și codurile QR ale grupelor (${groups.length}) ${open ? "▾" : "▴"}`;
+  $("toggle-groups-list-btn").textContent = `Linkuri & QR grupe (${groups.length}) ${open ? "▾" : "▴"}`;
 });
 
 let controlGroupCards = []; // cache local pentru grupa curent afisata in panoul de control (evita rebuild complet la fiecare click)
@@ -1782,6 +2199,8 @@ $("reveal-solution-btn").addEventListener("click", async () => {
 });
 
 // ---------- SELECTION (Hardiness): progres live al grupei selectate ----------
+let expandedSelectionGroupId = null; // ce grupa e "desfacuta" (acordeon) in lista de progres
+
 async function loadSelectionGroupsOverview() {
   const box = $("selection-groups-overview");
   if (!box) return;
@@ -1791,29 +2210,84 @@ async function loadSelectionGroupsOverview() {
   }
   const { data: allParts } = await supabase
     .from("session_participants")
-    .select("group_id, submitted_at")
-    .in("group_id", groups.map((g) => g.id));
+    .select("*")
+    .in("group_id", groups.map((g) => g.id))
+    .order("created_at", { ascending: true });
+  const partsByGroup = {};
+  groups.forEach((g) => (partsByGroup[g.id] = []));
+  (allParts || []).forEach((p) => {
+    if (partsByGroup[p.group_id]) partsByGroup[p.group_id].push(p);
+  });
+
+  const allPartIds = (allParts || []).map((p) => p.id);
+  const { data: pcRows } = await supabase
+    .from("session_participant_cards")
+    .select("*")
+    .in("participant_id", allPartIds.length > 0 ? allPartIds : ["00000000-0000-0000-0000-000000000000"]);
+  const choicesMap = {};
+  (pcRows || []).forEach((r) => {
+    if (!choicesMap[r.participant_id]) choicesMap[r.participant_id] = [];
+    choicesMap[r.participant_id].push(r.card_id);
+  });
 
   box.innerHTML = "";
   groups.forEach((g) => {
     const expected = g.expected_participants || 0;
-    const parts = (allParts || []).filter((p) => p.group_id === g.id);
+    const parts = partsByGroup[g.id] || [];
     const submitted = parts.filter((p) => p.submitted_at).length;
     const complete = expected > 0 && submitted >= expected;
     const isSelected = g.id === currentGroupId;
+    const isExpanded = g.id === expandedSelectionGroupId;
+
+    const wrap = document.createElement("div");
 
     const row = document.createElement("button");
     row.className = complete ? "btn group-complete" + (isSelected ? " group-complete-selected" : "") : "btn " + (isSelected ? "gold" : "outline");
     row.style.cssText = "display:flex; justify-content:space-between; align-items:center; text-align:left; width:100%;";
-    row.innerHTML = `<span>${escapeHtml(g.name)}</span><span style="font-weight:700;">${complete ? "✓ " : ""}${submitted} / ${expected || "?"}</span>`;
+    row.innerHTML = `<span>${isExpanded ? "▾" : "▸"} ${escapeHtml(g.name)}</span><span style="font-weight:700;">${complete ? "✓ " : ""}${submitted} / ${expected || "?"}</span>`;
     row.addEventListener("click", async () => {
       currentGroupId = g.id;
+      expandedSelectionGroupId = expandedSelectionGroupId === g.id ? null : g.id;
       renderGroupTabs();
       await renderControlGrid();
-      await loadSelectionParticipants();
       await loadSelectionGroupsOverview();
     });
-    box.appendChild(row);
+    wrap.appendChild(row);
+
+    if (isExpanded) {
+      const details = document.createElement("div");
+      details.style.cssText = "padding:10px 4px 4px 14px; display:flex; flex-direction:column; gap:8px;";
+      if (parts.length === 0) {
+        details.innerHTML = `<p style="font-size:13px; color:var(--grey); margin:0;">Niciun cursant nu s-a alăturat încă acestei grupe.</p>`;
+      } else {
+        parts.forEach((p, idx) => {
+          const cardIds = choicesMap[p.id] || [];
+          const titles = cardIds.map((id) => deckCards.find((c) => c.id === id)?.title).filter(Boolean).join(", ");
+          const prow = document.createElement("div");
+          prow.className = "panel";
+          prow.style.cssText = "padding:10px 14px; margin:0; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;";
+          prow.innerHTML = `
+            <strong>Cursant ${idx + 1}</strong>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:13px; color:${p.submitted_at ? "var(--green)" : "var(--grey)"};">
+                ${p.submitted_at ? `✓ A ales: ${escapeHtml(titles) || "—"}` : "…încă alege"}
+              </span>
+              <button class="toggle-flip" data-remove-participant style="border-color:var(--red); color:var(--red);">🗑 Elimină</button>
+            </div>
+          `;
+          prow.querySelector("[data-remove-participant]").addEventListener("click", async () => {
+            if (!confirm(`Elimini „Cursant ${idx + 1}” din grupă? Alegerea lui (dacă a făcut-o) se șterge și ea.`)) return;
+            await supabase.from("session_participant_cards").delete().eq("participant_id", p.id);
+            await supabase.from("session_participants").delete().eq("id", p.id);
+            await loadSelectionGroupsOverview();
+          });
+          details.appendChild(prow);
+        });
+      }
+      wrap.appendChild(details);
+    }
+
+    box.appendChild(wrap);
 
     // coloreaza si tab-ul corespunzator de sus (Grupa 1, Grupa 2...), la fel ca randul din lista
     const tabBtn = document.querySelector(`#group-tabs button[data-group-id="${g.id}"]`);
@@ -1823,64 +2297,13 @@ async function loadSelectionGroupsOverview() {
   });
 }
 
-async function loadSelectionParticipants() {
-  const box = $("selection-participants-list");
-  const progressEl = $("selection-progress");
-  if (!currentGroupId) {
-    box.innerHTML = "";
-    progressEl.textContent = "";
-    return;
-  }
-  const g = groups.find((g) => g.id === currentGroupId);
-  const expected = g?.expected_participants || 0;
-
-  const { data: pRows } = await supabase.from("session_participants").select("*").eq("group_id", currentGroupId).order("created_at", { ascending: true });
-  const parts = pRows || [];
-
-  const { data: pcRows } = await supabase
-    .from("session_participant_cards")
-    .select("*")
-    .in("participant_id", parts.length > 0 ? parts.map((p) => p.id) : ["00000000-0000-0000-0000-000000000000"]);
-  const choicesMap = {};
-  (pcRows || []).forEach((r) => {
-    if (!choicesMap[r.participant_id]) choicesMap[r.participant_id] = [];
-    choicesMap[r.participant_id].push(r.card_id);
-  });
-
-  const submittedCount = parts.filter((p) => p.submitted_at).length;
-  progressEl.textContent = `${submittedCount} / ${expected} au ales`;
-  progressEl.style.color = expected > 0 && submittedCount >= expected ? "var(--green)" : "var(--ink)";
-
-  box.innerHTML = "";
-  if (parts.length === 0) {
-    box.innerHTML = `<p style="font-size:13px; color:var(--grey); margin:0;">Niciun cursant nu s-a alăturat încă acestei grupe.</p>`;
-    return;
-  }
-  parts.forEach((p, idx) => {
-    const cardIds = choicesMap[p.id] || [];
-    const titles = cardIds.map((id) => deckCards.find((c) => c.id === id)?.title).filter(Boolean).join(", ");
-    const row = document.createElement("div");
-    row.className = "panel";
-    row.style.cssText = "padding:10px 14px; margin:0; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;";
-    row.innerHTML = `
-      <strong>Cursant ${idx + 1}</strong>
-      <span style="font-size:13px; color:${p.submitted_at ? "var(--green)" : "var(--grey)"};">
-        ${p.submitted_at ? `✓ A ales: ${escapeHtml(titles) || "—"}` : "…încă alege"}
-      </span>
-    `;
-    box.appendChild(row);
-  });
-}
-
 // actualizare live a progresului, indiferent cine scrie (admin nu trebuie sa dea refresh manual)
 supabase
   .channel("selection-progress-watch")
   .on("postgres_changes", { event: "*", schema: "public", table: "session_participants" }, () => {
-    if (isSelectionGame() && currentGroupId) loadSelectionParticipants();
     if (isSelectionGame()) loadSelectionGroupsOverview();
   })
   .on("postgres_changes", { event: "*", schema: "public", table: "session_participant_cards" }, () => {
-    if (isSelectionGame() && currentGroupId) loadSelectionParticipants();
     if (isSelectionGame()) loadSelectionGroupsOverview();
   })
   .subscribe();
@@ -1888,10 +2311,7 @@ supabase
 // plasa de siguranta: reverifica progresul periodic, indiferent daca abonarea live de mai sus
 // functioneaza sau nu (conexiuni WebSocket instabile, tab-uri lasate deschise mult timp etc.)
 setInterval(() => {
-  if (currentSession && isSelectionGame()) {
-    loadSelectionGroupsOverview();
-    if (currentGroupId) loadSelectionParticipants();
-  }
+  if (currentSession && isSelectionGame()) loadSelectionGroupsOverview();
 }, 5000);
 
 // ---------- PREZENTA (mod Standard): cati au deschis linkul, din cati sunt asteptati ----------
@@ -1917,7 +2337,7 @@ async function loadPresence() {
 supabase
   .channel("presence-watch")
   .on("postgres_changes", { event: "*", schema: "public", table: "session_participants" }, () => {
-    if (!isColourblindGame() && !isSelectionGame() && currentGroupId) loadPresence();
+    if (!isGenericGame() && !isSelectionGame() && currentGroupId) loadPresence();
   })
   .subscribe();
 

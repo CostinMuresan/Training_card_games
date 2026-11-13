@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ro" data-theme-role="trainer">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Panou trainer — Training Activities</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="home.css" />
+<script src="theme.js"></script>
+</head>
+<body class="home">
+<header class="home-header">
+  <div>
+    <div class="eyebrow">Panou trainer</div>
+    <h1>Training Activities</h1>
+  </div>
+  <div class="home-actions">
+    <a class="home-hbtn" id="home-link" href="index.html">Pagina inițială</a>
+    <a class="home-hbtn" id="manual-link" href="manual.html" target="_blank" hidden>Manual</a>
+    <button class="home-hbtn" id="theme-btn" type="button" hidden>Temă</button>
+    <span class="home-user" id="user-email"></span>
+    <button class="home-hbtn" id="logout-btn" type="button" hidden>Deconectare</button>
+  </div>
+</header>
+
+<main class="home-main">
+  <section id="auth-box" class="home-card login-card" hidden>
+    <div class="card-eyebrow">Trainer</div>
+    <h1>Autentificare</h1>
+    <label for="email">Email</label>
+    <input id="email" type="email" placeholder="trainer@exemplu.ro" autocomplete="username" />
+    <label for="password" style="margin-top:6px">Parolă</label>
+    <input id="password" type="password" autocomplete="current-password" />
+    <button class="home-btn" id="login" type="button">Intră</button>
+    <div class="home-err" id="auth-error" role="alert"></div>
+    <a class="home-link" href="index.html" style="min-height:44px; justify-content:center; border:none; background:transparent; color:var(--green-text); font-weight:600; font-size:14px">← Înapoi la pagina inițială</a>
+  </section>
+
+  <section id="hub" hidden>
+    <h1 class="big">Ce vrei să lansezi?</h1>
+    <p class="home-lead">Alege tipul de activitate. Fiecare te duce la propriul panou de control.</p>
+    <section class="running" id="running" hidden aria-labelledby="running-title">
+      <h2 id="running-title">Sesiuni în desfășurare</h2>
+      <div id="running-list"></div>
+    </section>
+    <div class="tile-grid" id="tiles"></div>
+  </section>
+</main>
+
+<footer class="home-footer">Training Activities · AcademiaBT</footer>
+<script type="module" src="trainer.js"></script>
+</body>
+</html>

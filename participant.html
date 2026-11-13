@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Carduri de training</title>
+<title>Training Activities</title>
 <link rel="stylesheet" href="style.css" />
+<script src="theme.js"></script>
 </head>
 <body>
 
 <header class="app-header">
   <div>
-    <div class="eyebrow">Joc de training · Colourblind</div>
-    <h1 id="participant-game-title">Carduri de training</h1>
+    <div class="eyebrow">Joc de training · Joc generic</div>
+    <h1 id="participant-game-title">Training Activities</h1>
   </div>
 </header>
 
@@ -21,8 +22,8 @@
     <span class="badge" id="participant-name-badge"></span>
   </div>
   <div id="session-timer-bar" style="display:none; text-align:center; margin-bottom:24px;">
-    <div style="font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); font-family:'Inter',sans-serif;">Timp rămas</div>
-    <div id="learner-timer-display" style="font-size:44px; font-family:'Fraunces',serif; font-weight:700; color:var(--green);">00:00:00</div>
+    <div style="font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent-text); font-family:'Inter',sans-serif;">Timp rămas</div>
+    <div id="learner-timer-display" style="font-size:44px; font-family:'Fraunces',serif; font-weight:700; color:var(--green-text);">00:00:00</div>
   </div>
 
   <div id="private-cards-section" style="display:none;">
@@ -31,7 +32,7 @@
   </div>
 
   <div id="solution-section" style="display:none; margin-top:40px; padding-top:30px; border-top:2px solid var(--gold);">
-    <h2 class="serif" style="text-align:center; color:var(--green-deep);">🎯 Soluția dezvăluită</h2>
+    <h2 class="serif" style="text-align:center; color:var(--green-text);">🎯 Soluția dezvăluită</h2>
     <div class="learner-grid" id="solution-grid" style="margin-top:16px;"></div>
   </div>
 </main>
