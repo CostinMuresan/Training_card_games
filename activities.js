@@ -42,12 +42,29 @@ export const ACTIVITIES = [
     icon: "target",
     badge: "Recapitulare",
   },
+  {
+    id: "puzzles",
+    title: "Jocuri de gândire critică",
+    chips: ["Connections", "Decision Lab"],
+    text: "Administrezi categoriile și scenariile jocurilor individuale, fără cont, pe care participanții le joacă singuri.",
+    href: "puzzle-admin.html",
+    icon: "puzzle",
+    badge: "Puzzle",
+  },
 ];
 
 // Jocuri individuale, fără cont (cardul „Jocuri de training” de pe pagina inițială).
 // Gol până există astfel de jocuri în aplicație: cât timp e gol, cardul nu apare.
 // O intrare: { id, name, text, href, icon }
-export const PLAY_GAMES = [];
+export const PLAY_GAMES = [
+  {
+    id: "puzzles",
+    name: "Jocuri de gândire critică",
+    text: "Connections și Decision Lab: joci singur, fără cont.",
+    href: "puzzles.html",
+    icon: "puzzle",
+  },
+];
 
 // Cum se numește activitatea găsită după cod (când un cod se potrivește cu mai multe)
 export const CODE_LABELS = {

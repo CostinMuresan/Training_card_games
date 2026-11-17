@@ -65,6 +65,7 @@
     <li><a href="#nodul-comunicarii">Nodul comunicării — trei activități online</a></li>
     <li><a href="#recapitulare">Recapitulare — două echipe, întrebări aruncate ca bulgări de hârtie</a></li>
     <li><a href="#tema">Tema de culori</a></li>
+    <li><a href="#gandire-critica">Jocuri de gândire critică — Connections și Decision Lab</a></li>
   </ol>
 </div>
 
@@ -267,13 +268,36 @@
 <p><b>Pagina inițială</b> (adresa principală a aplicației) o poate deschide <b>oricine, fără cont</b>. Are trei intrări:</p>
 <ul>
 <li><b>„Am un cod de sesiune”</b> (pentru participanți): participantul scrie <b>codul</b> primit de la trainer și apasă „Intră în sesiune”. Pagina află ce activitate este (joc cu cărți, Colourblind, Nodul comunicării sau Recapitulare) și îl duce direct acolo. Nu contează literele mari sau mici și nici spațiile din jur. Dacă un cod se potrivește cu două activități, participantul alege. Dacă lipește în câmp un link întreg de pe același site, deschide direct activitatea. După 5 coduri greșite la rând, pagina cere o pauză de 30 de secunde.</li>
-<li><b>„Jocuri de training”</b> (fără cont): apare doar când aplicația are jocuri individuale. Acum nu apare.</li>
+<li><b>„Jocuri de training”</b> (fără cont): apare doar când aplicația are jocuri individuale (de la v78: jocurile de gândire critică, vezi capitolul 25).</li>
 <li><b>„Sunt trainer”</b>: duce la autentificare.</li>
 </ul>
 <p><b>Linkurile și codurile QR pe care le-ai dat deja rămân valabile</b>, inclusiv cele de grupă de la jocurile cu cărți (adresa veche <code>index.html?g=…</code> este redirecționată automat). Linkurile noi de grupă folosesc <code>grupa.html</code>.</p>
 <p><b>Unde găsești codul ca să-l spui participanților:</b> la <b>Recapitulare</b> și la <b>Nodul comunicării</b>, în partea de sus a sesiunii („Cod de sesiune”, cu „Copiază codul” și indicația adresei unde se scrie); la <b>jocurile cu cărți</b>, în „Linkuri &amp; QR grupe”, pentru fiecare grupă („Cod”), iar la <b>Colourblind</b> în secțiunea linkului echipei. Codul de la jocurile cu cărți este cel al <b>grupei</b>.</p>
 <p><b>Meniul trainerului</b> (<code>trainer.html</code>): după autentificare alegi <b>activitatea</b> pe care o lansezi (Jocuri cu cărți, Jocuri de comunicare, Recapitulare), cu <b>Manual</b>, <b>Temă</b> și <b>Deconectare</b> sus. Deasupra plăcilor vezi <b>„Sesiuni în desfășurare”</b>, adică sesiunile tale neîncheiate, cu participanții și codul, și <b>Reia</b> care te duce în panoul activității. Din fiecare panou revii cu <b>„← Meniu trainer”</b>. O sesiune anonimă (de exemplu a unui jucător) nu e considerată trainer autentificat. Activitățile viitoare vor apărea aici ca plăci noi.</p>
 <p><b>Atenție la confidențialitate:</b> codul nu este o parolă. Cere participanților să folosească un <b>pseudonim</b>, nu numele real, și să nu scrie date sensibile în întrebări sau desene.</p>
+<section class="panel" id="gandire-critica"><h3>25. Jocuri de gândire critică — Connections și Decision Lab</h3>
+<p>Două jocuri <b>individuale</b>, pe care participanții le joacă <b>singuri, fără cont și fără nume</b>, de pe orice telefon sau laptop. Nu au sesiune, cod sau grupe: trainerul pregătește conținutul, iar participanții intră de pe pagina inițială, la cardul <b>„Jocuri de training”</b>, sau direct pe adresa <code>puzzles.html</code>.</p>
+<h4>Cum se joacă</h4>
+<ul>
+<li><b>Connections:</b> 16 cuvinte, de împărțit în 4 grupuri de câte 4, fiecare cu o legătură ascunsă. Se aleg 4 cuvinte și se apasă <b>Trimite</b>. Răspunsul poate fi <b>corect</b> (grupul apare ca bandă colorată, la nivelul lui de dificultate), <b>„Aproape”</b> (3 din 4 sunt corecte) sau <b>greșit</b>. Aproape-ul se numără tot ca greșeală. După <b>4 greșeli</b>, partida se pierde și se dezvăluie toate grupurile. Fiecare partidă ia câte o categorie din fiecare nivel (galben, verde, albastru, mov), deci două partide diferă.</li>
+<li><b>Decision Lab:</b> o situație de la locul de muncă, în pași succesivi. Participantul alege una dintre opțiuni, vede imediat consecința și punctajul, apoi trece la pasul următor. La final primește un <b>profil de decizie</b> (Exploratorul, Executorul, Analistul, Diplomatul, Investigatorul sau Echilibratul), un scurt debrief și, la cerere, un <b>feedback personalizat scris cu AI</b>.</li>
+<li>Dacă participantul reîncarcă pagina, <b>partida în curs se reia</b> (identificatorul ei se păstrează în browser). Scorurile și soluțiile rămân pe server până sunt descoperite.</li>
+<li>Feedbackul AI se generează <b>o singură dată pe partidă</b> și poate să lipsească (limită zilnică sau serviciu indisponibil): atunci participantul vede un mesaj simplu, iar rezultatul rămâne valabil.</li>
+</ul>
+<h4>Administrare (traineri)</h4>
+<p>Din meniul trainerului alegi placa <b>„Jocuri de gândire critică”</b>. Orice cont de trainer poate administra conținutul. Ai două file:</p>
+<ol>
+<li><b>Connections:</b> vezi câte categorii active are fiecare nivel (jocul nu pornește dacă un nivel nu are nicio categorie activă). Poți <b>adăuga o categorie</b> (nivel, titlul grupului, 4 iteme, explicație opțională), <b>căuta și filtra</b>, <b>dezactiva</b> (o categorie dezactivată nu mai apare în partide noi) sau <b>șterge</b>. O partidă începută nu e afectată de ce modifici.</li>
+<li><b>Decision Lab:</b> vezi scenariile, cu numărul de noduri și de opțiuni; le poți dezactiva (dispar din lista participanților) sau șterge (se șterg și partidele lor).</li>
+</ol>
+<h4>Import din Excel sau CSV</h4>
+<p>În ambele file poți încărca un fișier <b>.xlsx</b> sau <b>.csv</b> (separator virgulă, punct și virgulă sau tab). <b>Șabloanele</b> se descarcă din pagină. Înainte de import vezi o <b>previzualizare</b>: ce intră, ce are erori (cu rândul și motivul) și ce se ignoră. Nimic nu se salvează până nu apeși <b>Importă</b>; <b>Renunță</b> anulează.</p>
+<ul>
+<li><b>Connections:</b> coloanele <code>tier</code> (yellow, green, blue, purple; se acceptă și galben, verde, albastru, mov), <code>title</code>, <code>item1</code>–<code>item4</code>, <code>explanation</code> (opțional). Cele 4 iteme trebuie să fie diferite (literele mari și mici nu contează). O categorie cu aceleași 4 iteme ca una existentă se ignoră. Dacă același item apare în mai multe categorii ale fișierului, primești un avertisment (nu blochează importul).</li>
+<li><b>Decision Lab:</b> coloanele <code>scenario</code>, <code>scenario_description</code>, <code>node_code</code>, <code>node_text</code>, <code>is_root</code>, <code>is_final</code>, <code>choice_text</code>, <code>next_node_code</code>, <code>score</code>, <code>feedback</code>, <code>trait</code> (opțional: exploration, execution, analysis, diplomacy, investigation). Un nod cu mai multe opțiuni are mai multe rânduri cu același <code>node_code</code>. Un scenariu se importă doar dacă are <b>exact un nod de start</b>, fiecare opțiune duce la un nod existent, are cel puțin un nod final, iar de la start se poate ajunge la un final. Un scenariu cu un rând greșit nu se importă pe jumătate: previzualizarea îți spune ce să repari. Scorul trebuie să fie un număr întreg.</li>
+</ul>
+<div class="note"><b>Instalare:</b> rulează în Supabase <code>supabase/add-puzzles.sql</code> (apoi, dacă vrei conținutul inițial, <code>add-puzzles-seed.sql</code>). Pentru feedbackul AI mai e nevoie de funcția <code>pz-ai-debrief</code> și de cheia Gemini, descrise în README.md. Fără ele, jocurile merg, dar fără butonul AI funcțional. <b>Confidențialitate:</b> jucătorii nu introduc nume sau alte date. Pentru feedbackul AI, alegerile din scenariu (fără nicio dată personală) sunt trimise către serviciul Google Gemini.</div>
+</section>
 </main>
 </body>
 </html>

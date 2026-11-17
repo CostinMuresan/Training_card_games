@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ro" data-theme-role="trainer">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Jocuri de gândire critică · Trainer</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="puzzle.css">
+  <script src="theme.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <div class="eyebrow">Activități online</div>
+      <h1>Jocuri de gândire critică · Trainer</h1>
+    </div>
+    <div class="pz-headlinks">
+      <button class="btn outline pz-headlink" id="theme-btn" type="button" hidden>🎨 Temă</button>
+      <a class="btn outline pz-headlink" href="puzzles.html" target="_blank" rel="noopener">Pagina jucătorilor</a>
+      <a class="btn outline pz-headlink" href="trainer.html">← Meniu trainer</a>
+    </div>
+  </header>
+
+  <main>
+    <section id="auth-box" class="panel" hidden>
+      <h2>Autentificare trainer</h2>
+      <input id="email" type="email" placeholder="Email" autocomplete="username">
+      <input id="password" type="password" placeholder="Parolă" autocomplete="current-password">
+      <button class="btn" id="login" type="button">Intră</button>
+      <div class="error-msg" id="auth-error" role="alert"></div>
+    </section>
+
+    <div id="admin" hidden>
+      <div class="pz-tabs" role="tablist" aria-label="Jocuri">
+        <button class="pz-tab" role="tab" id="tab-conn" aria-selected="true" aria-controls="pane-conn" type="button">Connections</button>
+        <button class="pz-tab" role="tab" id="tab-dec" aria-selected="false" aria-controls="pane-dec" type="button">Decision Lab</button>
+      </div>
+      <div class="error-msg" id="global-error" role="alert"></div>
+
+      <!-- ===== Connections ===== -->
+      <section id="pane-conn" role="tabpanel" aria-labelledby="tab-conn">
+        <div class="panel">
+          <h2 class="pz-sec-title">Categoriile pentru Connections</h2>
+          <p class="pz-hint">Fiecare partidă ia câte o categorie din fiecare nivel (galben, verde, albastru, mov), deci ai nevoie de cel puțin una activă pe nivel. Cu cât ai mai multe, cu atât partidele diferă mai mult.</p>
+          <div class="pz-counts" id="conn-counts"></div>
+          <div id="conn-warn"></div>
+        </div>
+
+        <div class="panel">
+          <h2 class="pz-sec-title">Importă din Excel sau CSV</h2>
+          <p class="pz-hint">Coloane: <b>tier</b> (yellow / green / blue / purple), <b>title</b>, <b>item1</b>–<b>item4</b>, <b>explanation</b> (opțional). <a href="templates/connections-import-template.xlsx" download>Descarcă șablonul</a>.</p>
+          <input class="pz-file" id="conn-file" type="file" accept=".xlsx,.csv,.txt" aria-label="Fișier cu categorii">
+          <div id="conn-preview"></div>
+        </div>
+
+        <div class="panel">
+          <h2 class="pz-sec-title">Adaugă o categorie</h2>
+          <div class="pz-form-grid">
+            <div><label for="c-tier">Nivel</label><select id="c-tier"><option value="yellow">Galben</option><option value="green">Verde</option><option value="blue">Albastru</option><option value="purple">Mov</option></select></div>
+            <div><label for="c-title">Titlul grupului</label><input id="c-title" type="text" maxlength="120"></div>
+            <div><label for="c-i1">Item 1</label><input id="c-i1" type="text" maxlength="60"></div>
+            <div><label for="c-i2">Item 2</label><input id="c-i2" type="text" maxlength="60"></div>
+            <div><label for="c-i3">Item 3</label><input id="c-i3" type="text" maxlength="60"></div>
+            <div><label for="c-i4">Item 4</label><input id="c-i4" type="text" maxlength="60"></div>
+          </div>
+          <label for="c-expl">Explicație (opțional, apare după ce grupul e găsit)</label>
+          <input id="c-expl" type="text" maxlength="300" style="width:100%">
+          <p><button class="btn" id="c-add" type="button">Adaugă categoria</button></p>
+          <div class="error-msg" id="c-error" role="alert"></div>
+        </div>
+
+        <div class="panel">
+          <h2 class="pz-sec-title">Categorii existente</h2>
+          <div class="pz-row">
+            <div><label for="f-tier">Nivel</label><select id="f-tier"><option value="">Toate</option><option value="yellow">Galben</option><option value="green">Verde</option><option value="blue">Albastru</option><option value="purple">Mov</option></select></div>
+            <div><label for="f-q">Caută</label><input id="f-q" type="search" placeholder="titlu sau item"></div>
+          </div>
+          <div class="pz-table-wrap"><table class="pz-table" id="conn-table"><thead><tr><th>Nivel</th><th>Titlu</th><th>Iteme</th><th>Folosit</th><th>Activ</th><th></th></tr></thead><tbody></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- ===== Decision Lab ===== -->
+      <section id="pane-dec" role="tabpanel" aria-labelledby="tab-dec" hidden>
+        <div class="panel">
+          <h2 class="pz-sec-title">Scenarii pentru Decision Lab</h2>
+          <p class="pz-hint">Fiecare scenariu este un arbore de decizii: un nod de start, noduri cu 4 opțiuni, fiecare opțiune ducând la alt nod, și cel puțin un nod final. Scorurile și consecințele rămân ascunse jucătorilor până aleg.</p>
+        </div>
+        <div class="panel">
+          <h2 class="pz-sec-title">Importă din Excel sau CSV</h2>
+          <p class="pz-hint">Coloane: <b>scenario</b>, <b>scenario_description</b>, <b>node_code</b>, <b>node_text</b>, <b>is_root</b>, <b>is_final</b>, <b>choice_text</b>, <b>next_node_code</b>, <b>score</b>, <b>feedback</b>, <b>trait</b> (opțional: exploration, execution, analysis, diplomacy, investigation). Un nod cu mai multe opțiuni are mai multe rânduri cu același <b>node_code</b>. <a href="templates/decision-lab-import-template.xlsx" download>Descarcă șablonul</a>.</p>
+          <input class="pz-file" id="dec-file" type="file" accept=".xlsx,.csv,.txt" aria-label="Fișier cu scenarii">
+          <div id="dec-preview"></div>
+        </div>
+        <div class="panel">
+          <h2 class="pz-sec-title">Scenarii existente</h2>
+          <div class="pz-table-wrap"><table class="pz-table" id="dec-table"><thead><tr><th>Titlu</th><th>Noduri</th><th>Opțiuni</th><th>Activ</th><th></th></tr></thead><tbody></tbody></table></div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script type="module" src="puzzle-admin.js"></script>
+</body>
+</html>

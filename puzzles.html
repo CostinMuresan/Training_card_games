@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jocuri de gândire critică — Training Activities</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="home.css" />
+<link rel="stylesheet" href="puzzle.css" />
+</head>
+<body class="home">
+<header class="home-header">
+  <div>
+    <div class="eyebrow">Fără cont</div>
+    <h1>Training Activities</h1>
+  </div>
+  <div class="home-actions">
+    <a class="home-hbtn" href="index.html">Pagina inițială</a>
+  </div>
+</header>
+
+<main class="home-main">
+  <div class="pz-hero">
+    <h1>Jocuri de gândire critică</h1>
+    <p>Joci singur, în ritmul tău. Nu trebuie să te autentifici și nu ți se cere niciun nume.</p>
+  </div>
+  <div class="pz-err" id="err" role="alert"></div>
+  <div class="pz-loading" id="loading">Se încarcă jocurile…</div>
+  <div class="pz-games" id="games" hidden>
+    <a class="pz-game" id="g-connections" href="puzzle-connections.html">
+      <h2>Connections</h2>
+      <p>Ai 16 cuvinte. Împarte-le în 4 grupuri de câte 4, fiecare cu o legătură ascunsă. Ai voie să greșești de cel mult 4 ori.</p>
+      <span class="pz-open">Joacă <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="pz-game" id="g-decision" href="puzzle-decision.html">
+      <h2>Decision Lab</h2>
+      <p>O situație de la locul de muncă, în pași succesivi. Alegi, vezi consecința, iar la final primești un profil de decizie.</p>
+      <span class="pz-open">Joacă <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+  </div>
+</main>
+<footer class="home-footer">Training Activities · AcademiaBT</footer>
+<script type="module" src="puzzles.js"></script>
+</body>
+</html>

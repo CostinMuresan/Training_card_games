@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Connections — Training Activities</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="home.css" />
+<link rel="stylesheet" href="puzzle.css" />
+</head>
+<body class="home">
+<header class="home-header">
+  <div>
+    <div class="eyebrow">Gândire critică</div>
+    <h1>Connections</h1>
+  </div>
+  <div class="home-actions">
+    <a class="home-hbtn" href="puzzles.html">← Jocuri</a>
+  </div>
+</header>
+
+<main class="pz-wrap">
+  <div class="pz-loading" id="loading">Se pregătește puzzle-ul…</div>
+  <div class="pz-err" id="err" role="alert"></div>
+  <div id="game" class="pz-col" hidden>
+    <div class="pz-status">
+      <p class="pz-hint" style="margin:0">Alege 4 cuvinte care au ceva în comun.</p>
+      <div class="pz-dots" id="dots" aria-live="polite"></div>
+    </div>
+    <div class="pz-msg" id="msg" role="status" aria-live="polite"></div>
+    <div class="pz-grid" id="grid"></div>
+    <div class="pz-actions" id="controls">
+      <button class="pz-btn" id="shuffle" type="button">Amestecă</button>
+      <button class="pz-btn" id="clear" type="button">Deselectează</button>
+      <button class="pz-btn primary" id="submit" type="button" disabled>Trimite</button>
+    </div>
+    <div class="pz-end" id="end" hidden>
+      <h2 id="end-title"></h2>
+      <p id="end-text"></p>
+      <div class="pz-actions">
+        <button class="pz-btn primary" id="again" type="button">Joacă din nou</button>
+        <a class="pz-btn" href="puzzles.html">Alte jocuri</a>
+      </div>
+    </div>
+  </div>
+</main>
+<footer class="home-footer">Training Activities · AcademiaBT</footer>
+<script type="module" src="puzzle-connections.js"></script>
+</body>
+</html>

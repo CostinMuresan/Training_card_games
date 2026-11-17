@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Decision Lab — Training Activities</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="home.css" />
+<link rel="stylesheet" href="puzzle.css" />
+</head>
+<body class="home">
+<header class="home-header">
+  <div>
+    <div class="eyebrow">Gândire critică</div>
+    <h1>Decision Lab</h1>
+  </div>
+  <div class="home-actions">
+    <a class="home-hbtn" href="puzzles.html">← Jocuri</a>
+  </div>
+</header>
+
+<main class="pz-wrap">
+  <div class="pz-loading" id="loading">Se încarcă…</div>
+  <div class="pz-err" id="err" role="alert"></div>
+
+  <section id="pick" class="pz-col" hidden>
+    <p class="pz-hint">Alege un scenariu. Vei lua 5 decizii succesive; după fiecare vezi consecința, iar la final primești un profil de decizie.</p>
+    <div class="pz-scen-list" id="scen-list"></div>
+  </section>
+
+  <section id="play" class="pz-col" hidden>
+    <div class="pz-score" id="score" aria-live="polite"></div>
+    <div class="pz-card"><div class="pz-eyebrow" id="step-label">Situația</div><p id="situation"></p></div>
+    <div class="pz-choices" id="choices" role="group" aria-label="Opțiunile tale"></div>
+  </section>
+
+  <section id="feedback" class="pz-col" hidden>
+    <div class="pz-card pz-fb" aria-live="polite">
+      <div class="pz-eyebrow">Consecința alegerii tale</div>
+      <p id="fb-text"></p>
+      <div class="delta" id="fb-delta"></div>
+    </div>
+    <div class="pz-actions"><button class="pz-btn primary" id="next" type="button">Continuă</button></div>
+  </section>
+
+  <section id="done" class="pz-col" hidden>
+    <div class="pz-end">
+      <h2>Scenariu încheiat</h2>
+      <span class="pz-profile" id="profile"></span>
+      <p id="debrief" style="color:var(--ink)"></p>
+      <p id="final-score"></p>
+      <div class="pz-ai" id="ai-box" hidden><div class="pz-eyebrow">Feedback AI</div><p id="ai-text"></p></div>
+      <div class="pz-err" id="ai-err" role="alert"></div>
+      <div class="pz-actions">
+        <button class="pz-btn gold" id="ai-btn" type="button">✨ Generează feedback AI personalizat</button>
+        <button class="pz-btn primary" id="again" type="button">Alege alt scenariu</button>
+      </div>
+      <p class="pz-hint" id="ai-note">Feedbackul AI se scrie pe baza alegerilor tale din acest scenariu (fără nume sau alte date personale) și se generează o singură dată.</p>
+    </div>
+  </section>
+</main>
+<footer class="home-footer">Training Activities · AcademiaBT</footer>
+<script type="module" src="puzzle-decision.js"></script>
+</body>
+</html>
