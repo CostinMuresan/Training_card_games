@@ -27,6 +27,13 @@ function h(tag, props = {}, ...kids) {
 const gErr = (m) => ($("global-error").textContent = m || "");
 const dbMsg = (e) => (/pz_|schema cache|does not exist|permission denied/i.test(e?.message || "") ? `${e.message} (ai rulat scriptul add-puzzles.sql în Supabase?)` : e?.message || "Eroare necunoscută.");
 
+// deconectare din meniul „Contul meu”
+$("logout-btn").addEventListener("click", async () => {
+  await supabase.auth.signOut();
+  window.TCTheme?.useDefault(); // următorul utilizator din același browser nu primește tema acestui trainer
+  location.reload();
+});
+
 // ---------- autentificare ----------
 async function enter(user) {
   $("auth-box").hidden = true;

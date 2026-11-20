@@ -10,9 +10,7 @@ const $ = (id) => document.getElementById(id);
 function showLogin() {
   $("auth-box").hidden = false;
   $("hub").hidden = true;
-  $("logout-btn").hidden = true;
-  $("manual-link").hidden = true;
-  $("user-email").textContent = "";
+  window.TCHeader?.setUser(null);
   window.TCTheme?.useDefault(); // ecranul de autentificare: mereu tema implicită
 }
 
@@ -75,9 +73,6 @@ async function loadRunning(email) {
 async function enterHub(user) {
   $("auth-box").hidden = true;
   $("hub").hidden = false;
-  $("logout-btn").hidden = false;
-  $("manual-link").hidden = false;
-  $("user-email").textContent = user.email;
   window.TCTheme?.initTrainer(supabase, user.email); // tema salvată de trainer
   renderTiles();
   loadRunning(user.email);

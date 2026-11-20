@@ -25,6 +25,13 @@ function escapeHtml(s) {
   return d.innerHTML;
 }
 
+// deconectare din meniul „Contul meu”
+$("logout-btn").addEventListener("click", async () => {
+  await supabase.auth.signOut();
+  window.TCTheme?.useDefault(); // următorul utilizator din același browser nu primește tema acestui trainer
+  location.reload();
+});
+
 // ---------- autentificare + reluare sesiune ----------
 async function init() {
   const { data } = await supabase.auth.getSession();

@@ -178,6 +178,7 @@
   }
   // pagini de trainer: tema proprie, salvată în cont
   function initTrainer(supabase, email) {
+    if (window.TCHeader) window.TCHeader.setUser(email);
     var btn = document.getElementById("theme-btn");
     if (btn) {
       btn.hidden = false;

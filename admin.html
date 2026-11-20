@@ -22,19 +22,8 @@
 </div>
 
 <div id="admin-view" style="display:none;">
-  <header class="app-header">
-    <div>
-      <div class="eyebrow">Panou Trainer</div>
-      <h1>Training Activities · Jocuri cu cărți</h1>
-    </div>
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <button class="btn outline onhead" id="stats-btn" data-icon="chart">Statistici</button>
-      <a href="trainer.html" class="btn outline onhead">← Meniu trainer</a>
-      <a href="manual.html" target="_blank" class="btn outline onhead" data-icon="book">Manual</a>
-      <button class="btn outline onhead" id="theme-btn" data-icon="palette" hidden>Temă</button>
-      <button class="btn outline onhead" id="logout-btn">Deconectare</button>
-    </div>
-  </header>
+  <header class="app-header" id="app-header" data-title="Jocuri cu cărți" data-parent-label="Meniu trainer" data-parent-href="trainer.html"></header>
+  <script src="trainer-header.js"></script>
 
   <div id="stats-modal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
@@ -48,6 +37,7 @@
   </div>
 
   <main>
+    <div class="page-tools"><span class="lab">Instrumente pagină</span><button class="btn outline sm" id="stats-btn" type="button" data-icon="chart">Statistici traineri</button></div>
     <div class="panel" id="game-set-switcher" style="margin-bottom:16px;">
       <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-end;">
         <div>

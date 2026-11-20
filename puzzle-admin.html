@@ -10,17 +10,8 @@
   <script src="theme.js"></script>
 </head>
 <body class="t-ui">
-  <header class="app-header">
-    <div>
-      <div class="eyebrow">Activități online</div>
-      <h1>Jocuri de gândire critică · Trainer</h1>
-    </div>
-    <div class="pz-headlinks">
-      <button class="btn outline onhead" id="theme-btn" type="button" data-icon="palette" hidden>Temă</button>
-      <a class="btn outline onhead" href="puzzles.html" target="_blank" rel="noopener">Pagina jucătorilor</a>
-      <a class="btn outline onhead" href="trainer.html">← Meniu trainer</a>
-    </div>
-  </header>
+  <header class="app-header" id="app-header" data-title="Jocuri de gândire critică" data-parent-label="Meniu trainer" data-parent-href="trainer.html"></header>
+  <script src="trainer-header.js"></script>
 
   <main>
     <section id="auth-box" class="panel" hidden>
@@ -32,6 +23,7 @@
     </section>
 
     <div id="admin" hidden>
+      <div class="page-tools"><span class="lab">Instrumente pagină</span><a class="btn outline sm" href="puzzles.html" target="_blank" rel="noopener" data-icon="eye">Pagina jucătorilor</a></div>
       <div class="tabs-bar">
         <div class="tabs" role="tablist" aria-label="Jocuri">
           <button class="tab" role="tab" id="tab-conn" aria-selected="true" aria-controls="pane-conn" type="button">Connections</button>

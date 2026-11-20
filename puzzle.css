@@ -112,7 +112,6 @@ a.pz-game:focus-visible, .pz-btn:focus-visible, .pz-choice:focus-visible, .pz-ti
 .pz-ok { color: var(--pz-pos); font-weight: 700; font-size: 14px; min-height: 20px; }
 
 /* antetul paginii de administrare */
-.pz-headlinks { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 .pz-sec-title { font-family: 'Fraunces', serif; font-size: 22px; margin: 0 0 8px; }
 .pz-warnbox { background: var(--danger-bg); border: 1px solid var(--red); border-left: 4px solid var(--red); border-radius: 8px; padding: 10px 14px; font-size: 14px; font-weight: 600; margin: 8px 0; }
 .pz-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; }

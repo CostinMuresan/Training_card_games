@@ -695,3 +695,30 @@ code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; 
 .code-value { font-family:'Inter', sans-serif; font-size:24px; letter-spacing:0.12em; color:var(--ink); background:var(--field-bg); border:2px solid var(--gold); border-radius:8px; padding:0 12px; }
 .code-hint { flex-basis:100%; font-size:12.5px; color:var(--ink-soft); }
 
+
+/* ---------- v80: antet comun de trainer ---------- */
+body.t-ui header.app-header { padding: 16px 24px; gap: 16px; flex-wrap: nowrap; align-items: flex-start; }
+body.t-ui .hd-main { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+body.t-ui .crumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gold-soft); flex-wrap: wrap; }
+body.t-ui .crumb a { color: var(--gold-soft); text-decoration: underline; text-underline-offset: 3px; display: inline-flex; align-items: center; gap: 6px; min-height: 28px; }
+body.t-ui .crumb a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+body.t-ui .crumb [aria-current] { color: var(--on-header); }
+body.t-ui header.app-header h1 { font-size: 26px; line-height: 1.15; }
+body.t-ui .account { position: relative; flex: none; }
+body.t-ui .account[hidden] { display: none; }
+body.t-ui .account-menu { position: absolute; right: 0; top: calc(100% + 8px); width: 250px; background: var(--card-bg); color: var(--ink); border: 1px solid var(--parchment-dark); border-radius: 10px; padding: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.25); z-index: 50; display: flex; flex-direction: column; }
+body.t-ui .account-menu[hidden] { display: none; }
+body.t-ui .account-who { padding: 10px 12px 8px; font-size: 12px; color: var(--ink-soft); overflow-wrap: anywhere; }
+body.t-ui .account-who b { display: block; font-size: 14px; color: var(--ink); }
+body.t-ui .account-menu hr { border: 0; border-top: 1px solid var(--parchment-dark); margin: 4px 0; width: 100%; }
+body.t-ui .menu-item { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border: 0; border-radius: 6px; background: transparent; color: var(--ink); font: 500 14px 'Inter', sans-serif; text-align: left; text-decoration: none; cursor: pointer; width: 100%; box-sizing: border-box; }
+body.t-ui .menu-item:hover { background: var(--select-bg); }
+body.t-ui .menu-item:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
+body.t-ui .page-tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 18px; }
+body.t-ui .page-tools .lab { font: 600 11px/1 'Inter', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin-right: 6px; }
+@media (max-width: 600px) {
+  body.t-ui header.app-header { padding: 14px 16px; }
+  body.t-ui header.app-header h1 { font-size: 20px; }
+  body.t-ui .account-menu { width: min(250px, calc(100vw - 32px)); }
+  body.t-ui .crumb > span { display: none; } /* pe telefon: doar întoarcerea, titlul e dedesubt */
+}

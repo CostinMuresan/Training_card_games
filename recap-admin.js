@@ -45,6 +45,13 @@ const shuffle = (a) => {
   return a;
 };
 
+// deconectare din meniul „Contul meu”
+$("logout-btn").addEventListener("click", async () => {
+  await supabase.auth.signOut();
+  window.TCTheme?.useDefault(); // următorul utilizator din același browser nu primește tema acestui trainer
+  location.reload();
+});
+
 // ---------- autentificare + reluare ----------
 async function init() {
   const { data } = await supabase.auth.getSession();

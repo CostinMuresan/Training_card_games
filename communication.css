@@ -839,14 +839,6 @@ img[data-sid].loading {
   cursor:pointer;
 }
 
-/* legaturi in antetul paginilor de trainer */
-.header-links {
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  justify-content:flex-end;
-}
-
 /* ---------- grila de pătrățele (reper pentru instrucțiuni) ----------
    Liniile sunt un strat peste desen. Numerotarea (A–L, 1–9) stă ÎN AFARA zonei de desen, în marginile cadrului .grid-frame. */
 .grid-frame { position:relative; --gutter:22px; --bw:1px; }

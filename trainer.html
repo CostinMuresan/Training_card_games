@@ -6,22 +6,12 @@
 <title>Panou trainer — Training Activities</title>
 <link rel="stylesheet" href="style.css" />
 <link rel="stylesheet" href="home.css" />
+<link rel="stylesheet" href="icons.css" />
 <script src="theme.js"></script>
 </head>
-<body class="home">
-<header class="home-header">
-  <div>
-    <div class="eyebrow">Panou trainer</div>
-    <h1>Training Activities</h1>
-  </div>
-  <div class="home-actions">
-    <a class="home-hbtn" id="home-link" href="index.html">Pagina inițială</a>
-    <a class="home-hbtn" id="manual-link" href="manual.html" target="_blank" hidden>Manual</a>
-    <button class="home-hbtn" id="theme-btn" type="button" hidden>Temă</button>
-    <span class="home-user" id="user-email"></span>
-    <button class="home-hbtn" id="logout-btn" type="button" hidden>Deconectare</button>
-  </div>
-</header>
+<body class="home t-ui">
+<header class="app-header" id="app-header" data-title="Training Activities" data-current="Meniu trainer" data-parent-label="Pagina inițială" data-parent-href="index.html"></header>
+<script src="trainer-header.js"></script>
 
 <main class="home-main">
   <section id="auth-box" class="home-card login-card" hidden>
