@@ -115,7 +115,7 @@ function render() {
   if (document.activeElement !== $("max-live")) $("max-live").value = String(session.max_questions || 0);
   $("max-live").disabled = session.status === "ended";
   $("delete-session").hidden = session.status === "play";
-  $("delete-session").textContent = session.status === "lobby" ? "🗑 Anulează sesiunea" : "🗑 Închide de tot";
+  $("delete-session").textContent = session.status === "lobby" ? "Anulează sesiunea" : "Închide de tot";
   $("start-box").hidden = session.status !== "lobby";
   $("resplit").hidden = session.status !== "play";
   $("end").hidden = session.status === "ended";
@@ -436,7 +436,7 @@ $("qr-dl-btn").onclick = async () => {
 $("copy-questions").onclick = async () => {
   await navigator.clipboard.writeText(questionsAsText(store.all(), session.topic));
   $("copy-questions").textContent = "Copiat ✓";
-  setTimeout(() => ($("copy-questions").textContent = "📋 Copiază întrebările"), 2000);
+  setTimeout(() => ($("copy-questions").textContent = "Copiază întrebările"), 2000);
 };
 $("projector").onclick = () => document.body.classList.add("projector");
 $("projector-exit").onclick = () => document.body.classList.remove("projector");

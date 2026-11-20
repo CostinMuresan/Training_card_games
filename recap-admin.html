@@ -5,19 +5,20 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Recapitulare · Trainer</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="icons.css">
   <link rel="stylesheet" href="communication.css">
   <link rel="stylesheet" href="recap.css">
 <script src="theme.js"></script>
 </head>
-<body>
+<body class="t-ui">
   <header class="app-header">
     <div>
       <div class="eyebrow">Activități online</div>
       <h1>Recapitulare · Trainer</h1>
     </div>
     <div class="header-links">
-      <button class="btn outline header-link" id="theme-btn" hidden>🎨 Temă</button>
-      <a class="btn outline header-link" href="trainer.html">← Meniu trainer</a>
+      <button class="btn outline onhead" id="theme-btn" data-icon="palette" hidden>Temă</button>
+      <a class="btn outline onhead" href="trainer.html">← Meniu trainer</a>
     </div>
   </header>
 
@@ -65,7 +66,7 @@
             <h2 id="topic-title"></h2>
             <div class="code-box" id="code-box">
               <span class="code-label">Cod de sesiune:</span><b class="code-value" id="session-code"></b>
-              <button class="btn outline" id="copy-code" type="button" style="padding:4px 10px; font-size:12px">Copiază codul</button>
+              <button class="btn outline sm" id="copy-code" type="button" data-icon="copy">Copiază codul</button>
               <span class="code-hint" id="code-hint"></span>
             </div>
           </div>
@@ -76,11 +77,11 @@
         <p>Link participanți:</p>
         <div class="session-link-box">
           <span id="join-link"></span>
-          <button class="btn outline" id="copy">Copiază</button>
+          <button class="btn outline sm" id="copy" data-icon="copy">Copiază</button>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
-          <button class="btn outline" id="qr-btn" style="font-size:12px; padding:5px 10px;">Arată codul QR</button>
-          <button class="btn outline" id="qr-dl-btn" style="font-size:12px; padding:5px 10px;">⬇ Descarcă QR</button>
+          <button class="btn outline sm" id="qr-btn" data-icon="qr">Arată codul QR</button>
+          <button class="btn outline sm" id="qr-dl-btn" data-icon="download">Descarcă QR</button>
         </div>
         <img id="qr-img" alt="Cod QR" style="display:none; margin-top:8px; width:160px; height:160px; border-radius:8px; border:1px solid var(--parchment-dark); background:#fff;">
         <div class="limit-row">
@@ -101,11 +102,11 @@
           </div>
         </div>
         <div class="recap-controls">
-          <button class="btn outline" id="resplit">🔀 Reîmparte echipele</button>
-          <button class="btn outline" id="copy-questions">📋 Copiază întrebările</button>
-          <button class="btn outline" id="projector">🖥 Mod proiector</button>
+          <button class="btn outline" id="resplit" data-icon="shuffle">Reîmparte echipele</button>
+          <button class="btn outline" id="copy-questions" data-icon="copy">Copiază întrebările</button>
+          <button class="btn outline" id="projector" data-icon="monitor">Mod proiector</button>
           <button class="btn" id="new-session" hidden>Sesiune nouă</button>
-          <button class="btn outline" id="delete-session" hidden>🗑 Închide de tot</button>
+          <button class="btn danger-outline" id="delete-session" data-icon="trash" hidden>Închide de tot</button>
         </div>
         <p class="hint" id="controls-hint"></p>
         <details class="recap-help">
@@ -142,7 +143,7 @@
             <div class="timer-panel" id="timer-panel" hidden>
               <div id="timer-none-box" hidden>
                 <span class="hint">Sesiunea rulează fără cronometru.</span>
-                <button class="btn outline" id="timer-enable-btn">⏱ Activează un cronometru</button>
+                <button class="btn outline" id="timer-enable-btn" data-icon="clock">Activează un cronometru</button>
                 <div id="timer-setup-box" hidden>
                   <div class="timer-inputs">
                     <input id="timer-min" class="timer-num" type="number" min="0" max="180" step="1" value="5" inputmode="numeric" aria-label="Minute"><span>min</span>

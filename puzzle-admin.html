@@ -5,19 +5,20 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Jocuri de gândire critică · Trainer</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="icons.css">
   <link rel="stylesheet" href="puzzle.css">
   <script src="theme.js"></script>
 </head>
-<body>
+<body class="t-ui">
   <header class="app-header">
     <div>
       <div class="eyebrow">Activități online</div>
       <h1>Jocuri de gândire critică · Trainer</h1>
     </div>
     <div class="pz-headlinks">
-      <button class="btn outline pz-headlink" id="theme-btn" type="button" hidden>🎨 Temă</button>
-      <a class="btn outline pz-headlink" href="puzzles.html" target="_blank" rel="noopener">Pagina jucătorilor</a>
-      <a class="btn outline pz-headlink" href="trainer.html">← Meniu trainer</a>
+      <button class="btn outline onhead" id="theme-btn" type="button" data-icon="palette" hidden>Temă</button>
+      <a class="btn outline onhead" href="puzzles.html" target="_blank" rel="noopener">Pagina jucătorilor</a>
+      <a class="btn outline onhead" href="trainer.html">← Meniu trainer</a>
     </div>
   </header>
 
@@ -31,9 +32,11 @@
     </section>
 
     <div id="admin" hidden>
-      <div class="pz-tabs" role="tablist" aria-label="Jocuri">
-        <button class="pz-tab" role="tab" id="tab-conn" aria-selected="true" aria-controls="pane-conn" type="button">Connections</button>
-        <button class="pz-tab" role="tab" id="tab-dec" aria-selected="false" aria-controls="pane-dec" type="button">Decision Lab</button>
+      <div class="tabs-bar">
+        <div class="tabs" role="tablist" aria-label="Jocuri">
+          <button class="tab" role="tab" id="tab-conn" aria-selected="true" aria-controls="pane-conn" type="button">Connections</button>
+          <button class="tab" role="tab" id="tab-dec" aria-selected="false" aria-controls="pane-dec" type="button">Decision Lab</button>
+        </div>
       </div>
       <div class="error-msg" id="global-error" role="alert"></div>
 

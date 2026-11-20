@@ -84,6 +84,39 @@ main {
 .btn.outline { background: transparent; border: 1px solid var(--green-text); color: var(--green-text); }
 .btn.danger { background: var(--red); color: var(--on-red); }
 
+/* ============ v79: sistem de butoane pentru paginile de trainer ============
+   Se aplică doar când <body class="t-ui">, deci paginile participanților nu se schimbă.
+   Niveluri:  .btn (primar, verde) · .gold (accent: pasul care avansează sesiunea) · .outline (secundar)
+              · .ghost (discret, pe rânduri de listă) · .danger (roșu plin) · .danger-outline (roșu, contur)
+              · .onhead (pe fundalul verde al antetului)
+   Mărimi:    standard 44 px · .sm 36 px · .icon 36 px pătrat (doar pictogramă, cu aria-label)  */
+body.t-ui [hidden] { display: none !important; }
+body.t-ui .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; line-height: 1.2; text-decoration: none; }
+body.t-ui .btn.sm { min-height: 36px; padding: 6px 12px; font-size: 13px; }
+body.t-ui .btn.icon { min-height: 36px; width: 36px; padding: 0; }
+body.t-ui .btn.block { display: flex; width: 100%; }
+body.t-ui .btn.danger-outline { background: transparent; border: 1px solid var(--red); color: var(--red); }
+body.t-ui .btn.ghost { background: transparent; border: 1px solid transparent; color: var(--green-text); }
+body.t-ui .btn.ghost:hover { background: var(--select-bg); filter: none; }
+body.t-ui .btn.ghost.danger { background: transparent; color: var(--red); }
+body.t-ui .btn.onhead { background: transparent; border: 1px solid var(--gold-soft); color: var(--gold-soft); }
+body.t-ui .btn:focus-visible, body.t-ui .tab:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* taburi: sunt navigare, nu acțiuni (subliniere aurie la cel ales) */
+body.t-ui .tabs-bar { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 8px 12px; border-bottom: 1px solid var(--parchment-dark); margin-bottom: 20px; }
+body.t-ui .tabs { display: flex; flex-wrap: wrap; gap: 4px; }
+body.t-ui .tabs-actions { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding-bottom: 6px; }
+body.t-ui .tab { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; min-height: 44px; padding: 0 16px; background: none; border: none;
+  border-bottom: 3px solid transparent; margin-bottom: -1px; color: var(--ink-soft); cursor: pointer; }
+body.t-ui .tab:hover { color: var(--green-text); }
+body.t-ui .tab[aria-selected="true"] { color: var(--green-text); border-bottom-color: var(--gold); }
+
+/* mici ajutoare de spațiere, în locul stilurilor scrise pe butoane */
+.u-ml-auto { margin-left: auto; }
+.u-ml-8 { margin-left: 8px; }
+.u-mt-18 { margin-top: 18px; }
+.u-mb-14 { margin-bottom: 14px; }
+
 input, textarea, select {
   font-family: 'Inter', sans-serif;
   border: 1px solid var(--parchment-dark);

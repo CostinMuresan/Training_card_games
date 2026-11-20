@@ -44,12 +44,6 @@
   flex-wrap:wrap;
 }
 
-.header-link {
-  text-decoration:none;
-  border-color:var(--gold-soft)!important;
-  color:var(--gold-soft)!important;
-}
-
 .rule,.transfer {
   padding:14px;
   border-left:5px solid var(--gold);

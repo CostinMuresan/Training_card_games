@@ -5,18 +5,19 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Nodul comunicării · Trainer</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="icons.css">
   <link rel="stylesheet" href="communication.css">
 <script src="theme.js"></script>
 </head>
-<body>
+<body class="t-ui">
   <header class="app-header">
     <div>
       <div class="eyebrow">Activități online</div>
       <h1>Nodul comunicării · Trainer</h1>
     </div>
     <div class="header-links">
-      <button class="btn outline header-link" id="theme-btn" hidden>🎨 Temă</button>
-      <a class="btn outline header-link" href="trainer.html">← Meniu trainer</a>
+      <button class="btn outline onhead" id="theme-btn" data-icon="palette" hidden>Temă</button>
+      <a class="btn outline onhead" href="trainer.html">← Meniu trainer</a>
     </div>
   </header>
 
@@ -49,9 +50,11 @@
 
     <section id="scenarios" class="panel" hidden>
       <h2>Scenariile mele</h2>
-      <div class="tool-group sc-tabs" role="tablist" aria-label="Activitate">
-        <button class="tool-btn active" id="sc-tab-draw" aria-pressed="true">Desenează după instrucțiuni</button>
-        <button class="tool-btn" id="sc-tab-client" aria-pressed="false">Ce ai înțeles?</button>
+      <div class="tabs-bar">
+        <div class="tabs" role="tablist" aria-label="Activitate">
+          <button class="tab" role="tab" id="sc-tab-draw" aria-selected="true" type="button">Desenează după instrucțiuni</button>
+          <button class="tab" role="tab" id="sc-tab-client" aria-selected="false" type="button">Ce ai înțeles?</button>
+        </div>
       </div>
       <p class="hint">Scenariile sunt private: le vezi doar tu. La crearea unei sesiuni, scenariul ales se copiază în sesiune, deci modificările ulterioare nu schimbă sesiunile deja pornite.</p>
       <p class="rule" id="scenario-hint" hidden></p>
@@ -92,7 +95,7 @@
             <h2 id="activity-title"></h2>
             <div class="code-box" id="code-box">
               <span class="code-label">Cod de sesiune:</span><b class="code-value" id="session-code"></b>
-              <button class="btn outline" id="copy-code" type="button" style="padding:4px 10px; font-size:12px">Copiază codul</button>
+              <button class="btn outline sm" id="copy-code" type="button" data-icon="copy">Copiază codul</button>
               <span class="code-hint" id="code-hint"></span>
             </div>
           </div>
@@ -103,12 +106,12 @@
         <p>Link participanți:</p>
         <div class="session-link-box">
           <span id="join-link"></span>
-          <button class="btn outline" id="copy">Copiază</button>
+          <button class="btn outline sm" id="copy" data-icon="copy">Copiază</button>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
-          <button class="btn outline" id="qr-btn" style="font-size:12px; padding:5px 10px;">Arată codul QR</button>
-          <button class="btn outline" id="qr-dl-png-btn" style="font-size:12px; padding:5px 10px;">⬇ Descarcă PNG</button>
-          <button class="btn outline" id="qr-dl-jpg-btn" style="font-size:12px; padding:5px 10px;">⬇ Descarcă JPG</button>
+          <button class="btn outline sm" id="qr-btn" data-icon="qr">Arată codul QR</button>
+          <button class="btn outline sm" id="qr-dl-png-btn" data-icon="download">Descarcă PNG</button>
+          <button class="btn outline sm" id="qr-dl-jpg-btn" data-icon="download">Descarcă JPG</button>
         </div>
         <img id="qr-img" alt="Cod QR" style="display:none; margin-top:8px; width:160px; height:160px; border-radius:8px; border:1px solid var(--parchment-dark); background:#fff;">
         </div>

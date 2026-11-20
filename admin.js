@@ -359,14 +359,14 @@ async function showAdmin() {
 $("tab-sessions-btn").addEventListener("click", () => {
   $("view-sessions").style.display = "block";
   $("view-deck").style.display = "none";
-  $("tab-sessions-btn").className = "btn gold";
-  $("tab-deck-btn").className = "btn outline";
+  $("tab-sessions-btn").setAttribute("aria-selected", "true");
+  $("tab-deck-btn").setAttribute("aria-selected", "false");
 });
 $("tab-deck-btn").addEventListener("click", async () => {
   $("view-sessions").style.display = "none";
   $("view-deck").style.display = "block";
-  $("tab-deck-btn").className = "btn gold";
-  $("tab-sessions-btn").className = "btn outline";
+  $("tab-deck-btn").setAttribute("aria-selected", "true");
+  $("tab-sessions-btn").setAttribute("aria-selected", "false");
   await refreshDeckLockState(); // verificare proaspata la intrarea pe tab
 });
 
@@ -1060,16 +1060,16 @@ function renderGroupsList() {
       </div>
       <div class="code-box">
         <span class="code-label">Cod:</span><b class="code-value">${escapeHtml(g.group_code)}</b>
-        <button class="btn outline" data-copy-code style="padding:4px 10px; font-size:12px;">Copiază codul</button>
+        <button class="btn outline sm" data-copy-code data-icon="copy">Copiază codul</button>
       </div>
       <div class="session-link-box" style="margin-top:8px;">
         <span>${link}</span>
-        <button class="btn outline" data-copy style="padding:4px 10px; font-size:12px;">Copiază</button>
+        <button class="btn outline sm" data-copy data-icon="copy">Copiază</button>
       </div>
       <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
-        <button class="btn outline" data-qr style="font-size:12px; padding:5px 10px;">Arată codul QR</button>
-        <button class="btn outline" data-dl-png style="font-size:12px; padding:5px 10px;">⬇ Descarcă PNG</button>
-        <button class="btn outline" data-dl-jpg style="font-size:12px; padding:5px 10px;">⬇ Descarcă JPG</button>
+        <button class="btn outline sm" data-qr data-icon="qr">Arată codul QR</button>
+        <button class="btn outline sm" data-dl-png data-icon="download">Descarcă PNG</button>
+        <button class="btn outline sm" data-dl-jpg data-icon="download">Descarcă JPG</button>
       </div>
       <img data-qr-img style="display:none; margin-top:8px; width:160px; height:160px; border-radius:8px; border:1px solid var(--parchment-dark); background:#fff;" />
     `;
@@ -1223,7 +1223,7 @@ async function loadColourblindPanel() {
   const started = !!currentSession.cb_started_at;
   $("cbn-not-started-box").style.display = started ? "none" : "block";
   $("cbn-started-box").style.display = started ? "block" : "none";
-  $("end-session-btn-tabs").style.display = started ? "inline-block" : "none";
+  $("end-session-btn-tabs").style.display = started ? "" : "none";
 
   const expected = currentSession.cb_expected_participants || 0;
   const preText =
@@ -1248,7 +1248,7 @@ async function loadColourblindPanel() {
     wrap.innerHTML = `
       <img src="${card.front_image_url}" style="width:100%; border-radius:8px; border:2px solid ${revealed ? "var(--green)" : "var(--parchment-dark)"}; cursor:zoom-in;" data-zoom />
       <p style="font-size:12px; margin:6px 0;">${escapeHtml(card.title)}</p>
-      <button class="btn ${revealed ? "outline" : "gold"}" data-reveal style="font-size:12px; padding:5px 10px; width:100%;" ${revealed ? "disabled" : ""}>${revealed ? "✓ Dezvăluit" : "Dezvăluie"}</button>
+      <button class="btn sm block ${revealed ? "outline" : "gold"}" data-reveal ${revealed ? "disabled" : ""}>${revealed ? "✓ Dezvăluit" : "Dezvăluie"}</button>
     `;
     wrap.querySelector("[data-zoom]").addEventListener("click", () => openLightbox(card.front_image_url));
     if (!revealed) {
@@ -1471,8 +1471,8 @@ function renderTimerPanel() {
 
   // "Incheie sesiunea" de sus apare doar dupa ce chiar a fost lansata catre cursanti
   // (cronometru pornit, sau ales explicit "fara cronometru") - nu doar creata.
-  $("end-session-btn-tabs").style.display = status !== "not_started" ? "inline-block" : "none";
-  $("cancel-session-btn").style.display = status === "not_started" ? "inline-block" : "none";
+  $("end-session-btn-tabs").style.display = status !== "not_started" ? "" : "none";
+  $("cancel-session-btn").style.display = status === "not_started" ? "" : "none";
 
   if (status === "running" || status === "paused" || status === "expired") {
     $("timer-display").textContent = secondsToHMS(liveRemaining(currentSession));
@@ -1480,7 +1480,7 @@ function renderTimerPanel() {
     $("timer-status-label").textContent = labels[status] || "";
     $("timer-status-label").style.color = status === "expired" ? "var(--red)" : "var(--grey)";
     $("timer-pause-btn").textContent = status === "paused" ? "Reia" : "Pauză";
-    $("timer-pause-btn").style.display = status === "expired" ? "none" : "inline-block";
+    $("timer-pause-btn").style.display = status === "expired" ? "none" : "";
   }
 }
 
@@ -1639,7 +1639,7 @@ async function renderSessionPanel() {
     const defaultTwoCol = isGenericGame() || isSelectionGame() || cbn;
     const wantTwoCol = layoutOverride ? layoutOverride === "two" : defaultTwoCol;
     $("sessions-grid-wrap").classList.toggle("two-col", wantTwoCol);
-    $("layout-toggle-btn").style.display = "inline-block";
+    $("layout-toggle-btn").style.display = "";
     $("layout-toggle-btn").textContent = wantTwoCol ? "⇄ Vezi pe o coloană" : "⇄ Vezi pe două coloane";
 
     $("group-link-section").style.display = cbn ? "none" : "block";
@@ -2272,7 +2272,7 @@ async function loadSelectionGroupsOverview() {
               <span style="font-size:13px; color:${p.submitted_at ? "var(--green)" : "var(--grey)"};">
                 ${p.submitted_at ? `✓ A ales: ${escapeHtml(titles) || "—"}` : "…încă alege"}
               </span>
-              <button class="toggle-flip" data-remove-participant style="border-color:var(--red); color:var(--red);">🗑 Elimină</button>
+              <button class="btn danger-outline sm" data-remove-participant data-icon="trash">Elimină</button>
             </div>
           `;
           prow.querySelector("[data-remove-participant]").addEventListener("click", async () => {

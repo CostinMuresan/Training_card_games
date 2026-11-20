@@ -391,8 +391,8 @@ async function render() {
         <p><b>Variantă:</b> ${escapeHtml(variantLabel(session.mode, session.prompt_index, session.scenario))}</p>
         <p class="hint">${nRounds} runde: descriere interpretabilă → descriere stufoasă → descriere exactă, cu sistem de referință. Fiecare rundă are alt model.</p>
         ${roundsBlocked(nRounds) ? `<p class="error-msg">${ROUNDS_WARNING}</p>` : ""}
-        <button class="btn outline" id="reroll">🎲 Altă variantă</button>
-        <button class="btn outline" id="toggle-preview">${showPreview ? "Ascunde previzualizarea" : "👁 Previzualizează modelele"}</button>
+        <button class="btn outline" id="reroll" data-icon="shuffle">Altă variantă</button>
+        <button class="btn outline" id="toggle-preview" data-icon="eye">${showPreview ? "Ascunde previzualizarea" : "Previzualizează modelele"}</button>
         ${
           showPreview
             ? `<div class="preview-row">${getRounds(session.mode, session.prompt_index, session.scenario)
@@ -614,8 +614,7 @@ function setTab(tab) {
 
 function renderScenarioList() {
   for (const t of ["draw", "client"]) {
-    $(`sc-tab-${t}`).classList.toggle("active", scenarioTab === t);
-    $(`sc-tab-${t}`).setAttribute("aria-pressed", String(scenarioTab === t));
+    $(`sc-tab-${t}`).setAttribute("aria-selected", String(scenarioTab === t));
   }
   const n = (s) => `${s.rounds.length} ${s.rounds.length === 1 ? "rundă" : "runde"}`;
   $("scenario-list").innerHTML =

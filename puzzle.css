@@ -94,9 +94,6 @@ a.pz-game:focus-visible, .pz-btn:focus-visible, .pz-choice:focus-visible, .pz-ti
 @media (prefers-reduced-motion: reduce) { .pz-tile.shake, .pz-spin { animation: none; } .pz-tile { transition: none; } }
 
 /* ---- administrare ---- */
-.pz-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-.pz-tab { min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--green-text); background: transparent; color: var(--green-text); font: 600 15px 'Inter', sans-serif; cursor: pointer; }
-.pz-tab[aria-selected="true"] { background: var(--green); border-color: var(--green); color: var(--on-primary); }
 .pz-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
 .pz-form-grid label, .pz-panel label { display: block; font-size: 13px; font-weight: 600; margin: 8px 0 4px; }
 .pz-form-grid input, .pz-form-grid select, .pz-panel input[type="text"], .pz-panel input[type="search"], .pz-panel select { width: 100%; min-height: 40px; }
@@ -107,8 +104,6 @@ a.pz-game:focus-visible, .pz-btn:focus-visible, .pz-choice:focus-visible, .pz-ti
 .pz-table tr.off td { opacity: .55; }
 .pz-table .items { color: var(--ink-soft); }
 .pz-row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-.pz-mini { min-height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--green-text); background: transparent; color: var(--green-text); font: 600 13px 'Inter', sans-serif; cursor: pointer; }
-.pz-mini.danger { border-color: var(--red); color: var(--red); }
 .pz-counts { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 12px; }
 .pz-preview { margin-top: 12px; border: 1px solid var(--parchment-dark); border-radius: 10px; padding: 12px; background: var(--field-bg); }
 .pz-preview ul { margin: 6px 0 0; padding-left: 20px; font-size: 13px; }
@@ -118,7 +113,6 @@ a.pz-game:focus-visible, .pz-btn:focus-visible, .pz-choice:focus-visible, .pz-ti
 
 /* antetul paginii de administrare */
 .pz-headlinks { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
-.pz-headlink { text-decoration: none; border-color: var(--gold-soft) !important; color: var(--gold-soft) !important; }
 .pz-sec-title { font-family: 'Fraunces', serif; font-size: 22px; margin: 0 0 8px; }
 .pz-warnbox { background: var(--danger-bg); border: 1px solid var(--red); border-left: 4px solid var(--red); border-radius: 8px; padding: 10px 14px; font-size: 14px; font-weight: 600; margin: 8px 0; }
 .pz-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; }
