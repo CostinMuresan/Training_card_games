@@ -98,9 +98,9 @@ function openSession(s) {
   $("creator").hidden = true;
   $("live").hidden = false;
   $("join-link").textContent = joinUrl();
-  $("copy").textContent = "Copiază";
+  $("copy").textContent = "Copiază linkul";
   $("qr-img").style.display = "none";
-  $("qr-btn").textContent = "Arată codul QR";
+  $("qr-btn").textContent = "Cod QR";
   arena = createArena($("arena"));
   store = createStore(supabase, session.id, { withAuthor: true });
   participants = [];
@@ -122,7 +122,7 @@ function render() {
   if (document.activeElement !== $("max-live")) $("max-live").value = String(session.max_questions || 0);
   $("max-live").disabled = session.status === "ended";
   $("delete-session").hidden = session.status === "play";
-  $("delete-session").textContent = session.status === "lobby" ? "Anulează sesiunea" : "Închide de tot";
+  $("delete-session").textContent = session.status === "lobby" ? "Anulează sesiunea" : "Șterge sesiunea";
   $("start-box").hidden = session.status !== "lobby";
   $("resplit").hidden = session.status !== "play";
   $("end").hidden = session.status === "ended";
@@ -132,7 +132,7 @@ function render() {
       ? "Așteaptă să intre participanții, apoi alege „Start cu timp” sau „Start fără timp”. Cine intră mai târziu este pus automat în echipa mai mică."
       : session.status === "play"
         ? "Participanții își aruncă întrebările. Poți ascunde o întrebare nepotrivită (se ascunde și din ecranele lor) sau poți folosi „Mod proiector” pentru ecranul din sală."
-        : "Recapitularea s-a încheiat: nu se mai pot arunca întrebări, iar participanții văd în continuare câmpul de luptă. Copiază întrebările dacă vrei să le păstrezi, apoi „Închide de tot” (șterge sesiunea și oprește linkul) sau „Sesiune nouă”.";
+        : "Recapitularea s-a încheiat: nu se mai pot arunca întrebări, iar participanții văd în continuare câmpul de luptă. Copiază întrebările dacă vrei să le păstrezi, apoi „Șterge sesiunea” (șterge sesiunea și oprește linkul) sau „Sesiune nouă”.";
   renderParticipants();
   renderAllowPanel();
   renderTimerPanel();
@@ -372,12 +372,12 @@ $("timer-extend-btn").onclick = async () => {
   await timerAction("extend", sec);
 };
 $("resplit").onclick = async () => {
-  if (!confirm("Reîmpărți aleatoriu participanții în echipe? Întrebările deja aruncate rămân la echipa care le-a aruncat.")) return;
+  if (!(await TCUI.confirm("Reîmpărți aleatoriu participanții în echipe? Întrebările deja aruncate rămân la echipa care le-a aruncat.", { title: "Reîmparte echipele", confirmLabel: "Reîmparte" }))) return;
   await assignTeams(participants.map((p) => p.id));
   await tickNow();
 };
 $("end").onclick = async () => {
-  if (!confirm("Închei recapitularea? Participanții nu vor mai putea arunca întrebări.")) return;
+  if (!(await TCUI.confirm("Închei recapitularea? Participanții nu vor mai putea arunca întrebări.", { title: "Încheie sesiunea", confirmLabel: "Încheie sesiunea", danger: true }))) return;
   const { data, error } = await supabase.from("recap_sessions").update({ status: "ended" }).eq("id", session.id).select().single();
   if (error) return alert(error.message);
   session = data;
@@ -395,8 +395,8 @@ $("delete-session").onclick = async () => {
   const msg =
     session.status === "lobby"
       ? "Anulezi sesiunea? Participanții înscriși vor fi scoși, iar linkul nu va mai funcționa."
-      : "Închizi de tot recapitularea?\n\nSe șterg definitiv sesiunea, participanții și întrebările, iar linkul nu va mai funcționa. Dacă vrei să păstrezi întrebările, apasă mai întâi „Copiază întrebările”.";
-  if (!confirm(msg)) return;
+      : "Ștergi sesiunea de recapitulare?\n\nSe șterg definitiv sesiunea, participanții și întrebările, iar linkul nu va mai funcționa. Dacă vrei să păstrezi întrebările, apasă mai întâi „Copiază întrebările”.";
+  if (!(await TCUI.confirm(msg, { title: session.status === "lobby" ? "Anulează sesiunea" : "Șterge sesiunea", confirmLabel: session.status === "lobby" ? "Anulează sesiunea" : "Șterge sesiunea", danger: true }))) return;
   const { error } = await supabase.from("recap_sessions").delete().eq("id", session.id);
   if (error) return alert(error.message);
   clearInterval(poll);
@@ -424,7 +424,7 @@ $("qr-btn").onclick = () => {
     $("qr-btn").textContent = "Ascunde codul QR";
   } else {
     img.style.display = "none";
-    $("qr-btn").textContent = "Arată codul QR";
+    $("qr-btn").textContent = "Cod QR";
   }
 };
 $("qr-dl-btn").onclick = async () => {

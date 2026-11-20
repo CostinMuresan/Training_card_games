@@ -24,6 +24,7 @@
 <div id="admin-view" style="display:none;">
   <header class="app-header" id="app-header" data-title="Jocuri cu cărți" data-parent-label="Meniu trainer" data-parent-href="trainer.html"></header>
   <script src="trainer-header.js"></script>
+  <script src="trainer-dialog.js"></script>
 
   <div id="stats-modal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
@@ -44,7 +45,7 @@
           <label style="display:block; font-size:12px; font-weight:600; margin-bottom:4px;">Joc de training</label>
           <div style="display:flex; gap:6px; align-items:center;">
             <select id="game-select" style="min-width:170px;"></select>
-            <button class="btn outline sm" id="game-new-btn" title="Joc nou">+ Nou</button>
+            <button class="btn outline sm" id="game-new-btn" data-icon="plus">Joc nou</button>
             <button class="btn ghost icon" id="game-edit-btn" data-icon="pencil" title="Editează" aria-label="Editează jocul"></button>
             <button class="btn ghost danger icon" id="game-delete-btn" data-icon="trash" title="Șterge" aria-label="Șterge jocul"></button>
           </div>
@@ -53,7 +54,7 @@
           <label style="display:block; font-size:12px; font-weight:600; margin-bottom:4px;">Set de cărți</label>
           <div style="display:flex; gap:6px; align-items:center;">
             <select id="set-select" style="min-width:170px;"></select>
-            <button class="btn outline sm" id="set-new-btn" title="Set nou">+ Nou</button>
+            <button class="btn outline sm" id="set-new-btn" data-icon="plus">Set nou</button>
             <button class="btn ghost icon" id="set-edit-btn" data-icon="pencil" title="Editează" aria-label="Editează setul"></button>
             <button class="btn ghost danger icon" id="set-delete-btn" data-icon="trash" title="Șterge" aria-label="Șterge setul"></button>
           </div>
@@ -115,7 +116,7 @@
         <div id="participants-list" style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;"></div>
         <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:24px;">
           <input id="new-participant-name" placeholder="Nume participant" style="max-width:200px;" />
-          <button class="btn" id="add-participant-btn">+ Adaugă participant</button>
+          <button class="btn" id="add-participant-btn" data-icon="plus">Participant nou</button>
         </div>
 
         <h4 class="serif" style="margin:6px 0 10px;">Distribuire automată a cardurilor private</h4>
@@ -149,7 +150,7 @@
           <div class="error-msg" id="cbn-start-error"></div>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <button class="btn gold" id="cbn-start-btn">Pornește sesiunea</button>
-            <button class="btn danger-outline" id="cbn-cancel-session-btn">Anulează sesiunea</button>
+            <button class="btn danger-outline u-ml-auto" id="cbn-cancel-session-btn">Anulează sesiunea</button>
           </div>
         </div>
 
@@ -254,12 +255,12 @@
           <div class="code-box"><span class="code-label">Cod de sesiune:</span><b class="code-value" id="cbn-code"></b></div>
           <div class="session-link-box" id="cbn-link-box" style="margin-bottom:10px;">
             <span id="cbn-link-text"></span>
-            <button class="btn outline sm" id="cbn-link-copy-btn" data-icon="copy">Copiază</button>
+            <button class="btn outline sm" id="cbn-link-copy-btn" data-icon="copy">Copiază linkul</button>
           </div>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="btn outline sm" id="cbn-qr-btn" data-icon="qr">Arată codul QR</button>
-            <button class="btn outline sm" id="cbn-qr-dl-png-btn" data-icon="download">Descarcă PNG</button>
-            <button class="btn outline sm" id="cbn-qr-dl-jpg-btn" data-icon="download">Descarcă JPG</button>
+            <button class="btn outline sm" id="cbn-qr-btn" data-icon="qr">Cod QR</button>
+            <button class="btn outline sm" id="cbn-qr-dl-png-btn" data-icon="download">Descarcă QR (PNG)</button>
+            <button class="btn outline sm" id="cbn-qr-dl-jpg-btn" data-icon="download">Descarcă QR (JPG)</button>
           </div>
           <img id="cbn-qr-img" style="display:none; margin-top:8px; width:160px; height:160px; border-radius:8px; border:1px solid var(--parchment-dark); background:#fff;" />
         </div>
@@ -275,15 +276,15 @@
               <input id="timer-s" type="number" min="0" max="59" value="0" style="width:55px;" /><span>s</span>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button class="btn gold" id="timer-start-btn">Start cronometru</button>
+              <button class="btn gold" id="timer-start-btn">Start cu timp</button>
               <button class="btn outline" id="timer-skip-btn">Start fără timp</button>
-              <button class="btn danger-outline" id="cancel-session-btn" style="display:none;">Anulează sesiunea</button>
+              <button class="btn danger-outline u-ml-auto" id="cancel-session-btn" style="display:none;">Anulează sesiunea</button>
             </div>
           </div>
 
           <div id="timer-none-box" style="display:none;">
             <p style="font-size:13px; color:var(--grey); margin:0 0 10px;">Sesiunea rulează fără cronometru — cardurile sunt vizibile la cursanți, fără limită de timp.</p>
-            <button class="btn outline" id="timer-enable-btn">Activează un cronometru acum</button>
+            <button class="btn outline" id="timer-enable-btn" data-icon="clock">Adaugă cronometru</button>
           </div>
 
           <div id="timer-running-box" style="display:none;">
@@ -310,7 +311,7 @@
         <h3 style="margin:0;" id="deck-title">Carduri</h3>
         <div id="deck-edit-actions" style="display:flex; gap:8px;">
           <button class="btn outline" id="bulk-upload-btn">Încarcă în bulk</button>
-          <button class="btn" id="add-card-btn">+ Card nou</button>
+          <button class="btn" id="add-card-btn" data-icon="plus">Card nou</button>
         </div>
       </div>
       <p id="deck-locked-note" style="display:none; font-size:13px; color:var(--red); margin:-4px 0 12px;">
@@ -380,7 +381,7 @@
     <div class="error-msg" id="bulk-error"></div>
     <div id="bulk-progress" style="font-size:13px; color:var(--green-text); margin-top:8px;"></div>
     <div style="display:flex; gap:10px; margin-top:16px; justify-content:flex-end;">
-      <button class="btn outline" id="bulk-cancel-btn">Închide</button>
+      <button class="btn outline" id="bulk-cancel-btn">Anulează</button>
       <button class="btn" id="bulk-save-btn" disabled>Încarcă toate cardurile</button>
     </div>
   </div>

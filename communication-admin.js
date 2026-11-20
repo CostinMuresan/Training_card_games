@@ -118,7 +118,7 @@ function openSession(s) {
   session = s;
   setCreator(false);
   $("live").hidden = false;
-  $("copy").textContent = "Copiază";
+  $("copy").textContent = "Copiază linkul";
   resetQr();
   startWatch();
   render();
@@ -136,7 +136,7 @@ $("copy").onclick = async () => {
 // ---------- cod QR (acelasi serviciu si aceleasi butoane ca la celelalte activitati) ----------
 function resetQr() {
   $("qr-img").style.display = "none";
-  $("qr-btn").textContent = "Arată codul QR";
+  $("qr-btn").textContent = "Cod QR";
 }
 
 $("qr-btn").onclick = () => {
@@ -275,7 +275,7 @@ $("next").onclick = () => move(1);
 $("back").onclick = () => move(-1);
 
 $("end").onclick = async () => {
-  if (!confirm("Sigur închei sesiunea? Participanții nu vor mai putea continua și nu se poate relua.")) return;
+  if (!(await TCUI.confirm("Sigur închei sesiunea? Participanții nu vor mai putea continua și nu se poate relua.", { title: "Încheie sesiunea", confirmLabel: "Încheie sesiunea", danger: true }))) return;
   await supabase.from("communication_sessions").update({ status: "ended" }).eq("id", session.id);
   session.status = "ended";
   render();
@@ -770,7 +770,7 @@ function updateRoundButtons() {
   const max = form.mode === "client" ? 2 : MAX_ROUNDS;
   const n = form.rounds.length;
   $("sc-add-round").hidden = n >= max;
-  $("sc-add-round").textContent = `＋ Adaugă runda ${n + 1}`;
+  $("sc-add-round").textContent = `Adaugă runda ${n + 1}`;
   $("sc-remove-round").hidden = n < 2;
   $("sc-remove-round").textContent = `Elimină runda ${n}`;
 }
@@ -913,7 +913,7 @@ async function copyBaseScenario(index) {
 
 async function deleteScenario(id) {
   const sc = myScenarios.find((s) => s.id === id);
-  if (!sc || !confirm(`Ștergi scenariul „${sc.title}”? Sesiunile deja pornite nu sunt afectate.`)) return;
+  if (!sc || !(await TCUI.confirm(`Ștergi scenariul „${sc.title}”? Sesiunile deja pornite nu sunt afectate.`, { title: "Șterge scenariul", confirmLabel: "Șterge", danger: true }))) return;
   const { error } = await supabase.from("communication_scenarios").delete().eq("id", id);
   if (error) return alert(error.message);
   await loadScenarios();

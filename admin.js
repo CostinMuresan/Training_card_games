@@ -184,7 +184,7 @@ $("game-delete-btn").addEventListener("click", async () => {
     alert(`Nu poți șterge „${g?.name}” — are ${cardSets.length} set(uri) de carduri. Șterge întâi seturile.`);
     return;
   }
-  if (!confirm(`Ștergi definitiv jocul „${g?.name}”?`)) return;
+  if (!(await TCUI.confirm(`Ștergi definitiv jocul „${g?.name}”?`, { title: "Șterge jocul", confirmLabel: "Șterge", danger: true }))) return;
   const { error } = await supabase.from("games").delete().eq("id", activeGameId);
   if (error) {
     alert("Eroare: " + error.message);
@@ -198,7 +198,7 @@ $("game-delete-btn").addEventListener("click", async () => {
 $("set-delete-btn").addEventListener("click", async () => {
   if (!activeSetId) return;
   const s = cardSets.find((s) => s.id === activeSetId);
-  if (!confirm(`Ștergi setul „${s?.name}”? Cardurile din el NU se șterg, dar rămân fără set asignat.`)) return;
+  if (!(await TCUI.confirm(`Ștergi setul „${s?.name}”? Cardurile din el NU se șterg, dar rămân fără set asignat.`, { title: "Șterge setul", confirmLabel: "Șterge", danger: true }))) return;
   const { error } = await supabase.from("card_sets").delete().eq("id", activeSetId);
   if (error) {
     alert("Eroare: " + error.message);
@@ -443,7 +443,7 @@ function renderDeck() {
       });
       tile.querySelector("[data-delete]").addEventListener("click", async (e) => {
         e.stopPropagation();
-        if (!confirm(`Ștergi cardul „${c.title}”?`)) return;
+        if (!(await TCUI.confirm(`Ștergi cardul „${c.title}”?`, { title: "Șterge cardul", confirmLabel: "Șterge", danger: true }))) return;
         const { error } = await supabase.from("cards").delete().eq("id", c.id);
         if (error) {
           alert("Eroare la ștergere: " + error.message);
@@ -473,7 +473,7 @@ $("select-all-btn").addEventListener("click", () => {
 
 $("bulk-delete-btn").addEventListener("click", async () => {
   if (selectedCardIds.size === 0) return;
-  if (!confirm(`Ștergi definitiv ${selectedCardIds.size} carduri selectate?`)) return;
+  if (!(await TCUI.confirm(`Ștergi definitiv ${selectedCardIds.size} carduri selectate?`, { title: "Șterge cardurile", confirmLabel: "Șterge", danger: true }))) return;
   const btn = $("bulk-delete-btn");
   btn.disabled = true;
   btn.textContent = "Se șterge...";
@@ -988,7 +988,7 @@ $("create-session-btn").addEventListener("click", async () => {
 
 async function endSession() {
   if (!currentSession) return;
-  if (!confirm("Închei sesiunea curentă pentru toate grupele?")) return;
+  if (!(await TCUI.confirm("Închei sesiunea curentă pentru toate grupele?", { title: "Încheie sesiunea", confirmLabel: "Încheie sesiunea", danger: true }))) return;
   await supabase.from("training_sessions").update({ status: "ended" }).eq("id", currentSession.id);
   currentSession = null;
   groups = [];
@@ -1064,12 +1064,12 @@ function renderGroupsList() {
       </div>
       <div class="session-link-box" style="margin-top:8px;">
         <span>${link}</span>
-        <button class="btn outline sm" data-copy data-icon="copy">Copiază</button>
+        <button class="btn outline sm" data-copy data-icon="copy">Copiază linkul</button>
       </div>
       <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
-        <button class="btn outline sm" data-qr data-icon="qr">Arată codul QR</button>
-        <button class="btn outline sm" data-dl-png data-icon="download">Descarcă PNG</button>
-        <button class="btn outline sm" data-dl-jpg data-icon="download">Descarcă JPG</button>
+        <button class="btn outline sm" data-qr data-icon="qr">Cod QR</button>
+        <button class="btn outline sm" data-dl-png data-icon="download">Descarcă QR (PNG)</button>
+        <button class="btn outline sm" data-dl-jpg data-icon="download">Descarcă QR (JPG)</button>
       </div>
       <img data-qr-img style="display:none; margin-top:8px; width:160px; height:160px; border-radius:8px; border:1px solid var(--parchment-dark); background:#fff;" />
     `;
@@ -1081,7 +1081,7 @@ function renderGroupsList() {
     card.querySelector("[data-copy]").addEventListener("click", (e) => {
       navigator.clipboard.writeText(link);
       e.target.textContent = "Copiat!";
-      setTimeout(() => (e.target.textContent = "Copiază"), 1500);
+      setTimeout(() => (e.target.textContent = "Copiază linkul"), 1500);
     });
     const qrBtn = card.querySelector("[data-qr]");
     const qrImg = card.querySelector("[data-qr-img]");
@@ -1092,7 +1092,7 @@ function renderGroupsList() {
         qrBtn.textContent = "Ascunde codul QR";
       } else {
         qrImg.style.display = "none";
-        qrBtn.textContent = "Arată codul QR";
+        qrBtn.textContent = "Cod QR";
       }
     });
     const safeSlug = g.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -1114,7 +1114,7 @@ function renderCbnLink() {
   $("cbn-link-copy-btn").onclick = (e) => {
     navigator.clipboard.writeText(link);
     e.target.textContent = "Copiat!";
-    setTimeout(() => (e.target.textContent = "Copiază"), 1500);
+    setTimeout(() => (e.target.textContent = "Copiază linkul"), 1500);
   };
   const qrBtn = $("cbn-qr-btn");
   const qrImg = $("cbn-qr-img");
@@ -1125,7 +1125,7 @@ function renderCbnLink() {
       qrBtn.textContent = "Ascunde codul QR";
     } else {
       qrImg.style.display = "none";
-      qrBtn.textContent = "Arată codul QR";
+      qrBtn.textContent = "Cod QR";
     }
   };
   $("cbn-qr-dl-png-btn").onclick = (e) => downloadQr(link, "qr-echipa.png", "png", e.target);
@@ -1315,7 +1315,7 @@ $("cbn-start-btn").addEventListener("click", async () => {
 });
 
 $("cbn-reveal-all-btn").addEventListener("click", async () => {
-  if (!confirm("Sigur? Toți participanții vor vedea instant cine ce a avut — acțiunea nu poate fi anulată.")) return;
+  if (!(await TCUI.confirm("Sigur? Toți participanții vor vedea instant cine ce a avut — acțiunea nu poate fi anulată.", { title: "Arată tuturor", confirmLabel: "Arată tuturor", danger: true }))) return;
   await supabase.from("training_sessions").update({ cb_revealed_all_at: new Date().toISOString() }).eq("id", currentSession.id);
   currentSession.cb_revealed_all_at = new Date().toISOString();
   alert("Gata — participanții văd acum imaginea completă.");
@@ -1502,7 +1502,7 @@ $("timer-skip-btn").addEventListener("click", async () => {
   if (isSelectionGame()) {
     const { allDone, summary } = await checkAllGroupsSelectionComplete();
     if (!allDone) {
-      const proceed = confirm(`Nu toți cursanții au ales încă, în toate grupele:\n${summary}\n\nVrei să pornești sesiunea oricum?`);
+      const proceed = await TCUI.confirm(`Nu toți cursanții au ales încă, în toate grupele:\n${summary}\n\nVrei să pornești sesiunea oricum?`, { title: "Pornești sesiunea?", confirmLabel: "Pornește oricum" });
       if (!proceed) return;
     }
   }
@@ -1540,7 +1540,7 @@ $("timer-start-btn").addEventListener("click", async () => {
   if (isSelectionGame()) {
     const { allDone, summary } = await checkAllGroupsSelectionComplete();
     if (!allDone) {
-      const proceed = confirm(`Nu toți cursanții au ales încă, în toate grupele:\n${summary}\n\nVrei să pornești cronometrul oricum?`);
+      const proceed = await TCUI.confirm(`Nu toți cursanții au ales încă, în toate grupele:\n${summary}\n\nVrei să pornești cronometrul oricum?`, { title: "Pornești cronometrul?", confirmLabel: "Pornește oricum" });
       if (!proceed) return;
     }
   }
@@ -2045,7 +2045,7 @@ function renderParticipants() {
       <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
         <strong class="serif">${escapeHtml(p.name)}</strong>
         <div style="display:flex; gap:6px; flex-wrap:wrap;">
-          <button class="toggle-flip" data-copy>Copiază link</button>
+          <button class="toggle-flip" data-copy>Copiază linkul</button>
           <button class="toggle-flip" data-cards>Cardurile lui (${participantCardsMap[p.id]?.size || 0})</button>
           <button class="toggle-flip" style="border-color:var(--red); color:var(--red);" data-remove>Șterge</button>
         </div>
@@ -2055,7 +2055,7 @@ function renderParticipants() {
     row.querySelector("[data-copy]").addEventListener("click", (e) => {
       navigator.clipboard.writeText(link);
       e.target.textContent = "Copiat!";
-      setTimeout(() => (e.target.textContent = "Copiază link"), 1400);
+      setTimeout(() => (e.target.textContent = "Copiază linkul"), 1400);
     });
     const cardsPanel = row.querySelector("[data-cards-panel]");
     row.querySelector("[data-cards]").addEventListener("click", () => {
@@ -2064,7 +2064,7 @@ function renderParticipants() {
       if (!isOpen) renderParticipantCardPicker(p, cardsPanel);
     });
     row.querySelector("[data-remove]").addEventListener("click", async () => {
-      if (!confirm(`Ștergi participantul „${p.name}”?`)) return;
+      if (!(await TCUI.confirm(`Ștergi participantul „${p.name}”?`, { title: "Șterge participantul", confirmLabel: "Șterge", danger: true }))) return;
       await supabase.from("session_participants").delete().eq("id", p.id);
       await loadParticipants();
     });
@@ -2184,7 +2184,7 @@ $("reveal-solution-btn").addEventListener("click", async () => {
     alert("Nu ai marcat încă niciun card ca parte din tiparul-țintă.");
     return;
   }
-  if (!confirm("Dezvălui soluția tuturor participanților acestei grupe? Nu mai poate fi ascunsă înapoi.")) return;
+  if (!(await TCUI.confirm("Dezvălui soluția tuturor participanților acestei grupe? Nu mai poate fi ascunsă înapoi.", { title: "Dezvăluie soluția", confirmLabel: "Dezvăluie", danger: true }))) return;
   const { error } = await supabase
     .from("session_groups")
     .update({ solution_revealed_at: new Date().toISOString() })
@@ -2276,7 +2276,7 @@ async function loadSelectionGroupsOverview() {
             </div>
           `;
           prow.querySelector("[data-remove-participant]").addEventListener("click", async () => {
-            if (!confirm(`Elimini „Cursant ${idx + 1}” din grupă? Alegerea lui (dacă a făcut-o) se șterge și ea.`)) return;
+            if (!(await TCUI.confirm(`Elimini „Cursant ${idx + 1}” din grupă? Alegerea lui (dacă a făcut-o) se șterge și ea.`, { title: "Elimină cursantul", confirmLabel: "Elimină", danger: true }))) return;
             await supabase.from("session_participant_cards").delete().eq("participant_id", p.id);
             await supabase.from("session_participants").delete().eq("id", p.id);
             await loadSelectionGroupsOverview();

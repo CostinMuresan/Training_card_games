@@ -13,6 +13,7 @@
 <body class="t-ui">
   <header class="app-header" id="app-header" data-title="Recapitulare" data-parent-label="Meniu trainer" data-parent-href="trainer.html"></header>
   <script src="trainer-header.js"></script>
+  <script src="trainer-dialog.js"></script>
 
   <button class="btn outline" id="projector-exit">Ieși din modul proiector</button>
 
@@ -44,8 +45,8 @@
           <li><b>Cronometrul:</b> cu timp, participanții văd timpul rămas sus și, la <b>Pauză</b> sau după expirare, nu mai pot arunca întrebări (nici „Aruncă înapoi”); întrebările rămân vizibile. <b>Pauză / Reia</b> oprește și repornește timpul; <b>Adaugă timp</b> (minute și secunde) prelungește sau, după expirare, repornește cronometrul. Dacă ai pornit fără timp, poți activa un cronometru oricând din panou. În <b>Mod proiector</b> timpul apare mare, pe ecranul din sală.</li>
           <li><b>În timpul jocului:</b> bulgării de hârtie zboară spre tabăra adversă, iar întrebările apar listate pe echipe. Tu vezi și <b>aliasul autorului</b>. Poți <b>ascunde</b> o întrebare nepotrivită (dispare și de la participanți), poți <b>schimba limita</b> de întrebări, poți <b>reîmpărți echipele</b> (întrebările deja aruncate rămân la echipa lor) sau poți apăsa <b>Mod proiector</b> pentru ecranul din sală (rămân doar câmpul de luptă și întrebările). Participanții văd doar echipa autorului.</li>
           <li><b>Sugestie de desfășurare:</b> lasă 5–10 minute pentru aruncat întrebări, apoi citește întrebările cu voce tare, pe rând, iar echipa adversă răspunde oral. Folosește „Copiază întrebările” ca să păstrezi lista.</li>
-          <li><b>Încheie:</b> oprește aruncarea de întrebări. Câmpul de luptă și întrebările rămân vizibile la participanți, pentru discuția finală.</li>
-          <li><b>Închide de tot:</b> după „Încheie”, șterge definitiv sesiunea, participanții și întrebările; linkul nu mai funcționează, iar participanții văd un mesaj de mulțumire. <b>Copiază întrebările înainte</b>, dacă vrei să le păstrezi. „Sesiune nouă” doar te duce la ecranul de creare, fără să șteargă nimic.</li>
+          <li><b>Încheie sesiunea:</b> oprește aruncarea de întrebări. Câmpul de luptă și întrebările rămân vizibile la participanți, pentru discuția finală.</li>
+          <li><b>Șterge sesiunea:</b> după „Încheie sesiunea”, șterge definitiv sesiunea, participanții și întrebările; linkul nu mai funcționează, iar participanții văd un mesaj de mulțumire. <b>Copiază întrebările înainte</b>, dacă vrei să le păstrezi. „Sesiune nouă” doar te duce la ecranul de creare, fără să șteargă nimic.</li>
         </ol>
       </details>
     </section>
@@ -62,17 +63,17 @@
               <span class="code-hint" id="code-hint"></span>
             </div>
           </div>
-          <button class="btn danger" id="end">Încheie</button>
+          <button class="btn danger" id="end">Încheie sesiunea</button>
         </div>
         <details class="setup-details" id="setup-details" open>
         <summary id="setup-summary">⚙️ Setări sesiune: link, cod QR, limită de întrebări</summary>
         <p>Link participanți:</p>
         <div class="session-link-box">
           <span id="join-link"></span>
-          <button class="btn outline sm" id="copy" data-icon="copy">Copiază</button>
+          <button class="btn outline sm" id="copy" data-icon="copy">Copiază linkul</button>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
-          <button class="btn outline sm" id="qr-btn" data-icon="qr">Arată codul QR</button>
+          <button class="btn outline sm" id="qr-btn" data-icon="qr">Cod QR</button>
           <button class="btn outline sm" id="qr-dl-btn" data-icon="download">Descarcă QR</button>
         </div>
         <img id="qr-img" alt="Cod QR" style="display:none; margin-top:8px; width:160px; height:160px; border-radius:8px; border:1px solid var(--parchment-dark); background:#fff;">
@@ -94,11 +95,11 @@
           </div>
         </div>
         <div class="recap-controls">
-          <button class="btn outline" id="resplit" data-icon="shuffle">Reîmparte echipele</button>
-          <button class="btn outline" id="copy-questions" data-icon="copy">Copiază întrebările</button>
-          <button class="btn outline" id="projector" data-icon="monitor">Mod proiector</button>
+          <button class="btn outline sm" id="resplit" data-icon="shuffle">Reîmparte echipele</button>
+          <button class="btn outline sm" id="copy-questions" data-icon="copy">Copiază întrebările</button>
+          <button class="btn outline sm" id="projector" data-icon="monitor">Mod proiector</button>
           <button class="btn" id="new-session" hidden>Sesiune nouă</button>
-          <button class="btn danger-outline" id="delete-session" data-icon="trash" hidden>Închide de tot</button>
+          <button class="btn danger-outline" id="delete-session" data-icon="trash" hidden>Șterge sesiunea</button>
         </div>
         <p class="hint" id="controls-hint"></p>
         <details class="recap-help">
@@ -111,8 +112,8 @@
           <li><b>Cronometrul:</b> cu timp, participanții văd timpul rămas sus și, la <b>Pauză</b> sau după expirare, nu mai pot arunca întrebări (nici „Aruncă înapoi”); întrebările rămân vizibile. <b>Pauză / Reia</b> oprește și repornește timpul; <b>Adaugă timp</b> (minute și secunde) prelungește sau, după expirare, repornește cronometrul. Dacă ai pornit fără timp, poți activa un cronometru oricând din panou. În <b>Mod proiector</b> timpul apare mare, pe ecranul din sală.</li>
           <li><b>În timpul jocului:</b> bulgării de hârtie zboară spre tabăra adversă, iar întrebările apar listate pe echipe. Tu vezi și <b>aliasul autorului</b>. Poți <b>ascunde</b> o întrebare nepotrivită (dispare și de la participanți), poți <b>schimba limita</b> de întrebări, poți <b>reîmpărți echipele</b> (întrebările deja aruncate rămân la echipa lor) sau poți apăsa <b>Mod proiector</b> pentru ecranul din sală (rămân doar câmpul de luptă și întrebările). Participanții văd doar echipa autorului.</li>
           <li><b>Sugestie de desfășurare:</b> lasă 5–10 minute pentru aruncat întrebări, apoi citește întrebările cu voce tare, pe rând, iar echipa adversă răspunde oral. Folosește „Copiază întrebările” ca să păstrezi lista.</li>
-          <li><b>Încheie:</b> oprește aruncarea de întrebări. Câmpul de luptă și întrebările rămân vizibile la participanți, pentru discuția finală.</li>
-          <li><b>Închide de tot:</b> după „Încheie”, șterge definitiv sesiunea, participanții și întrebările; linkul nu mai funcționează, iar participanții văd un mesaj de mulțumire. <b>Copiază întrebările înainte</b>, dacă vrei să le păstrezi. „Sesiune nouă” doar te duce la ecranul de creare, fără să șteargă nimic.</li>
+          <li><b>Încheie sesiunea:</b> oprește aruncarea de întrebări. Câmpul de luptă și întrebările rămân vizibile la participanți, pentru discuția finală.</li>
+          <li><b>Șterge sesiunea:</b> după „Încheie sesiunea”, șterge definitiv sesiunea, participanții și întrebările; linkul nu mai funcționează, iar participanții văd un mesaj de mulțumire. <b>Copiază întrebările înainte</b>, dacă vrei să le păstrezi. „Sesiune nouă” doar te duce la ecranul de creare, fără să șteargă nimic.</li>
         </ol>
       </details>
       </div>
@@ -135,15 +136,15 @@
             <div class="timer-panel" id="timer-panel" hidden>
               <div id="timer-none-box" hidden>
                 <span class="hint">Sesiunea rulează fără cronometru.</span>
-                <button class="btn outline" id="timer-enable-btn" data-icon="clock">Activează un cronometru</button>
+                <button class="btn outline" id="timer-enable-btn" data-icon="clock">Adaugă cronometru</button>
                 <div id="timer-setup-box" hidden>
                   <div class="timer-inputs">
                     <input id="timer-min" class="timer-num" type="number" min="0" max="180" step="1" value="5" inputmode="numeric" aria-label="Minute"><span>min</span>
                     <input id="timer-sec" class="timer-num" type="number" min="0" max="59" step="1" value="0" inputmode="numeric" aria-label="Secunde"><span>sec</span>
                   </div>
                   <div class="start-btns">
-                    <button class="btn gold" id="timer-start-btn">Start cronometru</button>
-                    <button class="btn outline" id="timer-cancel-btn">Renunță</button>
+                    <button class="btn gold" id="timer-start-btn">Start cu timp</button>
+                    <button class="btn outline" id="timer-cancel-btn">Anulează</button>
                   </div>
                 </div>
               </div>

@@ -722,3 +722,17 @@ body.t-ui .page-tools .lab { font: 600 11px/1 'Inter', sans-serif; letter-spacin
   body.t-ui .account-menu { width: min(250px, calc(100vw - 32px)); }
   body.t-ui .crumb > span { display: none; } /* pe telefon: doar întoarcerea, titlul e dedesubt */
 }
+
+/* ---------- v81: dialog de confirmare comun ---------- */
+.cf-overlay { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(10, 12, 12, .62); }
+.cf-box { width: min(460px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: var(--card-bg); color: var(--ink); border: 1px solid var(--parchment-dark); border-radius: 14px; padding: 22px; box-shadow: 0 20px 60px rgba(0, 0, 0, .4); font-family: 'Inter', sans-serif; }
+.cf-box h2 { margin: 0 0 10px; font-size: 22px; }
+.cf-msg { margin: 0 0 20px; font-size: 15px; line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere; }
+.cf-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+.cf-actions .btn { min-width: 110px; }
+
+/* ---------- v81: bare de acțiuni pe zone ---------- */
+/* stânga: pasul următor; mijloc: ajutoare; dreapta, singur: oprire/ștergere */
+body.t-ui .recap-controls #new-session { order: -1; }
+body.t-ui .recap-controls #delete-session { margin-left: auto; }
+body.t-ui .btn.u-ml-auto { margin-left: auto; }

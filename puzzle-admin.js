@@ -123,7 +123,7 @@ function renderConn() {
     act.onchange = () => mutate(supabase.from("pz_categories").update({ active: act.checked }).eq("id", c.id));
     const del = h("button", { class: "btn danger-outline sm", type: "button", text: "Șterge", "aria-label": `Șterge: ${c.title}` });
     del.onclick = async () => {
-      if (!confirm(`Ștergi categoria „${c.title}”?`)) return;
+      if (!(await TCUI.confirm(`Ștergi categoria „${c.title}”?`, { title: "Șterge categoria", confirmLabel: "Șterge", danger: true }))) return;
       await mutate(supabase.from("pz_categories").delete().eq("id", c.id));
     };
     body.append(
@@ -177,7 +177,7 @@ $("conn-file").onchange = async (e) => {
     const go = h("button", { class: "btn", type: "button", text: `Importă ${good.length} ${good.length === 1 ? "categorie" : "categorii"}`, id: "conn-import" });
     go.disabled = !good.length;
     go.onclick = importCats;
-    const cancel = h("button", { class: "btn outline u-ml-8", type: "button", text: "Renunță", id: "conn-cancel" });
+    const cancel = h("button", { class: "btn outline u-ml-8", type: "button", text: "Anulează", id: "conn-cancel" });
     cancel.onclick = () => resetImport("conn");
     parts.push(h("p", {}, go, cancel));
     previewBox($("conn-preview"), "Previzualizare import", parts);
@@ -210,7 +210,7 @@ function renderDec() {
     act.onchange = () => mutate(supabase.from("pz_scenarios").update({ active: act.checked }).eq("id", s.id));
     const del = h("button", { class: "btn danger-outline sm", type: "button", text: "Șterge", "aria-label": `Șterge: ${s.title}` });
     del.onclick = async () => {
-      if (!confirm(`Ștergi scenariul „${s.title}”, cu toate nodurile, opțiunile și partidele lui?`)) return;
+      if (!(await TCUI.confirm(`Ștergi scenariul „${s.title}”, cu toate nodurile, opțiunile și partidele lui?`, { title: "Șterge scenariul", confirmLabel: "Șterge", danger: true }))) return;
       await mutate(supabase.from("pz_scenarios").delete().eq("id", s.id));
     };
     body.append(
@@ -248,7 +248,7 @@ $("dec-file").onchange = async (e) => {
     const go = h("button", { class: "btn", type: "button", text: `Importă ${pendingScen.length} ${pendingScen.length === 1 ? "scenariu" : "scenarii"}`, id: "dec-import" });
     go.disabled = !pendingScen.length;
     go.onclick = importScen;
-    const cancel = h("button", { class: "btn outline u-ml-8", type: "button", text: "Renunță", id: "dec-cancel" });
+    const cancel = h("button", { class: "btn outline u-ml-8", type: "button", text: "Anulează", id: "dec-cancel" });
     cancel.onclick = () => resetImport("dec");
     parts.push(h("p", {}, go, cancel));
     previewBox($("dec-preview"), "Previzualizare import", parts);
